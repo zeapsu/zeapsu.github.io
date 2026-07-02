@@ -121,6 +121,11 @@ li {
   color: var(--muted);
 }
 
+/* subtler scrim than the panels: the hero terrain is the first impression */
+.journey .hero {
+  background: radial-gradient(110% 70% at 12% 48%, rgba(11, 10, 18, 0.72), transparent 58%);
+}
+
 .links {
   display: flex;
   gap: 1.6rem;
@@ -140,6 +145,11 @@ li {
   color: var(--muted);
   max-width: 46ch;
   line-height: 1.6;
+  padding: 0.7rem 0.95rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
 }
 
 .live-dot {
@@ -233,9 +243,21 @@ li {
   justify-content: center;
 }
 
-/* keep closing text readable when terrain ridges rise behind it */
-.journey .closing {
-  background: radial-gradient(120% 90% at 18% 50%, rgba(11, 10, 18, 0.88), transparent 62%);
+/* keep panel text readable when terrain ridges rise behind it (Fixes #1).
+   Painted on a pseudo-element extended past the box so the fade has room
+   on the content-hugging research panel and section positions don't shift. */
+.journey .panel {
+  isolation: isolate;
+}
+
+.journey .panel::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -6rem -8rem;
+  pointer-events: none;
+  /* closest-side hits zero exactly at the box edges: no visible seams */
+  background: radial-gradient(closest-side, rgba(11, 10, 18, 0.92), rgba(11, 10, 18, 0.82) 66%, transparent 100%);
 }
 
 .open-to {
