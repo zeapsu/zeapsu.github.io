@@ -1,4 +1,5 @@
 import { identity, research, projects, howIWork, footer } from '../content/data'
+import { RESEARCH_TOP, CARD_BASE, CARD_STEP, CLOSING_TOP } from '../layout'
 
 export function ContactLinks() {
   return (
@@ -27,7 +28,10 @@ export function ProjectCard({ p }: { p: (typeof projects)[number] }) {
   )
 }
 
-// Absolute-positioned over 600vh of scroll (6 pages), riding drei's <Scroll html>.
+// Absolute-positioned over PAGES * 100dvh of scroll, riding drei's <Scroll html>.
+// dvh, not vh: drei's scroll range is pages * container pixel height (the
+// dynamic viewport), while vh is the large viewport on phones — the mismatch
+// pushed the closing section past the maximum scroll on mobile.
 export function Sections() {
   return (
     <div className="journey">
@@ -40,7 +44,7 @@ export function Sections() {
         </p>
       </section>
 
-      <section className="panel" style={{ top: '105vh' }}>
+      <section className="panel" style={{ top: `${RESEARCH_TOP}dvh` }}>
         <p className="eyebrow">{research.eyebrow}</p>
         <h2>{research.title}</h2>
         <p>{research.body}</p>
@@ -55,14 +59,14 @@ export function Sections() {
         <div
           key={p.name}
           className={`card-slot ${i % 2 ? 'right' : 'left'}`}
-          style={{ top: `${210 + i * 55}vh` }}
+          style={{ top: `${CARD_BASE + i * CARD_STEP}dvh` }}
         >
           {i === 0 && <p className="eyebrow">projects</p>}
           <ProjectCard p={p} />
         </div>
       ))}
 
-      <section className="panel closing" style={{ top: '505vh' }}>
+      <section className="panel closing" style={{ top: `${CLOSING_TOP}dvh` }}>
         <p className="eyebrow">{howIWork.eyebrow}</p>
         <h2>{howIWork.title}</h2>
         <p>{howIWork.body}</p>

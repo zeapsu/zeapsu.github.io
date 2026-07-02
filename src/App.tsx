@@ -4,9 +4,8 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { QuantumField } from './three/QuantumField'
 import { JourneyCamera } from './three/JourneyCamera'
 import { bloomOk } from './three/quality'
+import { PAGES } from './layout'
 import { Sections, StaticFallback } from './ui/Sections'
-
-const PAGES = 6
 
 function webglAvailable() {
   try {

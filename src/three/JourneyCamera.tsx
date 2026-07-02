@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
+import { mobileLayout } from '../layout'
 
 interface Key {
   at: number
@@ -13,13 +14,30 @@ interface Key {
 
 // Tuned against the field at y=-1.2, z=-8: hero looks along the terrain,
 // research skims it, projects float above it, contact faces the horizon.
-const KEYS: Key[] = [
+// `at` values pace scenes against sections: a section with top T (in
+// viewport-hundredths, see layout.ts) tops the viewport at
+// offset = T / ((PAGES - 1) * 100); keys lead their section by ~0.02-0.03.
+const DESKTOP_KEYS: Key[] = [
   { at: 0.0, pos: [0, 2.6, 10.5], look: [0, -0.2, -10] },
   { at: 0.18, pos: [-6, 0.4, 4.5], look: [4, -0.8, -9] },
   { at: 0.4, pos: [0, 7, 7], look: [0, -2.5, -12] },
   { at: 0.78, pos: [0, 8, 0], look: [0, -2.5, -18] },
   { at: 1.0, pos: [0, 2.6, 14], look: [0, 1.8, -30] },
 ]
+
+// Portrait: horizontal fov is ~27deg at fov 55, so pull back in z, ride
+// higher in y, and cut the lateral excursion that overshoots a narrow frame.
+// Section offsets at PAGES=8.5: research 0.14, cards 0.32, last card 0.83,
+// closing fully in view by 0.95.
+const MOBILE_KEYS: Key[] = [
+  { at: 0.0, pos: [0, 3.4, 13], look: [0, -0.2, -12] },
+  { at: 0.12, pos: [-2.5, 1.0, 6], look: [2, -0.8, -9] },
+  { at: 0.3, pos: [0, 8, 9], look: [0, -2.5, -12] },
+  { at: 0.8, pos: [0, 9, 2], look: [0, -2.5, -18] },
+  { at: 1.0, pos: [0, 3.0, 15], look: [0, 1.8, -30] },
+]
+
+const KEYS = mobileLayout ? MOBILE_KEYS : DESKTOP_KEYS
 
 const smooth = (t: number) => t * t * (3 - 2 * t)
 

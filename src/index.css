@@ -114,6 +114,7 @@ li {
 
 .hero {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -147,6 +148,7 @@ li {
     0 0 3px rgba(11, 10, 18, 0.9);
   position: absolute;
   bottom: 4.5vh;
+  bottom: 4.5dvh;
   left: clamp(1.2rem, 6vw, 6rem);
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.74rem;
@@ -247,6 +249,7 @@ li {
 
 .closing {
   min-height: 90vh;
+  min-height: 90dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -338,7 +341,10 @@ li {
     display: none;
   }
 
+  /* in-flow after the contact links: no overlap at any phone height */
   .sim-caption {
+    position: static;
+    margin-top: 1.6rem;
     max-width: 80vw;
   }
 }
