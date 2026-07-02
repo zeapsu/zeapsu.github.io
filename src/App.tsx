@@ -1,7 +1,9 @@
 import { Canvas } from '@react-three/fiber'
 import { ScrollControls, Scroll, Stars } from '@react-three/drei'
+import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { QuantumField } from './three/QuantumField'
 import { JourneyCamera } from './three/JourneyCamera'
+import { bloomOk } from './three/quality'
 import { Sections, StaticFallback } from './ui/Sections'
 
 const PAGES = 6
@@ -17,6 +19,8 @@ function webglAvailable() {
 
 const reducedMotion =
   typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const bloom = typeof document !== 'undefined' && bloomOk()
 
 export default function App() {
   if (!webglAvailable()) return <StaticFallback />
@@ -40,6 +44,11 @@ export default function App() {
           <Scroll html style={{ width: '100%' }}>
             <Sections />
           </Scroll>
+          {bloom && (
+            <EffectComposer>
+              <Bloom luminanceThreshold={0.72} intensity={0.5} mipmapBlur />
+            </EffectComposer>
+          )}
         </ScrollControls>
       </Canvas>
       <div className="rail" aria-hidden="true">
