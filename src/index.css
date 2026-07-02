@@ -1,7 +1,7 @@
 :root {
   --bg: #0b0a12;
   --ink: #f2eefb;
-  --muted: #a89fc0;
+  --muted: #bfb6d8;
   --spin-up: #7dd6ff;
   --spin-down: #ff94d2;
   --line: rgba(168, 159, 192, 0.25);
@@ -23,7 +23,7 @@ body,
 
 body {
   color: var(--ink);
-  font-family: 'Spectral', georgia, serif;
+  font-family: "Spectral", georgia, serif;
   font-weight: 300;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -38,7 +38,9 @@ a {
   color: var(--spin-up);
   text-decoration: none;
   border-bottom: 1px solid rgba(125, 214, 255, 0.35);
-  transition: border-color 120ms ease, color 120ms ease;
+  transition:
+    border-color 120ms ease,
+    color 120ms ease;
 }
 
 a:hover {
@@ -87,7 +89,7 @@ li {
 }
 
 .eyebrow {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: "IBM Plex Mono", monospace;
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.14em;
@@ -123,24 +125,30 @@ li {
 
 /* subtler scrim than the panels: the hero terrain is the first impression */
 .journey .hero {
-  background: radial-gradient(110% 70% at 12% 48%, rgba(11, 10, 18, 0.72), transparent 58%);
+  background: radial-gradient(
+    110% 70% at 12% 48%,
+    rgba(11, 10, 18, 0.72),
+    transparent 58%
+  );
 }
 
 .links {
   display: flex;
   gap: 1.6rem;
   flex-wrap: wrap;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: "IBM Plex Mono", monospace;
   font-size: 0.85rem;
   margin-top: 1.4rem;
 }
 
 .sim-caption {
-  text-shadow: 0 1px 10px rgba(11, 10, 18, 0.95), 0 0 3px rgba(11, 10, 18, 0.9);
+  text-shadow:
+    0 1px 10px rgba(11, 10, 18, 0.95),
+    0 0 3px rgba(11, 10, 18, 0.9);
   position: absolute;
   bottom: 4.5vh;
   left: clamp(1.2rem, 6vw, 6rem);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: "IBM Plex Mono", monospace;
   font-size: 0.74rem;
   color: var(--muted);
   max-width: 46ch;
@@ -182,6 +190,7 @@ li {
 .card li {
   margin-bottom: 0.55rem;
   font-size: 0.95rem;
+  font-weight: 400;
 }
 
 .panel li::marker,
@@ -222,7 +231,7 @@ li {
 }
 
 .card .status {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: "IBM Plex Mono", monospace;
   font-size: 0.7rem;
   letter-spacing: 0.06em;
   color: var(--spin-down);
@@ -251,13 +260,18 @@ li {
 }
 
 .journey .panel::before {
-  content: '';
+  content: "";
   position: absolute;
   z-index: -1;
   inset: -6rem -8rem;
   pointer-events: none;
   /* closest-side hits zero exactly at the box edges: no visible seams */
-  background: radial-gradient(closest-side, rgba(11, 10, 18, 0.92), rgba(11, 10, 18, 0.82) 66%, transparent 100%);
+  background: radial-gradient(
+    closest-side,
+    rgba(11, 10, 18, 0.92),
+    rgba(11, 10, 18, 0.52) 66%,
+    transparent 100%
+  );
 }
 
 .open-to {
