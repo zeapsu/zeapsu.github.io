@@ -258,11 +258,37 @@ experience and iterates until the gates pass. The old phases become a
 work checklist inside the goal, not session boundaries.
 
 Goal statement: rebuild the site as the AAA-bar character-select experience
-in this spec: four job worlds (frozen deep first, absorbing the parked
-sim-variation plan; sanctum, dev room, workbench), the gate rebuilt on top
-of the live Physicist world, the shared panel skeleton filled (quest log,
-quest board, skill tree, achievements, job-aware contact/resume), and the
-chat terminal.
+in this spec: an initial start screen (below) that precedes the gate, four
+job worlds (frozen deep first, absorbing the parked sim-variation plan;
+sanctum, dev room, workbench), the gate rebuilt on top of the live
+Physicist world, the shared panel skeleton filled (quest log, quest board,
+skill tree, achievements, job-aware contact/resume), and the chat terminal.
+
+### Start screen (precedes the gate)
+
+The site opens on a title-screen threshold inspired by The Last of Us
+Part I's start menu — reference image:
+~/Documents/personal/portfolio-assets/reference/start-screen.jpeg (and
+ffxiv-character-select-example.png in the same folder is the gate's
+reference). The feel to hit, not the literal scene: a near-still,
+atmospheric shot with slow ambient motion (drifting light, particles,
+soft parallax — TLOU uses curtains and window light), one quiet prompt
+line ("press any button" energy, wording TBD in Andry's voice), zero UI
+chrome. The scene should belong to this site's world — derived from a
+true fact per the metaphor rule, not a borrowed apocalypse. Any input
+advances to the character-select gate. Floor still applies: the prompt is
+real DOM text, keyboard/click/touch all advance, reduced-motion gets the
+static frame, and the plain-text link remains reachable without entering.
+
+### Tooling freedom (loop session)
+
+The loop session is free to use any external tool or asset source it
+judges useful — Blender (including the Blender MCP), image/asset fetching,
+generators, libraries beyond the current stack — provided the results meet
+the license-to-ship bar and the non-negotiables above. If it wants a tool,
+asset, credential, or reference it cannot access right away, it must NOT
+silently substitute or skip: pause and ping Andry with AskUserQuestion,
+stating what it wants and why, then continue on his answer.
 
 Machine-checkable gates (the loop self-verifies these each iteration):
 - npm run build clean; node src/content/jobs.selfcheck.ts and
