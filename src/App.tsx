@@ -3,7 +3,7 @@ import { ScrollControls, Scroll, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { QuantumField } from './three/QuantumField'
 import { JourneyCamera } from './three/JourneyCamera'
-import { bloomOk, maxDpr } from './three/quality'
+import { bloomOk, composerSamples, maxDpr } from './three/quality'
 import { PAGES } from './layout'
 import { Sections, StaticFallback } from './ui/Sections'
 
@@ -44,7 +44,7 @@ export default function App() {
             <Sections />
           </Scroll>
           {bloom && (
-            <EffectComposer multisampling={0}>
+            <EffectComposer multisampling={composerSamples()}>
               <Bloom luminanceThreshold={0.72} intensity={0.5} mipmapBlur />
             </EffectComposer>
           )}
