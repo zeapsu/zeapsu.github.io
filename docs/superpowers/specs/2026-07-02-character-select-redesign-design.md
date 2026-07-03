@@ -215,3 +215,73 @@ em dashes, no filler).
 
 Each phase is issue-driven with its own PR(s) per AGENTS.md workflow. The
 umbrella issue for this direction tracks the phase checklist.
+
+## Direction amendment (2026-07-03): craft-first, AAA bar, loop-to-finish
+
+Andry reviewed the phase-1 shell and called the direction: the frugality
+rules that served the journey site were killing the redesign's design. This
+amendment supersedes the phasing section above and the guardrails it
+inherited.
+
+### Quality bar
+
+AAA game title screen. The select gate is a title screen, not a webpage: a
+living world visible from first paint, bespoke motion choreography, art
+direction that lands the MMO conceit in the first three seconds. "Good for a
+portfolio site" is below the bar.
+
+### Retired rules (do not resurrect)
+
+- "Build cheap, review on-page, kill without ceremony" -> craft-first:
+  invest in each element until it clears the bar; iterate, don't cull.
+- "One set piece per view" -> one coherent art direction per job. Layered
+  visuals (world + gate effects + panel treatments) are welcome when they
+  serve that direction. The PR #12 lesson now reads: cut rivals to
+  coherence, not layers.
+- Performance as a per-frame veto -> a floor: 60 fps at deviceScaleFactor 2
+  on the MacBook baseline (measurement method per AGENTS.md machine notes).
+  Build the look first, optimize to the floor after.
+
+### Unchanged non-negotiables
+
+Honest physics (the sim stays a real GPE solver with its node selfcheck);
+content traceability (experience.md, no invented claims, no em dashes,
+Kibble-Zurek off pending Dr. Hurst); the accessibility floor (real DOM
+text, reduced-motion static frames, plain-text path carries everything,
+visible focus states).
+
+### Execution model: one goal-driven loop session
+
+The multi-session phase-per-PR plan is replaced by a single loop-to-finish
+goal session on redesign/character-select that scaffolds the whole
+experience and iterates until the gates pass. The old phases become a
+work checklist inside the goal, not session boundaries.
+
+Goal statement: rebuild the site as the AAA-bar character-select experience
+in this spec: four job worlds (frozen deep first, absorbing the parked
+sim-variation plan; sanctum, dev room, workbench), the gate rebuilt on top
+of the live Physicist world, the shared panel skeleton filled (quest log,
+quest board, skill tree, achievements, job-aware contact/resume), and the
+chat terminal.
+
+Machine-checkable gates (the loop self-verifies these each iteration):
+- npm run build clean; node src/content/jobs.selfcheck.ts and
+  node src/sim/gpe.selfcheck.ts pass.
+- The 8-point Playwright pass from phase 1 (task-7 checklist) stays green.
+- 60 fps at dsf 2 desktop; no horizontal scroll at 390 px; reduced-motion
+  computed transitions are none; ?plain=1 innerText carries all copy.
+- Each equipped job renders a visually distinct world (screenshot per job
+  per iteration, saved outside the repo).
+- index.html metadata updated to match what the site actually shows (the
+  phase-1 merge precondition).
+
+Human gates (the loop marks ready-for-review, never self-approves):
+- Aesthetic sign-off per world and for the gate is Andry's, from real
+  screenshots/live driving.
+- Resume PDFs ship only after Andry verifies publishable contact info.
+- Merge to main is Andry's call.
+
+Design iteration inside the loop: reference-driven (FFXIV/GW2 character
+select, award-tier sites), multiple live variants for the highest-stakes
+calls (gate composition, frozen-deep look), screenshots judged against the
+bar before moving on.
