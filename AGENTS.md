@@ -4,7 +4,7 @@ Guidance for coding agents (Claude Code, Codex, etc.) working in this repo. CLAU
 
 ## What this is
 
-Andry's portfolio site, live at https://zeapsu.github.io. A 3D scroll-journey (Vite + TypeScript + React + @react-three/fiber + drei) whose centerpiece is a live 1D spin-1/2 Gross-Pitaevskii simulation rendered as a spacetime terrain. It is both a job-hunt artifact and an ongoing passion project, so craft matters and shortcuts that show are not acceptable on the visual surface.
+Andry's portfolio site, live at https://zeapsu.github.io. A character-select portfolio (Vite + TypeScript + React; @react-three/fiber for the job worlds): one character, four jobs, each job re-theming the site and carrying its own world. The live 1D spin-1/2 Gross-Pitaevskii simulation remains the Physicist world's centerpiece. Redesign spec: docs/superpowers/specs/2026-07-02-character-select-redesign-design.md (in progress on the redesign/character-select branch; main still serves the journey site, tagged journey-v1). It is both a job-hunt artifact and an ongoing passion project, so craft matters and shortcuts that show are not acceptable on the visual surface.
 
 Design spec: `docs/superpowers/specs/2026-07-02-portfolio-3d-journey-design.md`.
 
@@ -41,5 +41,5 @@ Deploy is automatic: push to main runs `.github/workflows/deploy.yml` (build + s
 ## Guardrails (do not simplify away)
 
 - The sim must stay honest physics: the hero caption says it is a real Gross-Pitaevskii simulation, so it has to remain one. Any solver change keeps a node-runnable self-check.
-- The sim is the site's only 3D set piece. Per-scene set pieces (#2) were built, reviewed on-page, and rejected — they compete with the sim instead of deepening it (rejected spec: `docs/superpowers/specs/2026-07-02-project-stations-design.md`). Don't propose new elements beside the sim; visual work deepens the sim's own presentation and the existing sections (the #13/#14 polish shipped in PR #15 is the model).
+- One set piece per view: each job's world is that job's single set piece; panels and the chat terminal are chrome, never rivals. The pre-redesign lesson stands: per-scene set pieces beside a centerpiece (#2, PR #12) were built, reviewed, and rejected. Worlds must be real data, real math, or a labeled true-fact metaphor per the redesign spec; no decorative cosplay.
 - Accessibility floor: real DOM text (never texture-baked), prefers-reduced-motion respected, no-WebGL fallback renders all content, visible focus states.
