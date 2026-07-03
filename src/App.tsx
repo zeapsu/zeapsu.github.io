@@ -44,7 +44,7 @@ export default function App() {
             <Sections />
           </Scroll>
           {bloom && (
-            <EffectComposer>
+            <EffectComposer multisampling={0}>
               <Bloom luminanceThreshold={0.72} intensity={0.5} mipmapBlur />
             </EffectComposer>
           )}
