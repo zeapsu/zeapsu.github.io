@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { JOBS, type JobId } from '../content/jobs'
 import { identity } from '../content/data'
 import base from '../assets/portraits/base.jpg'
@@ -28,9 +28,21 @@ export function CharacterSelect({
   const previewJob = JOBS.find((j) => j.id === preview)
 
   return (
-    <div className="select-screen" data-preview={active}>
+    <div
+      className="select-screen"
+      style={
+        previewJob
+          ? ({
+              '--accent': previewJob.palette.accent,
+              '--accent-dim': previewJob.palette.accentDim,
+              '--bg0': previewJob.palette.bg0,
+              '--bg1': previewJob.palette.bg1,
+            } as CSSProperties)
+          : undefined
+      }
+    >
       <div className="select-stage">
-        <div className="select-portraits" aria-hidden={preview !== null ? undefined : true}>
+        <div className="select-portraits">
           {(Object.keys(PORTRAITS) as Array<'base' | JobId>).map((k) => (
             <img
               key={k}
