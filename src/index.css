@@ -7,6 +7,9 @@
   --line: rgba(168, 159, 192, 0.25);
   --panel: rgba(11, 10, 18, 0.55);
   --scroll: 0;
+  /* cap the journey band so alternating cards don't pin to the far edges of
+     wide monitors; inert below 1440px viewports */
+  --journey-max: 1440px;
 }
 
 * {
@@ -110,6 +113,10 @@ li {
   position: absolute;
   padding: 0 clamp(1.2rem, 6vw, 6rem);
   width: 100%;
+  max-width: var(--journey-max);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
 }
 
 .hero {
@@ -149,6 +156,7 @@ li {
   position: absolute;
   bottom: 4.5vh;
   bottom: 4.5dvh;
+  /* positioned inside .hero, so the band cap on sections already bounds it */
   left: clamp(1.2rem, 6vw, 6rem);
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.74rem;
