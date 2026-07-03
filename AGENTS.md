@@ -28,10 +28,11 @@ Deploy is automatic: push to main runs `.github/workflows/deploy.yml` (build + s
 ## Workflow
 
 - **Issue-driven.** Work maps to GitHub issues; check `gh issue list` before starting, file new issues for anything noticed but not fixed. Close issues from commits/PRs (`Fixes #N`).
-- **Branches + PRs for non-trivial work.** Small doc/copy fixes can land on main; anything touching the sim, camera, or visuals goes through a branch and PR so the history stays reviewable.
+- **Superpowers skills are preferred, not required.** They're a good first reach for planning and implementation — brainstorming before design work, systematic-debugging on bugs, TDD for features — but pick the tool that fits the task. Don't force a skill where your own judgment serves better.
+- **Branches + PRs for non-trivial work.** Small doc/copy fixes can land on main; anything touching the sim, camera, or visuals goes through a branch and PR so the history stays reviewable. Merge only after both code review and Andry's own review.
 - **Rich git history.** Commit messages explain what and why, present imperative subject, body for the reasoning and verification evidence. No squashed mystery blobs.
 - **Verify before claiming done.** `npm run build` clean, selfcheck passing, and for anything visual: drive the real page and look at it. On the Jetson the Playwright MCP does not work (wants a Chrome channel that does not exist on arm64); use playwright-core + snap chromium with `--enable-unsafe-swiftshader`. Screenshot scripts from the first session live in the session scratchpad pattern: launch chromium via `executablePath: '/usr/bin/chromium-browser'`, scroll drei's overflow container (largest div with scrollHeight > 2x clientHeight), screenshot at several offsets. Check reduced-motion (static frames), no-WebGL fallback (all content in innerText), and mobile (390px).
-- **Session close.** Update Claude's memory (`planned-portfolio-and-gh-readme.md` in the project memory dir) with what shipped and what is open, and record status changes in `~/Documents/personal/project-status.md` (pull, edit, commit, push per that repo's AGENTS.md).
+- **Session close.** Run the `close` skill: update Claude's memory (`planned-portfolio-and-gh-readme.md` in the project memory dir) with what shipped and what is open, and record status changes in `~/Documents/personal/project-status.md` (pull, edit, commit, push per that repo's AGENTS.md).
 
 ## Machine notes
 
