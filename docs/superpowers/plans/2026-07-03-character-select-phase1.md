@@ -105,7 +105,7 @@ export const JOBS: Job[] = [
     name: 'Physicist',
     subtitle: 'the Scholar',
     level: 4,
-    tagline: 'Quantum information and computational physics, from QAOA on real hardware to condensate simulations.',
+    tagline: 'Quantum information and computational physics, from QAOA portfolio benchmarks to condensate simulations.',
     palette: { accent: '#4fd8c8', accentDim: '#1e6f8f', bg0: '#061018', bg1: '#0a1c28' },
   },
   {
