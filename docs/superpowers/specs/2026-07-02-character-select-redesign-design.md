@@ -63,7 +63,7 @@ forgiving 3D discipline and would gate the redesign behind learning it).
 
 | Job | Flavor | Level | Front-loads |
 |---|---|---|---|
-| Physicist | the Scholar | high | BEC/GPE research with Dr. Hurst, the live sim, the Ising model project |
+| Physicist | the Scholar | high | quantum information/QC (QAOA vs CPLEX, Shor's code on IBM hardware, WISER), computational physics (Ising model, BEC/GPE research with Dr. Hurst), the live sim. Andry's physics identity is QIS + computational physics broadly; the GPE work is his job, not the whole job card — copy must not hyperfixate on it |
 | AI Systems Engineer | the Summoner | high | agents, local inference, MCP, Jetson, daily-hub |
 | Research SWE | the Artificer | mid-high | this site itself, dashboards, tooling, the selfcheck discipline |
 | Roboticist | the Automaton | low — "currently leveling" | Jetson edge work, Reachy interest, where he's headed |
