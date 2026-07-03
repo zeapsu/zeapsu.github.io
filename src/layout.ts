@@ -3,9 +3,15 @@
 // ScrollControls measures the same dynamic viewport in pixels, so page count
 // and section tops must come from one place or they drift apart.
 // ponytail: read once at module load, same limitation as reducedMotion in
-// App.tsx — rotating or resizing across a threshold needs a reload.
+// App.tsx. CSS media queries track resizes live but these constants cannot,
+// so crossing the breakpoint reloads (listener below) — otherwise mobile CSS
+// (full-width cards) runs against desktop slot spacing and cards overlap.
 export const mobileLayout =
   typeof matchMedia !== 'undefined' && matchMedia('(max-width: 640px)').matches
+
+if (typeof matchMedia !== 'undefined') {
+  matchMedia('(max-width: 640px)').addEventListener('change', () => location.reload())
+}
 
 const viewportPx = typeof window !== 'undefined' ? window.innerHeight : 900
 
