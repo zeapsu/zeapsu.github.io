@@ -6,7 +6,7 @@ export const identity = {
   tagline: 'Physics grad who likes building AI systems on hardware I can point at.',
   email: 'andryypaez@gmail.com',
   github: 'https://github.com/zeapsu',
-  linkedin: 'https://linkedin.com/in/andry-paez-744883252',
+  linkedin: 'https://www.linkedin.com/in/andry-lloyd-paez-744883252',
   simCaption:
     'This is a live two-component Gross-Pitaevskii simulation, the same equations I work on at SJSU. Scroll and watch spin domains form.',
 }
