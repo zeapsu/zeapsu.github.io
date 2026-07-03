@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import { ScrollControls, Scroll, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { QuantumField } from './three/QuantumField'
+import { ProjectStations } from './three/ProjectStations'
 import { JourneyCamera } from './three/JourneyCamera'
 import { bloomOk, maxDpr } from './three/quality'
 import { PAGES } from './layout'
@@ -31,6 +32,7 @@ export default function App() {
         <ScrollControls pages={PAGES} damping={reducedMotion ? 0 : 0.18}>
           <JourneyCamera frozen={reducedMotion} />
           <QuantumField frozen={reducedMotion} />
+          <ProjectStations frozen={reducedMotion} />
           <Stars
             radius={60}
             depth={40}
