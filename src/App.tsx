@@ -3,7 +3,7 @@ import { ScrollControls, Scroll, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { QuantumField } from './three/QuantumField'
 import { JourneyCamera } from './three/JourneyCamera'
-import { bloomOk } from './three/quality'
+import { bloomOk, maxDpr } from './three/quality'
 import { PAGES } from './layout'
 import { Sections, StaticFallback } from './ui/Sections'
 
@@ -25,7 +25,7 @@ export default function App() {
   if (!webglAvailable()) return <StaticFallback />
   return (
     <>
-      <Canvas dpr={[1, 2]} camera={{ fov: 55, near: 0.1, far: 90 }}>
+      <Canvas dpr={[1, maxDpr()]} camera={{ fov: 55, near: 0.1, far: 90 }}>
         <color attach="background" args={['#0b0a12']} />
         <fog attach="fog" args={['#0b0a12', 16, 48]} />
         <ScrollControls pages={PAGES} damping={reducedMotion ? 0 : 0.18}>
