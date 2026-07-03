@@ -63,8 +63,8 @@ forgiving 3D discipline and would gate the redesign behind learning it).
 
 | Job | Flavor | Level | Front-loads |
 |---|---|---|---|
-| Physicist | the Scholar | high | BEC/GPE research with Dr. Hurst, the live sim, CUDA numerics |
-| AI Systems Engineer | the Summoner | high | agents, local inference, MCP, Jetson, cost dashboard |
+| Physicist | the Scholar | high | BEC/GPE research with Dr. Hurst, the live sim, the Ising model project |
+| AI Systems Engineer | the Summoner | high | agents, local inference, MCP, Jetson, daily-hub |
 | Research SWE | the Artificer | mid-high | this site itself, dashboards, tooling, the selfcheck discipline |
 | Roboticist | the Automaton | low — "currently leveling" | Jetson edge work, Reachy interest, where he's headed |
 
@@ -99,9 +99,10 @@ derived from a true fact — no decorative cosplay.
 3. **Research SWE → the dev room (real).** A stylized diorama of the actual
    battlestation: PC tower, monitors textured with the real rice, LazyVim
    open. One fully-real zone inoculates the site against "it's all cosplay."
-4. **Roboticist → the workbench (mix).** Real Jetson board, a half-assembled
-   arm running real inverse kinematics, blueprints, foundry glow — visibly
-   under construction, which is true of the job.
+4. **Roboticist → the workbench (mix).** The real hardware he owns — Jetson
+   Orin Nano and the Reachy Mini Lite it hosts — on the bench, plus an
+   articulated element running real inverse kinematics, blueprints, foundry
+   glow — visibly under construction, which is true of the job.
 
 Zones ship staged, MMO-style: Physicist first (the sim and its five PRs of
 polish carry over), the others open "patch by patch" with an honest "zone
@@ -182,10 +183,15 @@ em dashes, no filler).
 ## Asset dependencies (Andry provides; blocks phase 2+, not phase 1)
 
 1. Portrait photo, high-res, + AI-drawn variants (base + four job palettes).
-2. Project UI screenshots: daily-hub, API cost dashboard, reachy-console, Sage.
+2. Project UI screenshots from projects that have UIs: reachy-console (web
+   control console), Sage (Tauri app), Kalshi (Streamlit dashboard).
+   daily-hub has no UI yet — add when one lands. (API cost dashboard was
+   never implemented — per experience.md and project-status.md — and appears
+   nowhere; the CUDA GEMM project likewise stays off per the standing rule.)
 3. Certificates/awards list or scans (Dean's Scholar, four MJC degrees, hackathon).
-4. Rice screenshot (dev-room monitor textures), Jetson/PC photo, GW2/FFXIV
-   flavor references, judo/lifting one-liners for microcopy.
+4. Rice screenshot (dev-room monitor textures), physical photos of the Jetson
+   and Reachy Mini (workbench-zone modeling reference; no PC photo needed),
+   GW2/FFXIV flavor references, judo/lifting one-liners for microcopy.
 5. Contact channels to list + whether to include a resume PDF download.
 
 ## Phasing (multi-PR, later sessions)
