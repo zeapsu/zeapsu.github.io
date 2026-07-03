@@ -7,6 +7,9 @@
   --line: rgba(168, 159, 192, 0.25);
   --panel: rgba(11, 10, 18, 0.55);
   --scroll: 0;
+  /* cap the journey band so alternating cards don't pin to the far edges of
+     wide monitors; inert below 1200px viewports */
+  --journey-max: 1200px;
 }
 
 * {
@@ -110,6 +113,10 @@ li {
   position: absolute;
   padding: 0 clamp(1.2rem, 6vw, 6rem);
   width: 100%;
+  max-width: var(--journey-max);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
 }
 
 .hero {
@@ -124,13 +131,13 @@ li {
   color: var(--muted);
 }
 
-/* subtler scrim than the panels: the hero terrain is the first impression */
+/* no scrim on the hero: the band cap clips a box gradient into visible hard
+   edges, and the terrain is the first impression anyway. The caption's soft
+   text-shadow recipe carries contrast instead (text-shadow inherits). */
 .journey .hero {
-  background: radial-gradient(
-    110% 70% at 12% 48%,
-    rgba(11, 10, 18, 0.72),
-    transparent 58%
-  );
+  text-shadow:
+    0 1px 10px rgba(11, 10, 18, 0.95),
+    0 0 3px rgba(11, 10, 18, 0.9);
 }
 
 .links {
@@ -140,6 +147,17 @@ li {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.85rem;
   margin-top: 1.4rem;
+  /* the links sit right on the teal crest once the hero scrim is gone;
+     ink glyphs + a tight dark halo stay legible on the frozen
+     reduced-motion frame, the teal underline keeps the link accent */
+  text-shadow:
+    0 0 2px rgba(11, 10, 18, 0.95),
+    0 0 6px rgba(11, 10, 18, 0.9),
+    0 2px 14px rgba(11, 10, 18, 0.85);
+}
+
+.links a {
+  color: var(--ink);
 }
 
 .sim-caption {
@@ -149,6 +167,7 @@ li {
   position: absolute;
   bottom: 4.5vh;
   bottom: 4.5dvh;
+  /* positioned inside .hero, so the band cap on sections already bounds it */
   left: clamp(1.2rem, 6vw, 6rem);
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.74rem;

@@ -10,6 +10,21 @@ export function maxDpr(): number {
   }
 }
 
+// MSAA on the bloom composer, only where aliasing is visible. At dpr 2 the
+// supersampling already hides stairsteps (verified pixel-identical crops) and
+// 4x MSAA costs ~20fps; at dpr 1 (external monitors) the miscible phase shows
+// long horizontal staircase edges and 4x is the only thing that cleans them
+// (SMAA misses the dim HDR edges, 2x barely helps).
+// ponytail: read at mount like everything else; dragging the window to a
+// different-dpr monitor needs a reload, same family as the 640px listener.
+export function composerSamples(): number {
+  try {
+    return devicePixelRatio < 1.5 ? 4 : 0
+  } catch {
+    return 0
+  }
+}
+
 // Bloom costs fillrate; skip it where it hurts (mobile) or where the GPU is
 // actually a software rasterizer (Jetson/CI screenshots run swiftshader).
 export function bloomOk(): boolean {
