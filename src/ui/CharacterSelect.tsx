@@ -69,12 +69,17 @@ export function CharacterSelect({
             >
               <span className="job-name">{j.name}</span>
               <span className="job-subtitle">{j.subtitle}</span>
-              <span className="job-level" aria-label={j.level === 1 ? 'currently leveling' : `level ${j.level} of 4`}>
+              <span
+                className="job-level"
+                role="img"
+                aria-label={j.level === 1 ? 'currently leveling' : `level ${j.level} of 4`}
+              >
                 {Array.from({ length: 4 }, (_, i) => (
                   <i key={i} className={i < j.level ? 'pip on' : 'pip'} />
                 ))}
                 {j.level === 1 && <em className="leveling">currently leveling</em>}
               </span>
+              {j.id === remembered && <span className="remembered-tag">last played</span>}
             </button>
           ))}
         </div>

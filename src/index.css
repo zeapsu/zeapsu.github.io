@@ -470,7 +470,7 @@ li {
   outline: none;
 }
 .job-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.job-card.remembered::after { content: 'last played'; font-size: 0.65rem; color: var(--muted); }
+.remembered-tag { font-size: 0.65rem; color: var(--muted); }
 .job-name { font-weight: 500; }
 .job-subtitle { font-style: italic; font-size: 0.85rem; color: var(--muted); }
 .job-level { display: flex; align-items: center; gap: 0.25rem; margin-top: 0.15rem; }
@@ -496,7 +496,7 @@ li {
   margin: 0 auto;
   padding: 5rem 1.25rem 7rem;
 }
-.panels[inert] { visibility: hidden; }
+.panels[inert] { display: none; }
 .game-panel {
   border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
   border-radius: 0.9rem;
