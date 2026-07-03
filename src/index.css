@@ -488,3 +488,24 @@ li {
 @media (prefers-reduced-motion: reduce) {
   .select-screen, .select-portraits img, .job-card { transition: none; }
 }
+
+/* ---- panel skeleton ---------------------------------------------------- */
+.panels {
+  display: grid;
+  gap: 4.5rem;
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 5rem 1.25rem 7rem;
+}
+.panels[inert] { visibility: hidden; }
+.game-panel {
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--bg1) 78%, transparent);
+  backdrop-filter: blur(8px);
+  padding: 2rem 2.2rem;
+  box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.game-panel.shell { opacity: 0.75; }
+.under-construction { color: var(--muted); font-style: italic; }
+.quest-board { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }

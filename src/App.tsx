@@ -1,58 +1,46 @@
-import { Canvas } from '@react-three/fiber'
-import { ScrollControls, Scroll, Stars } from '@react-three/drei'
-import { EffectComposer, Bloom } from '@react-three/postprocessing'
-import { QuantumField } from './three/QuantumField'
-import { JourneyCamera } from './three/JourneyCamera'
-import { bloomOk, composerSamples, maxDpr } from './three/quality'
-import { PAGES } from './layout'
-import { Sections, StaticFallback } from './ui/Sections'
+import { useEffect, useState } from 'react'
+import { CharacterSelect } from './ui/CharacterSelect'
+import { Panels } from './ui/Panels'
+import { StaticFallback } from './ui/Sections'
+import { isJobId, type JobId } from './content/jobs'
 
-function webglAvailable() {
+// Full-gate model per the redesign spec: the select screen always shows
+// first; the last-played job is only pre-highlighted, never auto-equipped.
+// ?plain=1 is the ungated plain-text path (recruiter hatch, a11y, no-WebGL
+// once zones land in phase 3).
+
+function rememberedJob(): JobId | null {
   try {
-    const c = document.createElement('canvas')
-    return !!(c.getContext('webgl2') || c.getContext('webgl'))
+    const v = localStorage.getItem('job')
+    return isJobId(v) ? v : null
   } catch {
-    return false
+    return null
   }
 }
 
-const reducedMotion =
-  typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
-
-const bloom = typeof document !== 'undefined' && bloomOk()
-
 export default function App() {
-  if (!webglAvailable()) return <StaticFallback />
+  const [job, setJob] = useState<JobId | null>(null)
+
+  useEffect(() => {
+    document.documentElement.dataset.job = job ?? ''
+  }, [job])
+
+  if (new URLSearchParams(location.search).has('plain')) return <StaticFallback />
+
+  const equip = (id: JobId) => {
+    try {
+      localStorage.setItem('job', id)
+    } catch {
+      /* private mode: remembering is best-effort */
+    }
+    setJob(id)
+  }
+
   return (
     <>
-      <Canvas dpr={[1, maxDpr()]} camera={{ fov: 55, near: 0.1, far: 90 }}>
-        <color attach="background" args={['#0b0a12']} />
-        <fog attach="fog" args={['#0b0a12', 16, 48]} />
-        <ScrollControls pages={PAGES} damping={reducedMotion ? 0 : 0.18}>
-          <JourneyCamera frozen={reducedMotion} />
-          <QuantumField frozen={reducedMotion} />
-          <Stars
-            radius={60}
-            depth={40}
-            count={2200}
-            factor={3}
-            saturation={0.4}
-            fade
-            speed={reducedMotion ? 0 : 0.6}
-          />
-          <Scroll html style={{ width: '100%' }}>
-            <Sections />
-          </Scroll>
-          {bloom && (
-            <EffectComposer multisampling={composerSamples()}>
-              <Bloom luminanceThreshold={0.72} intensity={0.5} mipmapBlur />
-            </EffectComposer>
-          )}
-        </ScrollControls>
-      </Canvas>
-      <div className="rail" aria-hidden="true">
-        <div className="rail-fill" />
-      </div>
+      <div className="world-placeholder" aria-hidden="true" />
+      {job === null && <CharacterSelect onEquip={equip} remembered={rememberedJob()} />}
+      <Panels job={job} />
     </>
   )
 }
