@@ -1,5 +1,6 @@
 // Run: node src/content/jobs.selfcheck.ts  (same pattern as gpe.selfcheck.ts)
 import assert from 'node:assert'
+import { readFileSync } from 'node:fs'
 import { JOBS, isJobId } from './jobs.ts'
 
 // 1. Exactly four jobs, unique ids, in select-screen order.
@@ -24,5 +25,15 @@ assert.strictEqual(JOBS.find((j) => j.level === 1)!.id, 'robotics')
 
 // 4. isJobId guards.
 assert.ok(isJobId('physicist') && !isJobId('warlock') && !isJobId(null))
+
+// 5. The CSS token blocks in index.css stay in sync with each job's palette.
+const css = readFileSync(new URL('../index.css', import.meta.url), 'utf8')
+for (const j of JOBS) {
+  const block = css.match(new RegExp(`:root\\[data-job='${j.id}'\\]\\s*\\{([^}]*)\\}`))
+  assert.ok(block, `index.css has a token block for ${j.id}`)
+  for (const [k, v] of Object.entries(j.palette)) {
+    assert.ok(block![1].includes(v), `${j.id} css block carries palette.${k} = ${v}`)
+  }
+}
 
 console.log('jobs selfcheck passed')
