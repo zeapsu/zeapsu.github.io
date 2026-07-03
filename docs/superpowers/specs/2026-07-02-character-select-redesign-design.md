@@ -124,7 +124,13 @@ tree → Achievements → Contact.
   branch is lit. This replaces any rotating-cloud-style skill widget.
 - **Achievements**: Dean's Scholar, the four MJC honors degrees, hackathon,
   certificates — an understated trophy grid.
-- **Contact** (new): party-invite panel — email, LinkedIn, GitHub, resume PDF.
+- **Contact** (new): party-invite panel — email, LinkedIn, GitHub, and a
+  job-aware resume: the equipped job loads its own PDF (Physicist → the full
+  CV, AI Systems → ai_systems, Research SWE → research_swe; Roboticist falls
+  back to the CV with "specialized resume: not yet forged" until one exists).
+  Also exposed as a `resume` command in the terminal. Sources live in the
+  private repo's resume/ (Typst); shipped copies go to public/ — verify they
+  contain only publishable contact info before committing.
 
 ### Chat terminal
 
