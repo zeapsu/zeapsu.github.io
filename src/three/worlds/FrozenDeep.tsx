@@ -3,16 +3,14 @@
 // the spin history texture drives curtain color and banding (teal spin-up,
 // amber spin-down, dark domain walls between bands). The curtain's vertical
 // axis is history age, so domain evolution streams upward in real time.
-import { useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useEffect, useMemo } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js'
 import { createSimFeed, resolveVisitSeed, SIM_N, HISTORY_ROWS } from '../simFeed'
 import { mulberry32 } from '../../sim/gpe'
 
 const BG = '#020509'
-const UP_COLOR = '#4fd8c8' // spin-up crest teal (site accent)
-const DOWN_COLOR = '#f0a848' // spin-down amber
 const CORE_COLOR = '#d9fff2' // hot lower border of the curtains
 const WORLD_SPAN = 80 // world-x units mapped across the periodic sim ring
 
@@ -45,6 +43,10 @@ interface Shared {
   uSpin: { value: THREE.DataTexture }
   uHead: { value: number }
   uTime: { value: number }
+  // shared aurora colors: one lerp target re-lights curtains, ice, floor, and
+  // lake together when a job is previewed/equipped on the gate
+  uUp: { value: THREE.Color }
+  uDown: { value: THREE.Color }
 }
 
 // ---- aurora curtains -------------------------------------------------------
@@ -129,8 +131,8 @@ function Aurora({ shared }: { shared: Shared }) {
               uHead: shared.uHead,
               uTime: shared.uTime,
               uSwayPhase: { value: c.sway },
-              uUpColor: { value: new THREE.Color(UP_COLOR) },
-              uDownColor: { value: new THREE.Color(DOWN_COLOR) },
+              uUpColor: shared.uUp,
+              uDownColor: shared.uDown,
               uCoreColor: { value: new THREE.Color(CORE_COLOR) },
               uIntensity: { value: c.intensity },
               uAgeOffset: { value: c.ageOffset },
@@ -304,8 +306,8 @@ function IceField({ shared }: { shared: Shared }) {
         uSpin: shared.uSpin,
         uHead: shared.uHead,
         uBg: { value: new THREE.Color(BG) },
-        uUpColor: { value: new THREE.Color(UP_COLOR) },
-        uDownColor: { value: new THREE.Color(DOWN_COLOR) },
+        uUpColor: shared.uUp,
+        uDownColor: shared.uDown,
         uLightDir: { value: new THREE.Vector3(-0.3, 0.85, 0.45).normalize() },
       },
       // stalactites use negative y-scale, which reverses winding; the shader
@@ -334,6 +336,137 @@ function IceField({ shared }: { shared: Shared }) {
       ))}
     </>
   )
+}
+
+// ---- condensate lake ---------------------------------------------------------
+// The same live field, seen directly: a fluid surface displaced by the spin
+// history (x = space, z = history flowing toward the camera), sitting between
+// the crystal ridges. One sim, two projections: the lake is the condensate,
+// the aurora is its history streaming upward. Shading is the abyssal-fluid
+// recipe from the journey site (slope-driven surf, wet glint).
+
+// same x-span and center as the curtains: every aurora column stands
+// directly above the spin domain that sources it
+const LAKE_W = WORLD_SPAN
+const LAKE_D = 52
+
+const lakeVertex = /* glsl */ `
+uniform sampler2D uSpin;
+uniform float uHead;
+varying float vSpin;
+varying float vAge;
+varying vec2 vUvL;
+varying vec3 vNormal;
+varying vec3 vViewDir;
+
+const float GN = ${SIM_N.toFixed(1)};
+const float GM = ${HISTORY_ROWS.toFixed(1)};
+const float DX = ${(LAKE_W / (SIM_N - 1)).toFixed(6)};
+const float DZ = ${(LAKE_D / (HISTORY_ROWS - 1)).toFixed(6)};
+const float H = 1.1;
+
+float spinRow(float col, float age) {
+  float row = mod(uHead - age + 3.0 * GM, GM);
+  return texture2D(uSpin, vec2((mod(col + GN, GN) + 0.5) / GN, (row + 0.5) / GM)).r;
+}
+
+void main() {
+  float col = uv.x * (GN - 1.0);
+  float age = uv.y * (GM - 1.0);
+  float s = spinRow(col, age);
+  vec3 transformed = position + vec3(0.0, s * H, 0.0);
+
+  float hL = spinRow(max(col - 1.0, 0.0), age) * H;
+  float hR = spinRow(min(col + 1.0, GN - 1.0), age) * H;
+  float hNear = spinRow(col, max(age - 1.0, 0.0)) * H;
+  float hFar = spinRow(col, min(age + 1.0, GM - 1.0)) * H;
+  vNormal = normalize(vec3(-(hR - hL) / (2.0 * DX), 1.0, -((hNear - hFar) / (2.0 * DZ))));
+
+  vSpin = s;
+  vAge = uv.y;
+  vUvL = uv;
+  vec4 worldPos = modelMatrix * vec4(transformed, 1.0);
+  vViewDir = cameraPosition - worldPos.xyz;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
+}
+`
+
+const lakeFragment = /* glsl */ `
+uniform vec3 uBg;
+uniform vec3 uUpDeep;
+uniform vec3 uUpCrest;
+uniform vec3 uDownDeep;
+uniform vec3 uDownCrest;
+uniform vec3 uLightDir;
+varying float vSpin;
+varying float vAge;
+varying vec2 vUvL;
+varying vec3 vNormal;
+varying vec3 vViewDir;
+
+void main() {
+  float t = min(abs(vSpin), 1.0);
+  vec3 n = normalize(vNormal) * (gl_FrontFacing ? 1.0 : -1.0);
+  vec3 v = normalize(vViewDir);
+  vec3 l = normalize(uLightDir);
+
+  vec3 deep = vSpin >= 0.0 ? uUpDeep : uDownDeep;
+  vec3 crest = vSpin >= 0.0 ? uUpCrest : uDownCrest;
+  vec3 albedo = mix(uBg, deep * 0.55, pow(t, 0.8));
+  float slope = 1.0 - n.y;
+  float surf = smoothstep(0.12, 0.65, slope) * t;
+
+  float diffuse = 0.45 + 0.55 * max(dot(n, l), 0.0);
+  float spec = pow(max(dot(n, normalize(l + v)), 0.0), 96.0);
+  float fresnel = pow(1.0 - max(dot(n, v), 0.0), 3.0);
+  float fade = 1.0 - vAge * 0.75; // oldest rows sink into the dark
+
+  vec3 color = albedo * diffuse;
+  // midground sea, not a set piece: surf glow stays subdued so the aurora
+  // above owns the light
+  color += crest * surf * 0.45;
+  color += vec3(0.81, 0.91, 1.0) * spec * (0.15 + 0.4 * t);
+  color += uUpCrest * fresnel * 0.08;
+  color *= fade;
+
+  // sink the cut edges of the plane into the dark
+  float edges = smoothstep(0.0, 0.10, vAge) * smoothstep(0.0, 0.05, vUvL.x) * smoothstep(1.0, 0.95, vUvL.x);
+  color *= edges;
+
+  gl_FragColor = vec4(color, 1.0);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}
+`
+
+function CondensateLake({ shared }: { shared: Shared }) {
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: lakeVertex,
+        fragmentShader: lakeFragment,
+        uniforms: {
+          uSpin: shared.uSpin,
+          uHead: shared.uHead,
+          uBg: { value: new THREE.Color(BG) },
+          uUpDeep: { value: new THREE.Color('#1e6f8f') },
+          uUpCrest: shared.uUp,
+          uDownDeep: { value: new THREE.Color('#7a4a1e') },
+          uDownCrest: shared.uDown,
+          uLightDir: { value: new THREE.Vector3(-0.35, 0.9, 0.5).normalize() },
+        },
+        side: THREE.DoubleSide,
+      }),
+    [shared]
+  )
+  const geometry = useMemo(() => {
+    const geo = new THREE.PlaneGeometry(LAKE_W, LAKE_D, SIM_N - 1, HISTORY_ROWS - 1)
+    geo.rotateX(-Math.PI / 2)
+    geo.computeBoundingSphere()
+    geo.boundingSphere!.radius += 2
+    return geo
+  }, [])
+  return <mesh geometry={geometry} material={material} position={[0, -0.4, -42]} />
 }
 
 // ---- floor -----------------------------------------------------------------
@@ -385,8 +518,8 @@ function Floor({ shared }: { shared: Shared }) {
           uSpin: shared.uSpin,
           uHead: shared.uHead,
           uBg: { value: new THREE.Color(BG) },
-          uUpColor: { value: new THREE.Color(UP_COLOR) },
-          uDownColor: { value: new THREE.Color(DOWN_COLOR) },
+          uUpColor: shared.uUp,
+          uDownColor: shared.uDown,
         },
       }),
     [shared]
@@ -495,7 +628,15 @@ function MouthGlow() {
 
 // ---- world root --------------------------------------------------------------
 
-export function FrozenDeep({ frozen }: { frozen: boolean }) {
+export function FrozenDeep({
+  frozen,
+  up,
+  down,
+}: {
+  frozen: boolean
+  up: string
+  down: string
+}) {
   const feed = useMemo(
     () => createSimFeed(frozen, resolveVisitSeed(location.search)),
     [frozen]
@@ -505,16 +646,45 @@ export function FrozenDeep({ frozen }: { frozen: boolean }) {
       uSpin: { value: feed.texture },
       uHead: { value: feed.head() },
       uTime: { value: 0 },
+      uUp: { value: new THREE.Color(up) },
+      uDown: { value: new THREE.Color(down) },
     }),
+    // colors are re-lit below, not re-created; only the sim feed rebuilds shared
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [feed]
   )
+
+  // re-light: lerp the shared aurora colors toward the previewed/equipped
+  // job's palette. Reduced motion snaps and invalidates the on-demand loop.
+  const target = useMemo(() => ({ up: new THREE.Color(up), down: new THREE.Color(down) }), [up, down])
+  const invalidate = useThree((s) => s.invalidate)
+  useEffect(() => {
+    if (frozen) {
+      shared.uUp.value.copy(target.up)
+      shared.uDown.value.copy(target.down)
+      invalidate()
+    }
+  }, [frozen, target, shared, invalidate])
 
   useFrame((_, delta) => {
     if (frozen) return
     feed.tick(delta)
     shared.uHead.value = feed.head()
     shared.uTime.value += delta
+    const k = 1 - Math.exp(-delta * 3)
+    shared.uUp.value.lerp(target.up, k)
+    shared.uDown.value.lerp(target.down, k)
   })
+
+  // exploration flag while the cavern look is being judged: ?variant=lake
+  // mounts the condensate lake between the ridges. Remove once decided.
+  const lake = useMemo(() => {
+    try {
+      return new URLSearchParams(location.search).get('variant') === 'lake'
+    } catch {
+      return false
+    }
+  }, [])
 
   return (
     <>
@@ -522,6 +692,7 @@ export function FrozenDeep({ frozen }: { frozen: boolean }) {
       <MouthGlow />
       <Aurora shared={shared} />
       <IceField shared={shared} />
+      {lake && <CondensateLake shared={shared} />}
       <Floor shared={shared} />
       <Motes shared={shared} />
     </>

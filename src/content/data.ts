@@ -9,6 +9,8 @@ export const identity = {
   linkedin: 'https://www.linkedin.com/in/andry-lloyd-paez-744883252',
   simCaption:
     'This is a live two-component Gross-Pitaevskii simulation, the same equations I work on at SJSU. Scroll and watch spin domains form.',
+  auroraCaption:
+    'The aurora is a live two-component Gross-Pitaevskii simulation, the same equations I work on at SJSU. Each band is a spin domain forming in real time.',
 }
 
 export const research = {

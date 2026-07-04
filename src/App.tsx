@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { StartScreen } from './ui/StartScreen'
 import { CharacterSelect } from './ui/CharacterSelect'
 import { Panels } from './ui/Panels'
@@ -10,8 +10,9 @@ import { isJobId, type JobId } from './content/jobs'
 // Full experience per the redesign spec + craft amendment: a TLOU-style
 // start screen precedes the gate; the select screen always shows next (the
 // last-played job is only pre-highlighted, never auto-equipped); equipping
-// re-themes the site over the persistent world canvas.
-// ?plain=1 is the ungated plain-text path (recruiter hatch, a11y, no-WebGL).
+// plays a sub-second transition and re-themes the site over the persistent
+// world canvas. Hovering a job on the gate re-lights the WORLD, not just
+// the chrome. ?plain=1 is the ungated plain-text path.
 
 function rememberedJob(): JobId | null {
   try {
@@ -27,14 +28,22 @@ const reducedMotion =
 
 const webgl = typeof document !== 'undefined' && webglOk()
 
+type Phase = 'start' | 'select' | 'equipping' | 'equipped'
+
 export default function App() {
-  const [stage, setStage] = useState<Stage>('start')
+  const [phase, setPhase] = useState<Phase>('start')
   const [job, setJob] = useState<JobId | null>(null)
-  const equipped = stage === 'equipped' ? job : null
+  const [preview, setPreview] = useState<JobId | null>(null)
+  const equipTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const equipped = phase === 'equipping' || phase === 'equipped' ? job : null
 
   useEffect(() => {
     document.documentElement.dataset.job = equipped ?? ''
   }, [equipped])
+
+  useEffect(() => () => {
+    if (equipTimer.current) clearTimeout(equipTimer.current)
+  }, [])
 
   if (new URLSearchParams(location.search).has('plain')) return <StaticFallback />
 
@@ -45,16 +54,34 @@ export default function App() {
       /* private mode: remembering is best-effort */
     }
     setJob(id)
-    setStage('equipped')
+    if (reducedMotion) {
+      setPhase('equipped')
+    } else {
+      setPhase('equipping')
+      equipTimer.current = setTimeout(() => setPhase('equipped'), 700)
+    }
   }
+
+  const stage: Stage = phase === 'start' ? 'start' : phase === 'select' ? 'select' : 'equipped'
+  // the world tints toward the previewed job on the gate, and stays in the
+  // equipped job's light afterwards
+  const tintJob = phase === 'select' ? preview : equipped
 
   return (
     <>
       <div className="world-placeholder" aria-hidden="true" />
-      {webgl && <WorldCanvas stage={stage} job={equipped} reduced={reducedMotion} />}
-      {stage === 'start' && <StartScreen onAdvance={() => setStage('select')} />}
-      {stage === 'select' && <CharacterSelect onEquip={equip} remembered={rememberedJob()} />}
-      <Panels job={equipped} />
+      {webgl && <WorldCanvas stage={stage} job={equipped} tintJob={tintJob} reduced={reducedMotion} />}
+      {phase === 'start' && <StartScreen onAdvance={() => setPhase('select')} />}
+      {(phase === 'select' || phase === 'equipping') && (
+        <CharacterSelect
+          onEquip={equip}
+          remembered={rememberedJob()}
+          preview={preview}
+          onPreview={setPreview}
+          leaving={phase === 'equipping'}
+        />
+      )}
+      <Panels job={phase === 'equipped' ? job : null} />
     </>
   )
 }

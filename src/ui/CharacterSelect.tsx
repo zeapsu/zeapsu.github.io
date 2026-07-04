@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import { JOBS, type JobId } from '../content/jobs'
 import { identity } from '../content/data'
 import base from '../assets/portraits/base.jpg'
@@ -18,18 +18,26 @@ const PORTRAITS: Record<'base' | JobId, string> = {
 export function CharacterSelect({
   onEquip,
   remembered,
+  preview,
+  onPreview,
+  leaving = false,
 }: {
   onEquip: (id: JobId) => void
   remembered: JobId | null
+  preview: JobId | null
+  onPreview: (id: JobId | null) => void
+  leaving?: boolean
 }) {
-  // Hover/focus previews a job: portrait crossfades, tokens re-light.
-  const [preview, setPreview] = useState<JobId | null>(remembered)
+  // Hover/focus previews a job: portrait crossfades, chrome AND world re-light.
+  // The initial programmatic autofocus is ignored so the base portrait gets
+  // its beat before the remembered job takes over (phase-1 carryover fix).
+  const sawAutoFocus = useRef(false)
   const active = preview ?? 'base'
   const previewJob = JOBS.find((j) => j.id === preview)
 
   return (
     <div
-      className="select-screen"
+      className={`select-screen${leaving ? ' equip-out' : ''}`}
       style={
         previewJob
           ? ({
@@ -63,8 +71,14 @@ export function CharacterSelect({
               type="button"
               className={`job-card${j.id === remembered ? ' remembered' : ''}`}
               autoFocus={j.id === (remembered ?? JOBS[0].id)}
-              onMouseEnter={() => setPreview(j.id)}
-              onFocus={() => setPreview(j.id)}
+              onMouseEnter={() => onPreview(j.id)}
+              onFocus={() => {
+                if (!sawAutoFocus.current) {
+                  sawAutoFocus.current = true
+                  return
+                }
+                onPreview(j.id)
+              }}
               onClick={() => onEquip(j.id)}
             >
               <span className="job-name">{j.name}</span>
@@ -86,6 +100,9 @@ export function CharacterSelect({
         <a className="plain-link" href="?plain=1">
           view the plain-text version
         </a>
+        <p className="aurora-caption">
+          <span className="live-dot" aria-hidden="true" /> {identity.auroraCaption}
+        </p>
       </div>
     </div>
   )

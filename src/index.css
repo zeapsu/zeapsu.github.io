@@ -559,11 +559,45 @@ li {
 .job-level .pip.on { background: var(--accent); }
 .job-level .leveling { font-size: 0.65rem; color: var(--muted); font-style: normal; margin-left: 0.3rem; }
 .plain-link { color: var(--muted); font-size: 0.85rem; margin-top: 1.25rem; }
+
+/* the live-sim caption, MMO-chat style, bottom-left over the world: the
+   aurora is a real GPE sim and the caption says so (honest-physics guardrail) */
+.aurora-caption {
+  position: fixed;
+  left: clamp(1.2rem, 4vw, 2.4rem);
+  bottom: clamp(1.2rem, 4vh, 2.2rem);
+  margin: 0;
+  max-width: 30ch;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: var(--muted);
+  text-align: left;
+  padding: 0.6rem 0.85rem;
+  background: rgba(2, 5, 9, 0.55);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: 9px;
+  backdrop-filter: blur(6px);
+}
+.aurora-caption .live-dot { background: var(--accent); }
+
+/* sub-second equip transition: the gate lifts and fades as the world takes
+   over. Skipped under reduced motion (the class still mounts; the rule is gated). */
+.select-screen.equip-out {
+  animation: equip-out 0.6s ease forwards;
+  pointer-events: none;
+}
+@keyframes equip-out {
+  to { opacity: 0; transform: scale(1.04); }
+}
+
 @media (max-width: 760px) {
   .job-cards { grid-template-columns: repeat(2, 1fr); }
+  .aurora-caption { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .select-screen, .select-portraits img, .job-card { transition: none; }
+  .select-screen.equip-out { animation: none; }
 }
 
 /* ---- panel skeleton ---------------------------------------------------- */

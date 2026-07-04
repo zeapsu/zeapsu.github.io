@@ -7,7 +7,15 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { FrozenDeep } from './worlds/FrozenDeep'
 import { bloomOk, composerSamples, maxDpr } from './quality'
-import type { JobId } from '../content/jobs'
+import { JOBS, type JobId } from '../content/jobs'
+
+// The frozen deep is the Physicist's own world, so its default light is the
+// Physicist aurora; previewing another job on the gate re-lights toward that
+// job's colors even before its dedicated world exists.
+function auroraFor(job: JobId | null): { up: string; down: string } {
+  const j = job && JOBS.find((x) => x.id === job)
+  return j ? j.aurora : JOBS[0].aurora
+}
 
 export type Stage = 'start' | 'select' | 'equipped'
 
@@ -52,14 +60,17 @@ function CameraRig({ stage, reduced }: { stage: Stage; reduced: boolean }) {
 export function WorldCanvas({
   stage,
   job,
+  tintJob,
   reduced,
 }: {
   stage: Stage
   job: JobId | null
+  tintJob: JobId | null
   reduced: boolean
 }) {
   const frozenDeep = job === null || job === 'physicist'
   const bloom = useMemo(() => bloomOk(), [])
+  const aurora = auroraFor(tintJob)
   return (
     <div className="world-canvas" aria-hidden="true">
       <Canvas
@@ -68,7 +79,7 @@ export function WorldCanvas({
         frameloop={reduced ? 'demand' : 'always'}
         gl={{ alpha: true }}
       >
-        {frozenDeep && <FrozenDeep frozen={reduced} />}
+        {frozenDeep && <FrozenDeep frozen={reduced} up={aurora.up} down={aurora.down} />}
         <CameraRig stage={stage} reduced={reduced} />
         {bloom && frozenDeep && (
           <EffectComposer multisampling={composerSamples()}>
