@@ -27,7 +27,24 @@ import assert from 'node:assert'
   assert.ok(maxAbs > 0.5, `spin never saturates (max |s| = ${maxAbs.toFixed(3)})`)
 }
 
-// 3. Determinism with a fixed seed (rendering loop relies on stable restarts)
+// 3. Weak corner of the per-visit variation ranges (frozen-deep aurora draws
+//    cycle params from g12 in [1.6, 2.0] and damping in [0.03, 0.05]; the
+//    least-immiscible, most-damped corner must still phase-separate)
+{
+  const sim = createSim({ n: 256, damping: 0.05, g12Immiscible: 1.6, seed: 1234 })
+  sim.quench()
+  sim.step(3000)
+  let walls = 0
+  const s = sim.spin
+  for (let i = 0; i < s.length; i++) {
+    if (Math.sign(s[i]) !== Math.sign(s[(i + 1) % s.length]) && Math.abs(s[i]) > 0.1) walls++
+  }
+  assert.ok(walls >= 2, `weak corner: only ${walls} domain walls after quench`)
+  const maxAbs = Math.max(...Array.from(s, Math.abs))
+  assert.ok(maxAbs > 0.5, `weak corner: spin never saturates (max |s| = ${maxAbs.toFixed(3)})`)
+}
+
+// 4. Determinism with a fixed seed (rendering loop relies on stable restarts)
 {
   const a = createSim({ n: 128, seed: 7 })
   const b = createSim({ n: 128, seed: 7 })

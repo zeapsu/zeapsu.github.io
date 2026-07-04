@@ -63,7 +63,7 @@ forgiving 3D discipline and would gate the redesign behind learning it).
 
 | Job | Flavor | Level | Front-loads |
 |---|---|---|---|
-| Physicist | the Scholar | high | BEC/GPE research with Dr. Hurst, the live sim, the Ising model project |
+| Physicist | the Scholar | high | quantum information/QC (QAOA vs CPLEX, Shor's code on IBM hardware, WISER), computational physics (Ising model, BEC/GPE research with Dr. Hurst), the live sim. Andry's physics identity is QIS + computational physics broadly; the GPE work is his job, not the whole job card — copy must not hyperfixate on it |
 | AI Systems Engineer | the Summoner | high | agents, local inference, MCP, Jetson, daily-hub |
 | Research SWE | the Artificer | mid-high | this site itself, dashboards, tooling, the selfcheck discipline |
 | Roboticist | the Automaton | low — "currently leveling" | Jetson edge work, Reachy interest, where he's headed |
@@ -215,3 +215,99 @@ em dashes, no filler).
 
 Each phase is issue-driven with its own PR(s) per AGENTS.md workflow. The
 umbrella issue for this direction tracks the phase checklist.
+
+## Direction amendment (2026-07-03): craft-first, AAA bar, loop-to-finish
+
+Andry reviewed the phase-1 shell and called the direction: the frugality
+rules that served the journey site were killing the redesign's design. This
+amendment supersedes the phasing section above and the guardrails it
+inherited.
+
+### Quality bar
+
+AAA game title screen. The select gate is a title screen, not a webpage: a
+living world visible from first paint, bespoke motion choreography, art
+direction that lands the MMO conceit in the first three seconds. "Good for a
+portfolio site" is below the bar.
+
+### Retired rules (do not resurrect)
+
+- "Build cheap, review on-page, kill without ceremony" -> craft-first:
+  invest in each element until it clears the bar; iterate, don't cull.
+- "One set piece per view" -> one coherent art direction per job. Layered
+  visuals (world + gate effects + panel treatments) are welcome when they
+  serve that direction. The PR #12 lesson now reads: cut rivals to
+  coherence, not layers.
+- Performance as a per-frame veto -> a floor: 60 fps at deviceScaleFactor 2
+  on the MacBook baseline (measurement method per AGENTS.md machine notes).
+  Build the look first, optimize to the floor after.
+
+### Unchanged non-negotiables
+
+Honest physics (the sim stays a real GPE solver with its node selfcheck);
+content traceability (experience.md, no invented claims, no em dashes,
+Kibble-Zurek off pending Dr. Hurst); the accessibility floor (real DOM
+text, reduced-motion static frames, plain-text path carries everything,
+visible focus states).
+
+### Execution model: one goal-driven loop session
+
+The multi-session phase-per-PR plan is replaced by a single loop-to-finish
+goal session on redesign/character-select that scaffolds the whole
+experience and iterates until the gates pass. The old phases become a
+work checklist inside the goal, not session boundaries.
+
+Goal statement: rebuild the site as the AAA-bar character-select experience
+in this spec: an initial start screen (below) that precedes the gate, four
+job worlds (frozen deep first, absorbing the parked sim-variation plan;
+sanctum, dev room, workbench), the gate rebuilt on top of the live
+Physicist world, the shared panel skeleton filled (quest log, quest board,
+skill tree, achievements, job-aware contact/resume), and the chat terminal.
+
+### Start screen (precedes the gate)
+
+The site opens on a title-screen threshold inspired by The Last of Us
+Part I's start menu — reference image:
+~/Documents/personal/portfolio-assets/reference/start-screen.jpeg (and
+ffxiv-character-select-example.png in the same folder is the gate's
+reference). The feel to hit, not the literal scene: a near-still,
+atmospheric shot with slow ambient motion (drifting light, particles,
+soft parallax — TLOU uses curtains and window light), one quiet prompt
+line ("press any button" energy, wording TBD in Andry's voice), zero UI
+chrome. The scene should belong to this site's world — derived from a
+true fact per the metaphor rule, not a borrowed apocalypse. Any input
+advances to the character-select gate. Floor still applies: the prompt is
+real DOM text, keyboard/click/touch all advance, reduced-motion gets the
+static frame, and the plain-text link remains reachable without entering.
+
+### Tooling freedom (loop session)
+
+The loop session is free to use any external tool or asset source it
+judges useful — Blender (including the Blender MCP), image/asset fetching,
+generators, libraries beyond the current stack — provided the results meet
+the license-to-ship bar and the non-negotiables above. If it wants a tool,
+asset, credential, or reference it cannot access right away, it must NOT
+silently substitute or skip: pause and ping Andry with AskUserQuestion,
+stating what it wants and why, then continue on his answer.
+
+Machine-checkable gates (the loop self-verifies these each iteration):
+- npm run build clean; node src/content/jobs.selfcheck.ts and
+  node src/sim/gpe.selfcheck.ts pass.
+- The 8-point Playwright pass from phase 1 (task-7 checklist) stays green.
+- 60 fps at dsf 2 desktop; no horizontal scroll at 390 px; reduced-motion
+  computed transitions are none; ?plain=1 innerText carries all copy.
+- Each equipped job renders a visually distinct world (screenshot per job
+  per iteration, saved outside the repo).
+- index.html metadata updated to match what the site actually shows (the
+  phase-1 merge precondition).
+
+Human gates (the loop marks ready-for-review, never self-approves):
+- Aesthetic sign-off per world and for the gate is Andry's, from real
+  screenshots/live driving.
+- Resume PDFs ship only after Andry verifies publishable contact info.
+- Merge to main is Andry's call.
+
+Design iteration inside the loop: reference-driven (FFXIV/GW2 character
+select, award-tier sites), multiple live variants for the highest-stakes
+calls (gate composition, frozen-deep look), screenshots judged against the
+bar before moving on.
