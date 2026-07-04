@@ -23,7 +23,7 @@ Deploy is automatic: push to main runs `.github/workflows/deploy.yml` (build + s
 ## Content rules (strict)
 
 - All site copy lives in `src/content/data.ts` and must be traceable to `~/Documents/personal/experience.md` (private repo, available on both machines). Never invent claims. Respect that file's exclusions section.
-- The Kibble-Zurek / quench research bullet stays OFF the site until Dr. Hurst reviews the wording.
+- The Kibble-Zurek / quench research bullet is cleared and ON the site (Andry cleared the wording 2026-07-04); it lives in `research.facts` in `src/content/data.ts`. Contact info is likewise cleared for publication; the job-aware resume PDFs still need wiring (#24).
 - Voice: the github.com/zeapsu/zeapsu README. Direct, personal, understated. No em dashes, no filler, authenticity over polish.
 - Private projects (reachy-console, Kalshi, daily-hub) are described without links, "ask me about it" style.
 

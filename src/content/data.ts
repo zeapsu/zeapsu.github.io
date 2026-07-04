@@ -22,6 +22,7 @@ export const research = {
     'Vectorized the sine-DVR kinetic-energy operator: 161 s down to 0.09 s at 2048 grid points, a 1,880x speedup verified bit-exact by a benchmark harness',
     'Validated spinor ground states to machine precision (norm error 2.2e-16) with correct miscible and immiscible domain-wall structure',
     'Hash-addressed initial-condition catalog with a rebuildable SQLite index and a write-then-index HPC workflow that avoids concurrent-writer contention',
+    'Ran a c2-quench study of spontaneous symmetry breaking with Truncated Wigner vacuum-noise seeding and domain-wall counting, recovering Kibble-Zurek scaling (exponent 1/4)',
     'Around 13 dated technical reports so far: benchmarks, validations, design recommendations',
   ],
 }
@@ -179,8 +180,8 @@ export const contact = {
   eyebrow: 'contact',
   title: 'Party invite',
   body: 'Open to AI systems and research software roles. The quickest way to reach me:',
-  // job-aware resume PDFs are gated on Andry verifying publishable contact
-  // info before they ship; until then the panel points at email.
+  // Andry cleared publishable contact info 2026-07-04; wiring the job-aware
+  // resume PDFs is its own task (#24). Until they ship, the panel points at email.
   resumeNote: 'Job-specific resumes are on the way. Email me and I will send the right one.',
 }
 
