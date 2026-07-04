@@ -25,6 +25,15 @@ export function composerSamples(): number {
   }
 }
 
+export function webglOk(): boolean {
+  try {
+    const c = document.createElement('canvas')
+    return !!(c.getContext('webgl2') || c.getContext('webgl'))
+  } catch {
+    return false
+  }
+}
+
 // Bloom costs fillrate; skip it where it hurts (mobile) or where the GPU is
 // actually a software rasterizer (Jetson/CI screenshots run swiftshader).
 export function bloomOk(): boolean {

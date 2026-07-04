@@ -32,8 +32,9 @@ export interface GPESim {
   unquench(): void
 }
 
-// mulberry32: tiny seedable PRNG, enough for noise seeding
-function rng(seed: number) {
+// mulberry32: tiny seedable PRNG, enough for noise seeding. Exported so the
+// per-visit sim variation derives its cycle params from the same generator.
+export function mulberry32(seed: number) {
   let a = seed >>> 0
   return () => {
     a = (a + 0x6d2b79f5) | 0
@@ -207,7 +208,7 @@ export function createSim(opts: SimOptions = {}): GPESim {
     }
   }
 
-  seedState(rng(seed))
+  seedState(mulberry32(seed))
 
   return {
     n,
@@ -225,7 +226,7 @@ export function createSim(opts: SimOptions = {}): GPESim {
     },
     quench(newSeed?: number) {
       g12 = g12Im
-      seedState(rng(newSeed ?? seed))
+      seedState(mulberry32(newSeed ?? seed))
     },
     unquench() {
       g12 = g12Mi

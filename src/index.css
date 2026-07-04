@@ -21,6 +21,12 @@ body,
 #root {
   margin: 0;
   height: 100%;
+}
+
+/* the base coat lives on html ONLY. With a background on html, a body (or
+   #root) background would paint OVER negative-z-index descendants in the root
+   stacking context, hiding the fixed z:-1 world canvas entirely. */
+html {
   background: var(--bg);
 }
 
@@ -403,14 +409,86 @@ li {
   .world-placeholder { transition: none; }
 }
 
+/* ---- world canvas + start screen --------------------------------------- */
+.world-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+.start-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.start-prompt {
+  position: absolute;
+  left: clamp(2rem, 9vw, 8rem);
+  top: 62%;
+  transform: translateY(-50%);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.88rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: lowercase;
+  color: rgba(242, 238, 251, 0.95);
+  background: none;
+  border: none;
+  padding: 0.4rem 0;
+  cursor: pointer;
+  /* tight dark halo: the prompt must survive sitting over the aurora */
+  text-shadow:
+    0 0 3px rgba(2, 5, 9, 0.95),
+    0 0 8px rgba(2, 5, 9, 0.9),
+    0 2px 18px rgba(2, 5, 9, 0.85);
+  animation: prompt-breathe 4.6s ease-in-out infinite;
+}
+
+.start-prompt:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 8px;
+  border-radius: 2px;
+}
+
+@keyframes prompt-breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.plain-corner {
+  position: absolute;
+  right: 1.8rem;
+  bottom: 1.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-shadow: 0 1px 10px rgba(2, 5, 9, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start-prompt {
+    animation: none;
+  }
+}
+
 /* ---- select screen ----------------------------------------------------- */
+/* Transparent over the live world; a bottom-weighted scrim keeps the job
+   cards readable. The no-WebGL path still shows the themed gradient via
+   .world-placeholder behind. */
 .select-screen {
   position: fixed;
   inset: 0;
   z-index: 10;
   display: grid;
   place-items: center;
-  background: radial-gradient(120% 90% at 50% 10%, var(--bg1) 0%, var(--bg0) 72%);
+  background: linear-gradient(
+    to bottom,
+    rgba(2, 5, 9, 0.08) 0%,
+    rgba(2, 5, 9, 0.3) 55%,
+    rgba(2, 5, 9, 0.68) 100%
+  );
   transition: background 0.4s ease;
   overflow-y: auto;
 }
