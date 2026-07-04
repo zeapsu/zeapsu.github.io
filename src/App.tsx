@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { StartScreen } from './ui/StartScreen'
 import { CharacterSelect } from './ui/CharacterSelect'
 import { Panels } from './ui/Panels'
+import { Terminal } from './ui/Terminal'
 import { StaticFallback } from './ui/Sections'
 import { WorldCanvas, type Stage } from './three/WorldCanvas'
 import { webglOk } from './three/quality'
@@ -54,7 +55,9 @@ export default function App() {
       /* private mode: remembering is best-effort */
     }
     setJob(id)
-    if (reducedMotion) {
+    // switching while already equipped (nameplate/terminal `job <name>`) is
+    // an in-place re-theme, never a one-way door: skip the equip transition.
+    if (reducedMotion || phase === 'equipped') {
       setPhase('equipped')
     } else {
       setPhase('equipping')
@@ -67,10 +70,20 @@ export default function App() {
   // equipped job's light afterwards
   const tintJob = phase === 'select' ? preview : equipped
 
+  // Only the frozen deep exists so far, and it is the Physicist's own world;
+  // showing it (even re-lit) for another job would be decorative cosplay. So
+  // the whole canvas mounts only when the frozen deep is what should render
+  // (start/select, or equipped Physicist); other jobs fall to the themed CSS
+  // gradient. Gating the whole canvas -- not FrozenDeep inside it -- also
+  // avoids the R3F bug where unmounting EffectComposer freezes the last frame.
+  const showWorld = equipped === null || equipped === 'physicist'
+
   return (
     <>
       <div className="world-placeholder" aria-hidden="true" />
-      {webgl && <WorldCanvas stage={stage} job={equipped} tintJob={tintJob} reduced={reducedMotion} />}
+      {webgl && showWorld && (
+        <WorldCanvas stage={stage} job={equipped} tintJob={tintJob} reduced={reducedMotion} />
+      )}
       {phase === 'start' && <StartScreen onAdvance={() => setPhase('select')} />}
       {(phase === 'select' || phase === 'equipping') && (
         <CharacterSelect
@@ -82,6 +95,7 @@ export default function App() {
         />
       )}
       <Panels job={phase === 'equipped' ? job : null} />
+      {phase === 'equipped' && <Terminal job={job} equip={equip} />}
     </>
   )
 }
