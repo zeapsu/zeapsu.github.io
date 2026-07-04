@@ -2,8 +2,11 @@
   --bg: #0b0a12;
   --ink: #f2eefb;
   --muted: #bfb6d8;
-  --spin-up: #4fd8c8;
-  --spin-down: #f0a848;
+  /* legacy journey-era accent tokens, now aliased to the per-job accent so
+     all DOM chrome (eyebrows, links, ::selection, markers) re-themes on equip.
+     var() is late-bound, so these resolve to whatever --accent cascades to. */
+  --spin-up: var(--accent);
+  --spin-down: var(--accent);
   --line: rgba(168, 159, 192, 0.25);
   --panel: rgba(11, 10, 18, 0.55);
   --scroll: 0;
@@ -44,9 +47,9 @@ body {
 }
 
 a {
-  color: var(--spin-up);
+  color: var(--accent);
   text-decoration: none;
-  border-bottom: 1px solid rgba(125, 214, 255, 0.35);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
   transition:
     border-color 120ms ease,
     color 120ms ease;
