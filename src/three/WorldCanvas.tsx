@@ -10,11 +10,12 @@ import * as THREE from 'three'
 import { FrozenDeep } from './worlds/FrozenDeep'
 import { Sanctum } from './worlds/Sanctum'
 import { DevRoom } from './worlds/DevRoom'
+import { Workbench } from './worlds/Workbench'
 import { bloomOk, composerSamples, maxDpr } from './quality'
 import { JOBS, type JobId } from '../content/jobs'
 
 // Jobs with a built R3F world. Others render the themed CSS gradient.
-export const WORLDS_BUILT: JobId[] = ['physicist', 'ai-systems', 'swe']
+export const WORLDS_BUILT: JobId[] = ['physicist', 'ai-systems', 'swe', 'robotics']
 
 // Each world defaults to the equipped job's aurora; previewing another job on
 // the gate re-lights the entry world toward that job's colors.
@@ -43,6 +44,9 @@ const EQUIPPED_FRAMING: Record<string, Framing> = {
   // close 3/4 from the left: the big rice monitor fills the right of frame,
   // legible, desk and tower in the foreground, panels over the darker left
   swe: { pos: new THREE.Vector3(-6.5, 5.2, 2), look: new THREE.Vector3(2.5, 4.8, -9) },
+  // 3/4 from the front-left: the IK arm reaches across center, bench grid
+  // recedes, ghost part and dev board sit right, panels over the darker left
+  robotics: { pos: new THREE.Vector3(-6.5, 4.2, 4.5), look: new THREE.Vector3(2.4, 4.6, -9) },
 }
 
 function framingFor(stage: Stage, job: JobId | null): Framing {
@@ -90,6 +94,7 @@ function World({
   const world = stage === 'equipped' ? job : null
   if (world === 'ai-systems') return <Sanctum frozen={reduced} up={up} down={down} />
   if (world === 'swe') return <DevRoom frozen={reduced} up={up} down={down} />
+  if (world === 'robotics') return <Workbench frozen={reduced} up={up} down={down} />
   // null (start/select) and physicist both get the frozen deep
   return <FrozenDeep frozen={reduced} up={up} down={down} />
 }
