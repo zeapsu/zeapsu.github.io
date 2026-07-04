@@ -9,11 +9,12 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { FrozenDeep } from './worlds/FrozenDeep'
 import { Sanctum } from './worlds/Sanctum'
+import { DevRoom } from './worlds/DevRoom'
 import { bloomOk, composerSamples, maxDpr } from './quality'
 import { JOBS, type JobId } from '../content/jobs'
 
 // Jobs with a built R3F world. Others render the themed CSS gradient.
-export const WORLDS_BUILT: JobId[] = ['physicist', 'ai-systems']
+export const WORLDS_BUILT: JobId[] = ['physicist', 'ai-systems', 'swe']
 
 // Each world defaults to the equipped job's aurora; previewing another job on
 // the gate re-lights the entry world toward that job's colors.
@@ -39,6 +40,9 @@ const GATE_FRAMINGS: Record<'start' | 'select', Framing> = {
 const EQUIPPED_FRAMING: Record<string, Framing> = {
   physicist: { pos: new THREE.Vector3(0, 5.0, 19), look: new THREE.Vector3(0, 4.0, -20) },
   'ai-systems': { pos: new THREE.Vector3(0, 6.5, 15), look: new THREE.Vector3(0, 1.5, -13) },
+  // close 3/4 from the left: the big rice monitor fills the right of frame,
+  // legible, desk and tower in the foreground, panels over the darker left
+  swe: { pos: new THREE.Vector3(-6.5, 5.2, 2), look: new THREE.Vector3(2.5, 4.8, -9) },
 }
 
 function framingFor(stage: Stage, job: JobId | null): Framing {
@@ -85,6 +89,7 @@ function World({
 }) {
   const world = stage === 'equipped' ? job : null
   if (world === 'ai-systems') return <Sanctum frozen={reduced} up={up} down={down} />
+  if (world === 'swe') return <DevRoom frozen={reduced} up={up} down={down} />
   // null (start/select) and physicist both get the frozen deep
   return <FrozenDeep frozen={reduced} up={up} down={down} />
 }
