@@ -603,20 +603,186 @@ li {
 /* ---- panel skeleton ---------------------------------------------------- */
 .panels {
   display: grid;
-  gap: 4.5rem;
+  /* minmax(0,1fr): without the 0, grid items default to min-width:auto and a
+     wide child (project card, skill branch) forces the column past the
+     viewport, giving horizontal scroll on phones */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
   max-width: 62rem;
   margin: 0 auto;
-  padding: 5rem 1.25rem 7rem;
+  padding: max(12vh, 6rem) 1.25rem 8rem;
 }
 .panels[inert] { display: none; }
 .game-panel {
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-  border-radius: 0.9rem;
-  background: color-mix(in srgb, var(--bg1) 78%, transparent);
-  backdrop-filter: blur(8px);
-  padding: 2rem 2.2rem;
-  box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 8%, transparent);
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-radius: 1rem;
+  /* darker glass so panel copy stays readable over the bright aurora behind */
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--bg0) 82%, transparent),
+      color-mix(in srgb, var(--bg1) 88%, transparent)
+    );
+  backdrop-filter: blur(14px);
+  padding: 2.4rem 2.6rem;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 6%, transparent),
+    0 18px 50px rgba(2, 5, 9, 0.5),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 12%, transparent);
 }
-.game-panel.shell { opacity: 0.75; }
-.under-construction { color: var(--muted); font-style: italic; }
-.quest-board { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+/* a thin accent seam along the top edge, MMO-panel signature */
+.game-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  border-radius: 1rem 1rem 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 55%, transparent),
+    transparent
+  );
+}
+
+/* hero panel: the page's h1 lives here after equip */
+.hero-panel { padding-block: 3rem; }
+.hero-name {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  margin: 0.2rem 0 0.6rem;
+}
+.hero-tagline {
+  font-size: 1.2rem;
+  color: var(--ink);
+  max-width: 40ch;
+  margin: 0 0 1.4rem;
+}
+
+/* quest chain: a vertical timeline of finished quests */
+.quest-chain {
+  list-style: none;
+  padding: 0;
+  margin: 1.4rem 0 0;
+  display: grid;
+  gap: 0;
+}
+.quest {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  gap: 1.2rem;
+  padding: 1rem 0 1.2rem 1.4rem;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  position: relative;
+}
+.quest::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 1.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bg0);
+  border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.quest-active::before {
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+.quest:last-child { padding-bottom: 0.2rem; }
+.quest-period {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  padding-top: 0.15rem;
+}
+.quest-body { display: grid; gap: 0.3rem; min-width: 0; }
+.quest-detail, .quest-title { overflow-wrap: break-word; }
+.quest-title {
+  font-size: 1.05rem;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.quest-badge {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--bg0);
+  background: var(--accent);
+  border-radius: 99px;
+  padding: 0.1rem 0.5rem;
+}
+.quest-detail { color: var(--muted); font-size: 0.95rem; max-width: 54ch; }
+
+/* min(100%, X): collapses to one full-width column when the panel is
+   narrower than the track minimum, instead of overflowing */
+.quest-board { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.card.featured {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 26px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+/* skill tree: four branches, the equipped one lit */
+.skill-tree {
+  display: grid;
+  gap: 1.1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  margin-top: 1.4rem;
+}
+.skill-branch {
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  padding: 1.1rem 1.3rem;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, border-color 0.3s ease;
+}
+.skill-branch.lit {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+.skill-branch-name {
+  font-size: 1.05rem;
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--ink);
+}
+.skill-branch.lit .skill-branch-name { color: var(--accent); }
+.skill-branch ul { margin: 0.5rem 0 0; padding-left: 1rem; }
+.skill-branch li { font-size: 0.88rem; margin-bottom: 0.4rem; }
+
+/* achievements: understated trophy grid */
+.trophy-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  margin-top: 1.4rem;
+}
+.trophy {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--bg1) 40%, transparent);
+}
+.trophy-title { color: var(--ink); font-size: 0.98rem; }
+.trophy-detail { color: var(--muted); font-size: 0.82rem; }
+
+.resume-note { color: var(--muted); font-size: 0.9rem; font-style: italic; margin-top: 1.1rem; }
+
+@media (max-width: 560px) {
+  .game-panel { padding: 1.8rem 1.4rem; }
+  /* stack the quest period above its body so the timeline stays readable */
+  .quest { grid-template-columns: 1fr; gap: 0.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-branch { transition: none; }
+}

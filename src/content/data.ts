@@ -1,5 +1,6 @@
 // All site copy lives here so it can be audited line-by-line against
 // ~/Documents/personal/experience.md. Do not add claims that are not in that file.
+import type { JobId } from './jobs'
 
 export const identity = {
   name: 'Andry Paez',
@@ -83,6 +84,105 @@ export const projects: Project[] = [
     link: 'https://github.com/zeapsu/Quantum-Portfolio-Optimization',
   },
 ]
+
+// Quest log: education + work as a completed quest chain. The pre-2021
+// years are rendered as one honest "time away" line — the Cal Poly stint is
+// on experience.md's exclusions list, so it is named nowhere on the site.
+export const questLog = {
+  eyebrow: 'quest log',
+  title: 'The route here was not a straight line',
+  intro: 'Community college to a physics degree to a research lab. Every step below is a finished quest.',
+  quests: [
+    {
+      period: 'before 2021',
+      title: 'The long way round',
+      detail: 'A few years finding the way to community college and physics.',
+      status: 'done' as const,
+    },
+    {
+      period: '2021 – 2024',
+      title: 'Modesto Junior College',
+      detail:
+        'Four transfer degrees, all with honors: Computer Science, Mathematics, Physics, and Language & Rationality. President’s List five times, GPA 3.73.',
+      status: 'done' as const,
+    },
+    {
+      period: '2024 – 2026',
+      title: 'San Jose State University',
+      detail:
+        'B.S. Physics, GPA 3.80, Dean’s Scholar. Quantum mechanics, quantum information science, and computational methods.',
+      status: 'done' as const,
+    },
+    {
+      period: '2026 – present',
+      title: 'Research Assistant, SJSU Physics',
+      detail:
+        'Spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst. The current quest.',
+      status: 'active' as const,
+    },
+  ],
+}
+
+// Skill tree: one tree, four branches (the four jobs). The equipped branch
+// lights. Every skill traces to experience.md's skills/projects sections.
+export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
+  {
+    job: 'physicist',
+    branch: 'Physicist',
+    skills: [
+      'Quantum information: Qiskit, QAOA, Shor-code error correction',
+      'Computational physics: NumPy, FFT/spectral methods, Monte Carlo',
+      'Condensate simulation: Gross-Pitaevskii, HDF5, Slurm/HPC',
+    ],
+  },
+  {
+    job: 'ai-systems',
+    branch: 'AI Systems',
+    skills: [
+      'Local inference: llama.cpp, Ollama, quantization-aware selection',
+      'Agents: ReAct tool loops, MCP, multi-agent review gates',
+      'Edge deployment: Jetson Orin Nano, faster-whisper',
+    ],
+  },
+  {
+    job: 'swe',
+    branch: 'Research SWE',
+    skills: [
+      'Python, TypeScript, Rust (Tauri), C/C++',
+      'FastAPI, Next.js/React, WebSockets/SSE',
+      'CI, pytest, Playwright-driven runtime verification',
+    ],
+  },
+  {
+    job: 'robotics',
+    branch: 'Roboticist',
+    skills: [
+      'A Reachy Mini living on a headless Jetson',
+      'GStreamer, ALSA/PipeWire, kernel-driver debugging',
+      'ESP32 firmware (currently leveling)',
+    ],
+  },
+]
+
+// Achievements: understated trophy grid. Degrees/honors from the education
+// section, certificates from the certificates section of experience.md.
+export const achievements = [
+  { title: 'Dean’s Scholar', detail: 'SJSU, Fall 2024 and Fall 2025' },
+  { title: 'Four degrees with honors', detail: 'MJC: CS, Mathematics, Physics, Language & Rationality' },
+  { title: 'President’s List × 5', detail: 'Modesto Junior College' },
+  { title: '2025 Quantum Program', detail: 'WISER — quantum algorithms for portfolio optimization' },
+  { title: 'QBronze169 Diploma', detail: 'QWorld, 2025' },
+  { title: 'PennyLane LCU Challenge', detail: 'Womanium & WISER, 2025' },
+]
+
+export const contact = {
+  eyebrow: 'contact',
+  title: 'Party invite',
+  body: 'Open to AI systems and research software roles. The quickest way to reach me:',
+  // job-aware resume PDFs are gated on Andry verifying publishable contact
+  // info before they ship; until then the panel points at email.
+  resumeNote: 'Job-specific resumes are on the way. Email me and I will send the right one.',
+}
 
 export const howIWork = {
   eyebrow: 'how I work',

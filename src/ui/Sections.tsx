@@ -1,4 +1,14 @@
-import { identity, research, projects, howIWork, footer } from '../content/data'
+import {
+  identity,
+  research,
+  projects,
+  questLog,
+  skillTree,
+  achievements,
+  contact,
+  howIWork,
+  footer,
+} from '../content/data'
 import { RESEARCH_TOP, CARD_BASE, CARD_STEP, CLOSING_TOP } from '../layout'
 
 export function ContactLinks() {
@@ -11,9 +21,15 @@ export function ContactLinks() {
   )
 }
 
-export function ProjectCard({ p }: { p: (typeof projects)[number] }) {
+export function ProjectCard({
+  p,
+  featured = false,
+}: {
+  p: (typeof projects)[number]
+  featured?: boolean
+}) {
   return (
-    <article className="card">
+    <article className={`card${featured ? ' featured' : ''}`}>
       <header>
         <h3>{p.link ? <a href={p.link}>{p.name}</a> : p.name}</h3>
         <span className="status">{p.status}</span>
@@ -77,7 +93,9 @@ export function Sections() {
   )
 }
 
-// Plain document-flow version for when WebGL is unavailable.
+// Plain document-flow version: the ungated recruiter/SEO/no-WebGL path. It
+// must carry ALL content (accessibility + crawl floor), so every panel the
+// gated experience renders has a plain equivalent here.
 export function StaticFallback() {
   return (
     <main className="fallback">
@@ -86,6 +104,7 @@ export function StaticFallback() {
         <h1>{identity.tagline}</h1>
         <ContactLinks />
       </section>
+
       <section className="panel">
         <p className="eyebrow">{research.eyebrow}</p>
         <h2>{research.title}</h2>
@@ -96,10 +115,60 @@ export function StaticFallback() {
           ))}
         </ul>
       </section>
+
+      <section className="panel">
+        <p className="eyebrow">{questLog.eyebrow}</p>
+        <h2>{questLog.title}</h2>
+        <p>{questLog.intro}</p>
+        <ul>
+          {questLog.quests.map((q) => (
+            <li key={q.title}>
+              <strong>{q.period}</strong> — {q.title}: {q.detail}
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <p className="eyebrow">projects</p>
       {projects.map((p) => (
         <ProjectCard key={p.name} p={p} />
       ))}
+
+      <section className="panel">
+        <p className="eyebrow">skill tree</p>
+        <h2>One character, four branches</h2>
+        {skillTree.map((branch) => (
+          <div key={branch.job}>
+            <h3>{branch.branch}</h3>
+            <ul>
+              {branch.skills.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      <section className="panel">
+        <p className="eyebrow">achievements</p>
+        <h2>Records</h2>
+        <ul>
+          {achievements.map((a) => (
+            <li key={a.title}>
+              <strong>{a.title}</strong> — {a.detail}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="panel">
+        <p className="eyebrow">{contact.eyebrow}</p>
+        <h2>{contact.title}</h2>
+        <p>{contact.body}</p>
+        <ContactLinks />
+        <p>{contact.resumeNote}</p>
+      </section>
+
       <section className="panel closing">
         <p className="eyebrow">{howIWork.eyebrow}</p>
         <h2>{howIWork.title}</h2>
