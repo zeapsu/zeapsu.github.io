@@ -9,9 +9,8 @@ import {
   contact,
   howIWork,
   resumes,
-  hardware,
 } from '../content/data'
-import { ContactLinks, ProjectCard } from './Sections'
+import { ContactLinks, ProjectCard, HardwareFigures } from './Sections'
 
 // The shared skeleton all four jobs render through: About/hero -> quest log ->
 // quest board -> skill tree -> achievements -> contact. Theme, ordering, and
@@ -48,16 +47,7 @@ export function Panels({ job }: { job: JobId | null }) {
 
       {job === 'robotics' && (
         <section className="game-panel">
-          <p className="eyebrow">hardware</p>
-          <h2>Reachy Mini on a Jetson Orin Nano</h2>
-          <div className="hardware-figures">
-            {hardware.map((h) => (
-              <figure key={h.src} className="hardware">
-                <img src={h.src} alt={h.alt} loading="lazy" />
-                <figcaption>{h.caption}</figcaption>
-              </figure>
-            ))}
-          </div>
+          <HardwareFigures />
         </section>
       )}
 
@@ -144,6 +134,7 @@ export function Panels({ job }: { job: JobId | null }) {
                 href={a.credential}
                 target="_blank"
                 rel="noopener"
+                aria-label={`${a.title}, ${a.detail}. View credential.`}
               >
                 {inner}
                 <span className="trophy-view" aria-hidden="true">view credential</span>

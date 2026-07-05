@@ -3,7 +3,7 @@
 // the actual GPE solver in the browser (honest-physics guardrail).
 import { createSim } from '../sim/gpe'
 import { JOBS, isJobId, type JobId } from '../content/jobs'
-import { identity, research, projects } from '../content/data'
+import { identity, research, projects, resumes, resumeDefault } from '../content/data'
 
 export interface CmdLine {
   text: string
@@ -119,11 +119,14 @@ export function runCommand(raw: string, ctx: CmdContext): CmdLine[] {
         { text: `${identity.email} · github.com/zeapsu`, kind: 'dim' },
       ]
 
-    case 'resume':
+    case 'resume': {
+      const url = ctx.job ? resumes[ctx.job] : resumeDefault
+      const who = ctx.job ? JOBS.find((j) => j.id === ctx.job)?.name ?? 'full CV' : 'full CV'
       return [
-        { text: 'Job-specific resumes are on the way.', kind: 'ok' },
-        { text: `Email ${identity.email} and I will send the right one.` },
+        { text: `${who} resume: ${url}`, kind: 'ok' },
+        { text: 'Also a download button in the contact panel below.', kind: 'dim' },
       ]
+    }
 
     case '/selfcheck':
     case 'selfcheck':

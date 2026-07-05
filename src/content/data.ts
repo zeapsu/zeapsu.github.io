@@ -225,21 +225,27 @@ export const resumes: Record<JobId, string> = {
   swe: '/resume/Andry_Paez_research_swe.pdf',
   robotics: '/resume/Andry_Paez_robotics.pdf',
 }
-export const resumeDefault = '/resume/Andry_Paez_CV_2026.pdf'
+// One source of truth for the CV path (also the physicist's resume).
+export const resumeDefault = resumes.physicist
 
 // Real hardware photos for the Roboticist figure. Deliberately real, never
 // AI-painted (workbench honesty rule). `alt` is the full a11y description;
-// `caption` is the terse visible line.
-export const hardware: { src: string; alt: string; caption: string }[] = [
+// `caption` is the terse visible line; `w`/`h` are intrinsic pixel dimensions
+// so the browser reserves space and the lazy images don't shift layout.
+export const hardware: { src: string; alt: string; caption: string; w: number; h: number }[] = [
   {
     src: reachyPhoto,
     alt: 'A Reachy Mini Lite on its Jetson Orin Nano, an ESP32 breadboard running pixel-art firmware, LazyVim open on the monitor.',
     caption: 'Reachy Mini on its Jetson host, ESP32 firmware on the breadboard.',
+    w: 1050,
+    h: 1400,
   },
   {
     src: jetsonPhoto,
     alt: 'A Jetson Orin Nano Developer Kit, the headless edge box that hosts the Reachy.',
     caption: 'The Jetson Orin Nano that runs it all.',
+    w: 1400,
+    h: 1050,
   },
 ]
 

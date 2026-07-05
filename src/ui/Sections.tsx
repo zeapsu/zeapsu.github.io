@@ -53,6 +53,26 @@ export function ProjectCard({
   )
 }
 
+// The Roboticist "real bench" figure. Shared so the equipped panel and the
+// ?plain=1 fallback never drift; each caller wraps it in its own <section>.
+// width/height are set so the lazy photos reserve space (no layout shift).
+export function HardwareFigures() {
+  return (
+    <>
+      <p className="eyebrow">hardware</p>
+      <h2>Reachy Mini on a Jetson Orin Nano</h2>
+      <div className="hardware-figures">
+        {hardware.map((h) => (
+          <figure key={h.src} className="hardware">
+            <img src={h.src} alt={h.alt} width={h.w} height={h.h} loading="lazy" />
+            <figcaption>{h.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </>
+  )
+}
+
 // Absolute-positioned over PAGES * 100dvh of scroll, riding drei's <Scroll html>.
 // dvh, not vh: drei's scroll range is pages * container pixel height (the
 // dynamic viewport), while vh is the large viewport on phones — the mismatch
@@ -179,14 +199,7 @@ export function StaticFallback() {
       </section>
 
       <section className="panel">
-        <p className="eyebrow">hardware</p>
-        <h2>Reachy Mini on a Jetson Orin Nano</h2>
-        {hardware.map((h) => (
-          <figure key={h.src} className="hardware">
-            <img src={h.src} alt={h.alt} loading="lazy" />
-            <figcaption>{h.caption}</figcaption>
-          </figure>
-        ))}
+        <HardwareFigures />
       </section>
 
       <section className="panel">
@@ -201,7 +214,6 @@ export function StaticFallback() {
             </span>
           ))}
         </p>
-        <p>{contact.resumeNote}</p>
       </section>
 
       <section className="panel closing">
