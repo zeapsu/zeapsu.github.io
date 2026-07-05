@@ -17,7 +17,15 @@ function isMobile() {
   }
 }
 
-export function Terminal({ job, equip }: { job: JobId | null; equip: (id: JobId) => void }) {
+export function Terminal({
+  job,
+  equip,
+  reset,
+}: {
+  job: JobId | null
+  equip: (id: JobId) => void
+  reset: () => void
+}) {
   const [open, setOpen] = useState(() => !isMobile())
   const [lines, setLines] = useState<CmdLine[]>(GREETING)
   const [input, setInput] = useState('')
@@ -40,6 +48,7 @@ export function Terminal({ job, equip }: { job: JobId | null; equip: (id: JobId)
     const out = runCommand(raw, {
       job,
       equip,
+      reset,
       clear: () => setLines([]),
     })
     // clear handled inside runCommand mutates via callback; if it cleared, skip echo append

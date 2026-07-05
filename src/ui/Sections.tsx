@@ -15,12 +15,18 @@ import {
 import { JOBS } from '../content/jobs'
 import { RESEARCH_TOP, CARD_BASE, CARD_STEP, CLOSING_TOP } from '../layout'
 
-export function ContactLinks() {
+type LinkKey = 'github' | 'linkedin' | 'email'
+
+// One nav, optionally filtered. Callers with no `show` get all three (the
+// plain fallback and legacy journey view); the gated panels split them so no
+// link repeats (#20): hero = github+linkedin, contact card = email.
+export function ContactLinks({ show }: { show?: LinkKey[] } = {}) {
+  const on = (k: LinkKey) => !show || show.includes(k)
   return (
     <nav className="links" aria-label="contact">
-      <a href={identity.github}>GitHub</a>
-      <a href={identity.linkedin}>LinkedIn</a>
-      <a href={`mailto:${identity.email}`}>{identity.email}</a>
+      {on('github') && <a href={identity.github}>GitHub</a>}
+      {on('linkedin') && <a href={identity.linkedin}>LinkedIn</a>}
+      {on('email') && <a href={`mailto:${identity.email}`}>{identity.email}</a>}
     </nav>
   )
 }
@@ -132,6 +138,7 @@ export function StaticFallback() {
         <p className="eyebrow">Andry Paez · AI systems + research software</p>
         <h1>{identity.tagline}</h1>
         <ContactLinks />
+        <a className="plain-link" href="./">back to the interactive site</a>
       </section>
 
       <section className="panel">

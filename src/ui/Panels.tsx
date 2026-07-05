@@ -34,15 +34,18 @@ function sortedProjects(job: JobId | null) {
   })
 }
 
-export function Panels({ job }: { job: JobId | null }) {
+export function Panels({ job, onReset }: { job: JobId | null; onReset: () => void }) {
   const equipped = JOBS.find((j) => j.id === job)
   return (
     <main className="panels" inert={job === null || undefined}>
       <section className="game-panel hero-panel">
+        <button type="button" className="select-reset" onClick={onReset}>
+          ← character select
+        </button>
         <p className="eyebrow">{equipped ? `${equipped.name} · ${equipped.subtitle}` : 'Andry Paez'}</p>
         <h1 className="hero-name">{identity.name}</h1>
         <p className="hero-tagline">{equipped ? equipped.tagline : identity.tagline}</p>
-        <ContactLinks />
+        <ContactLinks show={['github', 'linkedin']} />
       </section>
 
       {job === 'robotics' && (
@@ -152,7 +155,7 @@ export function Panels({ job }: { job: JobId | null }) {
         <p className="eyebrow">{contact.eyebrow}</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
-        <ContactLinks />
+        <ContactLinks show={['email']} />
         {job && (
           <p className="resume-download">
             <a className="resume-button" href={resumes[job]} target="_blank" rel="noopener">
