@@ -78,7 +78,7 @@ export const projects: Project[] = [
     ],
     link: 'https://github.com/zeapsu/Sage',
     image: sageShot,
-    imageAlt: 'The Sage desktop app: dashboard with sources, chat, and citations.',
+    imageAlt: 'The Sage desktop app home screen: the Tome chat prompt and skill actions (Sources, Report, Quiz, Flashcards, Audio, Chat).',
   },
   {
     name: 'daily-hub',
