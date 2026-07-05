@@ -203,7 +203,8 @@ export const achievements: Achievement[] = [
   {
     title: 'PennyLane LCU Challenge',
     detail: 'Womanium & WISER, 2025',
-    credential: '/certificates/pennylane-lcu.pdf',
+    // SVG (vector): the source PDF renders cut off in-browser.
+    credential: '/certificates/pennylane-lcu.svg',
   },
 ]
 
