@@ -8,7 +8,11 @@ import {
   contact,
   howIWork,
   footer,
+  resumes,
+  resumeDefault,
+  hardware,
 } from '../content/data'
+import { JOBS } from '../content/jobs'
 import { RESEARCH_TOP, CARD_BASE, CARD_STEP, CLOSING_TOP } from '../layout'
 
 export function ContactLinks() {
@@ -30,6 +34,11 @@ export function ProjectCard({
 }) {
   return (
     <article className={`card${featured ? ' featured' : ''}`}>
+      {p.image && (
+        <figure className="card-shot">
+          <img src={p.image} alt={p.imageAlt ?? `${p.name} screenshot`} loading="lazy" />
+        </figure>
+      )}
       <header>
         <h3>{p.link ? <a href={p.link}>{p.name}</a> : p.name}</h3>
         <span className="status">{p.status}</span>
@@ -41,6 +50,26 @@ export function ProjectCard({
         ))}
       </ul>
     </article>
+  )
+}
+
+// The Roboticist "real bench" figure. Shared so the equipped panel and the
+// ?plain=1 fallback never drift; each caller wraps it in its own <section>.
+// width/height are set so the lazy photos reserve space (no layout shift).
+export function HardwareFigures() {
+  return (
+    <>
+      <p className="eyebrow">hardware</p>
+      <h2>Reachy Mini on a Jetson Orin Nano</h2>
+      <div className="hardware-figures">
+        {hardware.map((h) => (
+          <figure key={h.src} className="hardware">
+            <img src={h.src} alt={h.alt} width={h.w} height={h.h} loading="lazy" />
+            <figcaption>{h.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </>
   )
 }
 
@@ -123,7 +152,7 @@ export function StaticFallback() {
         <ul>
           {questLog.quests.map((q) => (
             <li key={q.title}>
-              <strong>{q.period}</strong> — {q.title}: {q.detail}
+              <strong>{q.period}</strong>, {q.title}: {q.detail}
             </li>
           ))}
         </ul>
@@ -155,10 +184,22 @@ export function StaticFallback() {
         <ul>
           {achievements.map((a) => (
             <li key={a.title}>
-              <strong>{a.title}</strong> — {a.detail}
+              <strong>{a.title}</strong>: {a.detail}
+              {a.credential && (
+                <>
+                  {' '}
+                  <a href={a.credential} target="_blank" rel="noopener">
+                    view credential
+                  </a>
+                </>
+              )}
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="panel">
+        <HardwareFigures />
       </section>
 
       <section className="panel">
@@ -166,7 +207,13 @@ export function StaticFallback() {
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
         <ContactLinks />
-        <p>{contact.resumeNote}</p>
+        <p>Resumes: <a href={resumeDefault} target="_blank" rel="noopener">full CV</a>{' '}
+          {JOBS.map((j) => (
+            <span key={j.id}>
+              · <a href={resumes[j.id]} target="_blank" rel="noopener">{j.name}</a>{' '}
+            </span>
+          ))}
+        </p>
       </section>
 
       <section className="panel closing">
