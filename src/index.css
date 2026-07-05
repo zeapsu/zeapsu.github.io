@@ -651,6 +651,22 @@ li {
 
 /* hero panel: the page's h1 lives here after equip */
 .hero-panel { padding-block: 3rem; }
+/* reset-to-gate control (#19); the discoverable path back on mobile, where the
+   terminal `back`/`reset` command is hidden behind the collapsed chat bar */
+.select-reset {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.select-reset:hover { color: var(--accent); }
+.select-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 .hero-name {
   font-size: clamp(2.2rem, 5vw, 3.4rem);
   margin: 0.2rem 0 0.6rem;

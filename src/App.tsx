@@ -65,6 +65,16 @@ export default function App() {
     }
   }
 
+  // Reset out of an equipped world back to the gate (#19). Pure phase change:
+  // Panels go inert, Terminal unmounts, dataset.job clears, the world drops to
+  // its entry state. localStorage 'job' is left intact so the gate re-highlights
+  // the last-played job; clearing preview/job just gives a clean gate.
+  const reset = () => {
+    setPreview(null)
+    setJob(null)
+    setPhase('select')
+  }
+
   const stage: Stage = phase === 'start' ? 'start' : phase === 'select' ? 'select' : 'equipped'
   // the world tints toward the previewed job on the gate, and stays in the
   // equipped job's light afterwards
@@ -94,8 +104,8 @@ export default function App() {
           leaving={phase === 'equipping'}
         />
       )}
-      <Panels job={phase === 'equipped' ? job : null} />
-      {phase === 'equipped' && <Terminal job={job} equip={equip} />}
+      <Panels job={phase === 'equipped' ? job : null} onReset={reset} />
+      {phase === 'equipped' && <Terminal job={job} equip={equip} reset={reset} />}
     </>
   )
 }

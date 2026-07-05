@@ -13,6 +13,7 @@ export interface CmdLine {
 export interface CmdContext {
   job: JobId | null
   equip: (id: JobId) => void
+  reset: () => void
   clear: () => void
 }
 
@@ -23,6 +24,7 @@ const HELP: CmdLine[] = [
   { text: '  cat research.md   research summary' },
   { text: '  cat <project>     a project, by name' },
   { text: '  job <name>        switch job (physicist, ai-systems, swe, robotics)' },
+  { text: '  back / reset      return to character select' },
   { text: '  whoami            who I am' },
   { text: '  resume            how to get my resume' },
   { text: '  /selfcheck        run the live GPE solver checks' },
@@ -111,6 +113,11 @@ export function runCommand(raw: string, ctx: CmdContext): CmdLine[] {
         { text: `  choices: ${JOBS.map((j) => j.id).join(', ')}`, kind: 'dim' },
       ]
     }
+
+    case 'back':
+    case 'reset':
+      ctx.reset()
+      return [{ text: 'leaving world… back to character select.', kind: 'ok' }]
 
     case 'whoami':
       return [
