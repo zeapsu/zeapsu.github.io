@@ -48,13 +48,13 @@ export function Panels({ job }: { job: JobId | null }) {
 
       {job === 'robotics' && (
         <section className="game-panel">
-          <p className="eyebrow">the real bench</p>
-          <h2>Actual hardware, no render</h2>
+          <p className="eyebrow">hardware</p>
+          <h2>Reachy Mini on a Jetson Orin Nano</h2>
           <div className="hardware-figures">
             {hardware.map((h) => (
               <figure key={h.src} className="hardware">
                 <img src={h.src} alt={h.alt} loading="lazy" />
-                <figcaption>{h.alt}</figcaption>
+                <figcaption>{h.caption}</figcaption>
               </figure>
             ))}
           </div>
@@ -165,7 +165,7 @@ export function Panels({ job }: { job: JobId | null }) {
         {job && (
           <p className="resume-download">
             <a className="resume-button" href={resumes[job]} target="_blank" rel="noopener">
-              Download the {equipped?.name} resume
+              Download resume
             </a>
           </p>
         )}

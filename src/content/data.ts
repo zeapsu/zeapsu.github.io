@@ -199,16 +199,6 @@ export const achievements: Achievement[] = [
     detail: 'Quantum algorithms for portfolio optimization, 2025',
     credential: '/certificates/wiser-project-2025.jpg',
   },
-  {
-    title: 'WISER Module 2 — Quantum Algorithms',
-    detail: 'Solving linear PDEs on quantum computers, 2025',
-    credential: '/certificates/wiser-module2-pdes.jpg',
-  },
-  {
-    title: 'WISER Module 5 — Quantum Algorithms',
-    detail: 'Nonlinear differential equations, Carleman linearization, 2025',
-    credential: '/certificates/wiser-module5-nonlinear.jpg',
-  },
   { title: 'QBronze169 Diploma', detail: 'QWorld, 2025', credential: '/certificates/qbronze169.jpg' },
   {
     title: 'PennyLane LCU Challenge',
@@ -223,7 +213,7 @@ export const contact = {
   body: 'Open to AI systems and research software roles. The quickest way to reach me:',
   // The download resolves to the equipped job's resume (see `resumes`); this
   // line explains the job-aware behavior.
-  resumeNote: 'This resume is tuned to the equipped role — switch jobs to get a different one.',
+  resumeNote: 'The resume matches the equipped role. Switch jobs to swap it.',
 }
 
 // Job-aware resume downloads (public/resume/, opened in a new tab). One per
@@ -236,16 +226,19 @@ export const resumes: Record<JobId, string> = {
 }
 export const resumeDefault = '/resume/Andry_Paez_CV_2026.pdf'
 
-// Real hardware photos for the Roboticist "real bench" figure. Deliberately
-// real, never AI-painted (workbench honesty rule).
-export const hardware: { src: string; alt: string }[] = [
+// Real hardware photos for the Roboticist figure. Deliberately real, never
+// AI-painted (workbench honesty rule). `alt` is the full a11y description;
+// `caption` is the terse visible line.
+export const hardware: { src: string; alt: string; caption: string }[] = [
   {
     src: reachyPhoto,
-    alt: 'The real bench: a Reachy Mini Lite on its Jetson Orin Nano, an ESP32 breadboard running pixel-art firmware, LazyVim open on the monitor.',
+    alt: 'A Reachy Mini Lite on its Jetson Orin Nano, an ESP32 breadboard running pixel-art firmware, LazyVim open on the monitor.',
+    caption: 'Reachy Mini on its Jetson host, ESP32 firmware on the breadboard.',
   },
   {
     src: jetsonPhoto,
-    alt: 'The Jetson Orin Nano Developer Kit — the headless edge box that hosts the Reachy.',
+    alt: 'A Jetson Orin Nano Developer Kit, the headless edge box that hosts the Reachy.',
+    caption: 'The Jetson Orin Nano that runs it all.',
   },
 ]
 

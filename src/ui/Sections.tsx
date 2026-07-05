@@ -132,7 +132,7 @@ export function StaticFallback() {
         <ul>
           {questLog.quests.map((q) => (
             <li key={q.title}>
-              <strong>{q.period}</strong> — {q.title}: {q.detail}
+              <strong>{q.period}</strong>, {q.title}: {q.detail}
             </li>
           ))}
         </ul>
@@ -164,7 +164,7 @@ export function StaticFallback() {
         <ul>
           {achievements.map((a) => (
             <li key={a.title}>
-              <strong>{a.title}</strong> — {a.detail}
+              <strong>{a.title}</strong>: {a.detail}
               {a.credential && (
                 <>
                   {' '}
@@ -179,12 +179,12 @@ export function StaticFallback() {
       </section>
 
       <section className="panel">
-        <p className="eyebrow">the real bench</p>
-        <h2>Actual hardware, no render</h2>
+        <p className="eyebrow">hardware</p>
+        <h2>Reachy Mini on a Jetson Orin Nano</h2>
         {hardware.map((h) => (
           <figure key={h.src} className="hardware">
             <img src={h.src} alt={h.alt} loading="lazy" />
-            <figcaption>{h.alt}</figcaption>
+            <figcaption>{h.caption}</figcaption>
           </figure>
         ))}
       </section>
