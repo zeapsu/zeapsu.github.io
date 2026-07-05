@@ -1,6 +1,11 @@
 // All site copy lives here so it can be audited line-by-line against
 // ~/Documents/personal/experience.md. Do not add claims that are not in that file.
 import type { JobId } from './jobs'
+import sageShot from '../assets/screenshots/sage.jpg'
+import kalshiShot from '../assets/screenshots/kalshi.jpg'
+import reachyConsoleShot from '../assets/screenshots/reachy-console.jpg'
+import reachyPhoto from '../assets/hardware/reachy.jpg'
+import jetsonPhoto from '../assets/hardware/jetson.jpg'
 
 export const identity = {
   name: 'Andry Paez',
@@ -33,6 +38,10 @@ export interface Project {
   blurb: string
   facts: string[]
   link?: string
+  // A real UI screenshot of the shipped project (private projects show their
+  // UI only; the "ask me about it" caveat stays in `status`).
+  image?: string
+  imageAlt?: string
 }
 
 export const projects: Project[] = [
@@ -45,6 +54,8 @@ export const projects: Project[] = [
       'Voice pipeline: mic to faster-whisper to LLM to TTS, with live camera frames for visual questions; 286 tests',
       'Real hardware debugging: built webrtcsink from source for arm64, root-caused speaker silence to ALSA card remapping after an OS migration',
     ],
+    image: reachyConsoleShot,
+    imageAlt: 'The reachy-console web UI: live camera feed and robot controls.',
   },
   {
     name: 'Kalshi weather markets',
@@ -54,6 +65,8 @@ export const projects: Project[] = [
       'NWS and commercial forecast ingestion, a Gaussian edge model, and stacked LSTM temperature models in PyTorch with per-city artifacts',
       'A 1,336-line trading engine with bracket parsing and ASOS rounding compensation, plus a Streamlit dashboard',
     ],
+    image: kalshiShot,
+    imageAlt: 'The Kalshi weather-markets dashboard: market overview.',
   },
   {
     name: 'Sage',
@@ -64,6 +77,8 @@ export const projects: Project[] = [
       '130 commits over 15 months, then a documented strategic pause with written market rationale. The kill decision is in the repo.',
     ],
     link: 'https://github.com/zeapsu/Sage',
+    image: sageShot,
+    imageAlt: 'The Sage desktop app: dashboard with sources, chat, and citations.',
   },
   {
     name: 'daily-hub',
@@ -167,23 +182,72 @@ export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
 
 // Achievements: understated trophy grid. Degrees/honors from the education
 // section, certificates from the certificates section of experience.md.
-export const achievements = [
+// `credential` links the actual scan (public/certificates/) for the ones that
+// have a real document behind them; the trophy becomes clickable when set.
+export interface Achievement {
+  title: string
+  detail: string
+  credential?: string
+}
+
+export const achievements: Achievement[] = [
   { title: 'Dean’s Scholar', detail: 'SJSU, Fall 2024 and Fall 2025' },
   { title: 'Four degrees with honors', detail: 'MJC: CS, Mathematics, Physics, Language & Rationality' },
   { title: 'President’s List × 5', detail: 'Modesto Junior College' },
-  { title: '2025 Quantum Program', detail: 'WISER — quantum algorithms for portfolio optimization' },
-  { title: 'QBronze169 Diploma', detail: 'QWorld, 2025' },
-  { title: 'PennyLane LCU Challenge', detail: 'Womanium & WISER, 2025' },
+  {
+    title: '2025 Quantum Program, WISER',
+    detail: 'Quantum algorithms for portfolio optimization, 2025',
+    credential: '/certificates/wiser-project-2025.jpg',
+  },
+  {
+    title: 'WISER Module 2 — Quantum Algorithms',
+    detail: 'Solving linear PDEs on quantum computers, 2025',
+    credential: '/certificates/wiser-module2-pdes.jpg',
+  },
+  {
+    title: 'WISER Module 5 — Quantum Algorithms',
+    detail: 'Nonlinear differential equations, Carleman linearization, 2025',
+    credential: '/certificates/wiser-module5-nonlinear.jpg',
+  },
+  { title: 'QBronze169 Diploma', detail: 'QWorld, 2025', credential: '/certificates/qbronze169.jpg' },
+  {
+    title: 'PennyLane LCU Challenge',
+    detail: 'Womanium & WISER, 2025',
+    credential: '/certificates/pennylane-lcu.pdf',
+  },
 ]
 
 export const contact = {
   eyebrow: 'contact',
   title: 'Party invite',
   body: 'Open to AI systems and research software roles. The quickest way to reach me:',
-  // Andry cleared publishable contact info 2026-07-04; wiring the job-aware
-  // resume PDFs is its own task (#24). Until they ship, the panel points at email.
-  resumeNote: 'Job-specific resumes are on the way. Email me and I will send the right one.',
+  // The download resolves to the equipped job's resume (see `resumes`); this
+  // line explains the job-aware behavior.
+  resumeNote: 'This resume is tuned to the equipped role — switch jobs to get a different one.',
 }
+
+// Job-aware resume downloads (public/resume/, opened in a new tab). One per
+// job; the full CV is the default for the no-job plain-text path.
+export const resumes: Record<JobId, string> = {
+  physicist: '/resume/Andry_Paez_CV_2026.pdf',
+  'ai-systems': '/resume/Andry_Paez_ai_systems.pdf',
+  swe: '/resume/Andry_Paez_research_swe.pdf',
+  robotics: '/resume/Andry_Paez_robotics.pdf',
+}
+export const resumeDefault = '/resume/Andry_Paez_CV_2026.pdf'
+
+// Real hardware photos for the Roboticist "real bench" figure. Deliberately
+// real, never AI-painted (workbench honesty rule).
+export const hardware: { src: string; alt: string }[] = [
+  {
+    src: reachyPhoto,
+    alt: 'The real bench: a Reachy Mini Lite on its Jetson Orin Nano, an ESP32 breadboard running pixel-art firmware, LazyVim open on the monitor.',
+  },
+  {
+    src: jetsonPhoto,
+    alt: 'The Jetson Orin Nano Developer Kit — the headless edge box that hosts the Reachy.',
+  },
+]
 
 export const howIWork = {
   eyebrow: 'how I work',

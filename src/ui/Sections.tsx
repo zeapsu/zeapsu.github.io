@@ -8,7 +8,11 @@ import {
   contact,
   howIWork,
   footer,
+  resumes,
+  resumeDefault,
+  hardware,
 } from '../content/data'
+import { JOBS } from '../content/jobs'
 import { RESEARCH_TOP, CARD_BASE, CARD_STEP, CLOSING_TOP } from '../layout'
 
 export function ContactLinks() {
@@ -30,6 +34,11 @@ export function ProjectCard({
 }) {
   return (
     <article className={`card${featured ? ' featured' : ''}`}>
+      {p.image && (
+        <figure className="card-shot">
+          <img src={p.image} alt={p.imageAlt ?? `${p.name} screenshot`} loading="lazy" />
+        </figure>
+      )}
       <header>
         <h3>{p.link ? <a href={p.link}>{p.name}</a> : p.name}</h3>
         <span className="status">{p.status}</span>
@@ -156,9 +165,28 @@ export function StaticFallback() {
           {achievements.map((a) => (
             <li key={a.title}>
               <strong>{a.title}</strong> — {a.detail}
+              {a.credential && (
+                <>
+                  {' '}
+                  <a href={a.credential} target="_blank" rel="noopener">
+                    view credential
+                  </a>
+                </>
+              )}
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="panel">
+        <p className="eyebrow">the real bench</p>
+        <h2>Actual hardware, no render</h2>
+        {hardware.map((h) => (
+          <figure key={h.src} className="hardware">
+            <img src={h.src} alt={h.alt} loading="lazy" />
+            <figcaption>{h.alt}</figcaption>
+          </figure>
+        ))}
       </section>
 
       <section className="panel">
@@ -166,6 +194,13 @@ export function StaticFallback() {
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
         <ContactLinks />
+        <p>Resumes: <a href={resumeDefault} target="_blank" rel="noopener">full CV</a>{' '}
+          {JOBS.map((j) => (
+            <span key={j.id}>
+              · <a href={resumes[j.id]} target="_blank" rel="noopener">{j.name}</a>{' '}
+            </span>
+          ))}
+        </p>
         <p>{contact.resumeNote}</p>
       </section>
 

@@ -8,6 +8,8 @@ import {
   achievements,
   contact,
   howIWork,
+  resumes,
+  hardware,
 } from '../content/data'
 import { ContactLinks, ProjectCard } from './Sections'
 
@@ -43,6 +45,21 @@ export function Panels({ job }: { job: JobId | null }) {
         <p className="hero-tagline">{equipped ? equipped.tagline : identity.tagline}</p>
         <ContactLinks />
       </section>
+
+      {job === 'robotics' && (
+        <section className="game-panel">
+          <p className="eyebrow">the real bench</p>
+          <h2>Actual hardware, no render</h2>
+          <div className="hardware-figures">
+            {hardware.map((h) => (
+              <figure key={h.src} className="hardware">
+                <img src={h.src} alt={h.alt} loading="lazy" />
+                <figcaption>{h.alt}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="game-panel">
         <p className="eyebrow">{research.eyebrow}</p>
@@ -113,12 +130,30 @@ export function Panels({ job }: { job: JobId | null }) {
         <p className="eyebrow">achievements</p>
         <h2>Records</h2>
         <div className="trophy-grid">
-          {achievements.map((a) => (
-            <div key={a.title} className="trophy">
-              <span className="trophy-title">{a.title}</span>
-              <span className="trophy-detail">{a.detail}</span>
-            </div>
-          ))}
+          {achievements.map((a) => {
+            const inner = (
+              <>
+                <span className="trophy-title">{a.title}</span>
+                <span className="trophy-detail">{a.detail}</span>
+              </>
+            )
+            return a.credential ? (
+              <a
+                key={a.title}
+                className="trophy trophy-link"
+                href={a.credential}
+                target="_blank"
+                rel="noopener"
+              >
+                {inner}
+                <span className="trophy-view" aria-hidden="true">view credential</span>
+              </a>
+            ) : (
+              <div key={a.title} className="trophy">
+                {inner}
+              </div>
+            )
+          })}
         </div>
       </section>
 
@@ -127,6 +162,13 @@ export function Panels({ job }: { job: JobId | null }) {
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
         <ContactLinks />
+        {job && (
+          <p className="resume-download">
+            <a className="resume-button" href={resumes[job]} target="_blank" rel="noopener">
+              Download the {equipped?.name} resume
+            </a>
+          </p>
+        )}
         <p className="resume-note">{contact.resumeNote}</p>
       </section>
 
