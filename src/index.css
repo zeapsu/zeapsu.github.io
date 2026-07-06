@@ -514,12 +514,13 @@ li {
 .dive-boot-line {
   opacity: 0;
   transform: translateX(-6px);
+  /* per-line reveal time comes from an inline animation-delay */
   animation: dive-boot-line 0.32s ease forwards;
-  animation-delay: calc(var(--i) * 0.16s);
 }
 @keyframes dive-boot-line {
   to { opacity: 1; transform: translateX(0); }
 }
+.dive.title .dive-boot,
 .dive.warp .dive-boot {
   opacity: 0;
 }
@@ -540,7 +541,8 @@ li {
   text-shadow: 0 0 10px rgba(60, 240, 130, 0.55);
   opacity: 0;
   pointer-events: none;
-  animation: dive-title-in 0.4s ease 0.95s forwards;
+  /* reveal time (as the closing terminal line) comes from an inline delay */
+  animation: dive-title-in 0.4s ease forwards;
   transition: font-size 0.55s cubic-bezier(0.16, 1, 0.3, 1),
     letter-spacing 0.55s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease,
     text-shadow 0.5s ease;
@@ -548,6 +550,7 @@ li {
 @keyframes dive-title-in {
   to { opacity: 1; }
 }
+.dive.title .dive-title,
 .dive.warp .dive-title {
   font-size: clamp(1.1rem, 4vw, 2.1rem);
   letter-spacing: 0.5em;
@@ -565,7 +568,7 @@ li {
   pointer-events: none;
 }
 .dive.warp .dive-flash {
-  animation: dive-flash 1.7s ease-in forwards;
+  animation: dive-flash 2s ease-in forwards;
 }
 @keyframes dive-flash {
   0%, 78% { opacity: 0; }
