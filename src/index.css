@@ -568,7 +568,7 @@ li {
   pointer-events: none;
 }
 .dive.warp .dive-flash {
-  animation: dive-flash 2s ease-in forwards;
+  animation: dive-flash 3s ease-in forwards;
 }
 @keyframes dive-flash {
   0%, 78% { opacity: 0; }

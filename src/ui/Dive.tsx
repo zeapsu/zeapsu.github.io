@@ -15,8 +15,8 @@ import { mulberry32 } from '../sim/gpe'
 // played under reduced-motion or no-WebGL (App bypasses straight to select).
 
 const BOOT_MS = 3200 // terminal boots + runs the link script
-const TITLE_MS = 2000 // "LINK START" lingers, centered, before the stream
-const WARP_MS = 2000 // tunnel emanates from the distance and accelerates past
+const TITLE_MS = 1000 // "LINK START" lingers, centered, before the stream
+const WARP_MS = 3000 // tunnel emanates from the distance and accelerates past
 const WARP_S = WARP_MS / 1000
 const TITLE_IN_S = 2.9 // when the "link start" line lands as terminal output
 
@@ -60,8 +60,8 @@ function Tunnel() {
     const col = new THREE.Color()
     for (let i = 0; i < STREAKS; i++) {
       ang[i] = rand() * Math.PI * 2
-      rad[i] = 0.5 + rand() * rand() * 7 // bias toward the core, a few wide streaks
-      z[i] = -DEPTH * (0.7 + 0.3 * rand()) // start bunched in the far 30%
+      rad[i] = 0.4 + rand() * rand() * 6.5 // bias toward the core, a few wide streaks
+      z[i] = -DEPTH * (0.8 + 0.2 * rand()) // start bunched in the far 20%
       spd[i] = 0.7 + rand() * 0.6
       // saturated + mid lightness so the hue survives additive blending; the
       // dense core still stacks to a hot white light at the tunnel's end
@@ -89,7 +89,10 @@ function Tunnel() {
     t.current += d
     const p = Math.min(t.current / WARP_S, 1)
     const accel = 5 + 130 * p * p // ease-in: emanate slowly, then warp
-    const rScale = 0.3 + 0.7 * Math.min(t.current / 0.8, 1) // contained, then spreads
+    // start as a tight point at centre and hold contained, then spread: an
+    // ease-in radial scale keeps the stream narrow for the first ~1s
+    const q = Math.min(t.current / 1.7, 1)
+    const rScale = 0.08 + 0.92 * q * q
     const { positions, z, ang, rad, spd } = state
     for (let i = 0; i < STREAKS; i++) {
       z[i] += spd[i] * accel * d
