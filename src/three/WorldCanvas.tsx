@@ -11,6 +11,7 @@ import { FrozenDeep } from './worlds/FrozenDeep'
 import { Sanctum } from './worlds/Sanctum'
 import { DevRoom } from './worlds/DevRoom'
 import { Workbench } from './worlds/Workbench'
+import { VistaWorld } from './worlds/VistaWorld'
 import { bloomOk, composerSamples, maxDpr } from './quality'
 import { JOBS, type JobId } from '../content/jobs'
 
@@ -34,7 +35,9 @@ interface Framing {
 // gate framings ride on the entry world (frozen deep)
 const GATE_FRAMINGS: Record<'start' | 'select', Framing> = {
   start: { pos: new THREE.Vector3(4.5, 2.0, 25), look: new THREE.Vector3(-3, 7.5, -22) },
-  select: { pos: new THREE.Vector3(0, 3.6, 22), look: new THREE.Vector3(0, 4.4, -18) },
+  // across-the-valley view matching the Blender vista camera: low, looking down
+  // the river to the arch with the mountains on the horizon
+  select: { pos: new THREE.Vector3(0, 7.5, 24), look: new THREE.Vector3(0, -1.5, -30) },
 }
 
 // each world's equipped framing (panels scroll over it)
@@ -95,8 +98,9 @@ function World({
   if (world === 'ai-systems') return <Sanctum frozen={reduced} up={up} down={down} />
   if (world === 'swe') return <DevRoom frozen={reduced} up={up} down={down} />
   if (world === 'robotics') return <Workbench frozen={reduced} up={up} down={down} />
-  // null (start/select) and physicist both get the frozen deep
-  return <FrozenDeep frozen={reduced} up={up} down={down} />
+  if (world === 'physicist') return <FrozenDeep frozen={reduced} up={up} down={down} />
+  // null (start/select): the neutral character-select vista
+  return <VistaWorld frozen={reduced} up={up} down={down} />
 }
 
 export function WorldCanvas({
@@ -116,8 +120,9 @@ export function WorldCanvas({
   return (
     <div className="world-canvas" aria-hidden="true">
       <Canvas
+        shadows
         dpr={[1, maxDpr()]}
-        camera={{ fov: 50, near: 0.1, far: 160, position: [0, 1.8, 27] }}
+        camera={{ fov: 50, near: 0.1, far: 600, position: [0, 1.8, 27] }}
         frameloop={reduced ? 'demand' : 'always'}
         gl={{ alpha: true }}
       >
