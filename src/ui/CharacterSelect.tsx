@@ -21,12 +21,15 @@ export function CharacterSelect({
   preview,
   onPreview,
   leaving = false,
+  flash = false,
 }: {
   onEquip: (id: JobId) => void
   remembered: JobId | null
   preview: JobId | null
   onPreview: (id: JobId | null) => void
   leaving?: boolean
+  /** arriving from the dive: emerge from a closing white-out */
+  flash?: boolean
 }) {
   // Hover/focus previews a job: portrait crossfades, chrome AND world re-light.
   // The initial programmatic autofocus is ignored so the base portrait gets
@@ -104,6 +107,7 @@ export function CharacterSelect({
           <span className="live-dot" aria-hidden="true" /> {identity.auroraCaption}
         </p>
       </div>
+      {flash && <div className="select-whiteout" aria-hidden="true" />}
     </div>
   )
 }

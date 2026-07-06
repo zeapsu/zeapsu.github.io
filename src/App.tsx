@@ -36,6 +36,10 @@ export default function App() {
   const [phase, setPhase] = useState<Phase>('start')
   const [job, setJob] = useState<JobId | null>(null)
   const [preview, setPreview] = useState<JobId | null>(null)
+  // true only when the gate is arrived at through the dive: the select screen
+  // then emerges from the dive's closing white-out (a clean dissolve, not a
+  // dark cut). Cleared on reset so returning to the gate has no white-out.
+  const [spawnFlash, setSpawnFlash] = useState(false)
   const equipTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const equipped = phase === 'equipping' || phase === 'equipped' ? job : null
 
@@ -73,6 +77,7 @@ export default function App() {
   const reset = () => {
     setPreview(null)
     setJob(null)
+    setSpawnFlash(false)
     setPhase('select')
   }
 
@@ -105,7 +110,14 @@ export default function App() {
         <WorldCanvas stage={stage} job={equipped} tintJob={tintJob} reduced={reducedMotion} />
       )}
       {phase === 'start' && <StartScreen onAdvance={beginDive} />}
-      {phase === 'dive' && <Dive onComplete={() => setPhase('select')} />}
+      {phase === 'dive' && (
+        <Dive
+          onComplete={() => {
+            setSpawnFlash(true)
+            setPhase('select')
+          }}
+        />
+      )}
       {(phase === 'select' || phase === 'equipping') && (
         <CharacterSelect
           onEquip={equip}
@@ -113,6 +125,7 @@ export default function App() {
           preview={preview}
           onPreview={setPreview}
           leaving={phase === 'equipping'}
+          flash={spawnFlash}
         />
       )}
       <Panels job={phase === 'equipped' ? job : null} onReset={reset} />

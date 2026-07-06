@@ -559,7 +559,10 @@ li {
   text-shadow: 0 0 18px rgba(180, 200, 255, 0.9), 0 0 46px rgba(120, 150, 255, 0.6);
 }
 
-/* the senses-online bloom: a white flash near the end that clears into the gate */
+/* the closing white-out: the tunnel blows out to full white by the end of the
+   warp and holds. The select screen then fades in from its own white overlay
+   (.select-whiteout), so the white carries across the dive->gate boundary as a
+   clean dissolve rather than a flashbang. */
 .dive-flash {
   position: absolute;
   inset: 0;
@@ -571,9 +574,22 @@ li {
   animation: dive-flash 3s ease-in forwards;
 }
 @keyframes dive-flash {
-  0%, 78% { opacity: 0; }
-  94% { opacity: 0.82; }
-  100% { opacity: 0; }
+  0%, 62% { opacity: 0; }
+  100% { opacity: 1; }
+}
+/* the gate emerging from the dive's closing white-out */
+.select-whiteout {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: #fff;
+  pointer-events: none;
+  /* the light-stream-end -> gate dissolve, kept at/under a 3s cap */
+  animation: select-whiteout 2.5s ease-out forwards;
+}
+@keyframes select-whiteout {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 /* ---- select screen ----------------------------------------------------- */
