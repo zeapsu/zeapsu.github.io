@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { mulberry32 } from '../sim/gpe'
@@ -121,24 +121,34 @@ function Tunnel() {
   )
 }
 
-export function Dive({ onComplete }: { onComplete: () => void }) {
+// onComplete's `whiteOut` is true only when the dive ran to its natural end,
+// where the tunnel has blown out to full white and the gate should dissolve out
+// of that white. A skip (click/key) at any earlier beat passes false, so the
+// gate cuts in cleanly instead of flashing dark -> white.
+export function Dive({ onComplete }: { onComplete: (whiteOut: boolean) => void }) {
   const [stage, setStage] = useState<'boot' | 'title' | 'warp'>('boot')
   const done = useRef(false)
-  useEffect(() => {
-    const finish = () => {
+  const finish = useCallback(
+    (whiteOut: boolean) => {
       if (done.current) return
       done.current = true
-      onComplete()
-    }
+      onComplete(whiteOut)
+    },
+    [onComplete]
+  )
+  useEffect(() => {
     const toTitle = setTimeout(() => setStage('title'), BOOT_MS)
     const toWarp = setTimeout(() => setStage('warp'), BOOT_MS + TITLE_MS)
-    const end = setTimeout(finish, BOOT_MS + TITLE_MS + WARP_MS)
+    const end = setTimeout(() => finish(true), BOOT_MS + TITLE_MS + WARP_MS)
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Tab' || e.altKey || e.ctrlKey || e.metaKey) return
-      // stop Enter's default from leaking into the job card that autofocuses
-      // on the select screen and instantly equipping it (same guard as start)
-      e.preventDefault()
-      finish()
+      // a bare modifier press is not a skip (matches StartScreen)
+      if (e.key === 'Shift' || e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta') return
+      // only swallow the keys that would otherwise leak their default into the
+      // job card that autofocuses on the select screen (Enter/Space activate
+      // it); other keys still skip but keep their browser default (e.g. F5)
+      if (e.key === 'Enter' || e.key === ' ') e.preventDefault()
+      finish(false)
     }
     window.addEventListener('keydown', onKey)
     return () => {
@@ -147,14 +157,13 @@ export function Dive({ onComplete }: { onComplete: () => void }) {
       clearTimeout(end)
       window.removeEventListener('keydown', onKey)
     }
-  }, [onComplete])
+  }, [finish])
 
   return (
-    <div
-      className={`dive ${stage}`}
-      onClick={() => onComplete()}
-      onTouchStart={() => onComplete()}
-    >
+    // click-to-skip only (no onTouchStart): a tap already produces a click, and
+    // routing the skip through click keeps the event targeted at the dive so it
+    // cannot ghost-click into the select screen that mounts under the finger
+    <div className={`dive ${stage}`} onClick={() => finish(false)}>
       {stage === 'warp' && (
         <Canvas
           camera={{ fov: 80, near: 0.05, far: 120, position: [0, 0, 0] }}

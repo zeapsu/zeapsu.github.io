@@ -112,8 +112,10 @@ export default function App() {
       {phase === 'start' && <StartScreen onAdvance={beginDive} />}
       {phase === 'dive' && (
         <Dive
-          onComplete={() => {
-            setSpawnFlash(true)
+          onComplete={(whiteOut) => {
+            // only dissolve the gate out of white when the dive actually ended
+            // in white; a skip cuts in cleanly (no dark->white flashbang)
+            setSpawnFlash(whiteOut)
             setPhase('select')
           }}
         />

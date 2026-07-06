@@ -705,9 +705,12 @@ li {
    then the character and roster form. Motion only; reduced-motion shows the
    fully-formed gate with no entrance. */
 @media (prefers-reduced-motion: no-preference) {
+  /* `backwards` fill (not forwards): the from-frame hides each element during
+     its delay, but once the entrance ends the element reverts to its resting
+     styles -- so the animation does not keep holding transform: translateY(0)
+     and clobber the job-card :hover/:focus lift. */
   .select-stage > * {
-    opacity: 0;
-    animation: spawn-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: spawn-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   }
   .select-stage .eyebrow { animation-delay: 0.1s; }
   .select-stage .nameplate { animation-delay: 0.25s; animation-duration: 0.8s; }
@@ -717,20 +720,22 @@ li {
   .select-stage .plain-link { animation-delay: 1.15s; }
   .select-stage .aurora-caption { animation-delay: 1.15s; }
   /* the roster container itself does not fade; its cards stagger in (below) */
-  .select-stage .job-cards { opacity: 1; animation: none; }
+  .select-stage .job-cards { animation: none; }
   /* the four cards stagger in as the roster forms */
   .job-cards .job-card {
-    opacity: 0;
-    animation: spawn-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: spawn-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   }
   .job-cards .job-card:nth-child(1) { animation-delay: 0.95s; }
   .job-cards .job-card:nth-child(2) { animation-delay: 1.07s; }
   .job-cards .job-card:nth-child(3) { animation-delay: 1.19s; }
   .job-cards .job-card:nth-child(4) { animation-delay: 1.31s; }
-  /* the leaving gate must not be held invisible by the entrance rules */
+  /* the autofocused card must show its focus ring immediately, not after its
+     stagger delay -- reveal the focused card without waiting */
+  .job-cards .job-card:focus,
+  .job-cards .job-card:focus-visible { animation-delay: 0s; }
+  /* the leaving gate must not be mid-entrance when it fades out */
   .select-screen.equip-out .select-stage > *,
   .select-screen.equip-out .job-cards .job-card {
-    opacity: 1;
     animation: none;
   }
 }
