@@ -477,9 +477,11 @@ li {
 }
 
 /* ---- dive (SAO "Link Start") -------------------------------------------- */
-/* A transient full-screen beat over its own R3F canvas: the rainbow tunnel is
-   drawn in WebGL; the title and the closing sense-online flash are DOM on top.
-   Never mounts under reduced-motion or no-WebGL (App bypasses to the gate). */
+/* Two beats. Boot: a hacker-green log types out; its final line, "link start",
+   is the title element sitting just under the log. Warp: the log fades, the
+   title blooms to centre, and a rainbow tunnel (its own R3F canvas) emanates
+   from the distance and rushes past, ending in a sense-online flash. Never
+   mounts under reduced-motion or no-WebGL (App bypasses to the gate). */
 .dive {
   position: fixed;
   inset: 0;
@@ -490,6 +492,40 @@ li {
 .dive canvas {
   display: block;
 }
+
+/* boot log: green terminal rows stacked just above centre, revealed in sequence */
+.dive-boot {
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% + 1.6rem);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: min(90vw, 32rem);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: left;
+  color: #57e39a;
+  text-shadow: 0 0 8px rgba(60, 240, 130, 0.4);
+  transition: opacity 0.4s ease;
+}
+.dive-boot-line {
+  opacity: 0;
+  transform: translateX(-6px);
+  animation: dive-boot-line 0.32s ease forwards;
+  animation-delay: calc(var(--i) * 0.16s);
+}
+@keyframes dive-boot-line {
+  to { opacity: 1; transform: translateX(0); }
+}
+.dive.warp .dive-boot {
+  opacity: 0;
+}
+
+/* the closing "link start" line: a green terminal row during boot that morphs
+   into the centered hero title on warp */
 .dive-title {
   position: absolute;
   left: 50%;
@@ -497,20 +533,29 @@ li {
   transform: translate(-50%, -50%);
   margin: 0;
   font-family: "IBM Plex Mono", monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-transform: none;
+  color: #63f5a6;
+  text-shadow: 0 0 10px rgba(60, 240, 130, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  animation: dive-title-in 0.4s ease 0.95s forwards;
+  transition: font-size 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    letter-spacing 0.55s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease,
+    text-shadow 0.5s ease;
+}
+@keyframes dive-title-in {
+  to { opacity: 1; }
+}
+.dive.warp .dive-title {
   font-size: clamp(1.1rem, 4vw, 2.1rem);
   letter-spacing: 0.5em;
   text-transform: uppercase;
   color: #fff;
   text-shadow: 0 0 18px rgba(180, 200, 255, 0.9), 0 0 46px rgba(120, 150, 255, 0.6);
-  pointer-events: none;
-  animation: dive-title 2.8s ease-in forwards;
 }
-@keyframes dive-title {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.94); letter-spacing: 0.5em; }
-  14% { opacity: 1; }
-  55% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); letter-spacing: 0.95em; }
-}
+
 /* the senses-online bloom: a white flash near the end that clears into the gate */
 .dive-flash {
   position: absolute;
@@ -518,11 +563,13 @@ li {
   background: #fff;
   opacity: 0;
   pointer-events: none;
-  animation: dive-flash 2.8s ease-in forwards;
+}
+.dive.warp .dive-flash {
+  animation: dive-flash 1.7s ease-in forwards;
 }
 @keyframes dive-flash {
-  0%, 82% { opacity: 0; }
-  95% { opacity: 0.82; }
+  0%, 78% { opacity: 0; }
+  94% { opacity: 0.82; }
   100% { opacity: 0; }
 }
 
