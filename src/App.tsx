@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { StartScreen } from './ui/StartScreen'
+import { Dive } from './ui/Dive'
 import { CharacterSelect } from './ui/CharacterSelect'
 import { Panels } from './ui/Panels'
 import { Terminal } from './ui/Terminal'
@@ -29,12 +30,16 @@ const reducedMotion =
 
 const webgl = typeof document !== 'undefined' && webglOk()
 
-type Phase = 'start' | 'select' | 'equipping' | 'equipped'
+type Phase = 'start' | 'dive' | 'select' | 'equipping' | 'equipped'
 
 export default function App() {
   const [phase, setPhase] = useState<Phase>('start')
   const [job, setJob] = useState<JobId | null>(null)
   const [preview, setPreview] = useState<JobId | null>(null)
+  // true only when the gate is arrived at through the dive: the select screen
+  // then emerges from the dive's closing white-out (a clean dissolve, not a
+  // dark cut). Cleared on reset so returning to the gate has no white-out.
+  const [spawnFlash, setSpawnFlash] = useState(false)
   const equipTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const equipped = phase === 'equipping' || phase === 'equipped' ? job : null
 
@@ -72,10 +77,16 @@ export default function App() {
   const reset = () => {
     setPreview(null)
     setJob(null)
+    setSpawnFlash(false)
     setPhase('select')
   }
 
-  const stage: Stage = phase === 'start' ? 'start' : phase === 'select' ? 'select' : 'equipped'
+  // Leaving the black start screen: play the dive when it can be seen (motion
+  // allowed and WebGL present), otherwise go straight to the gate. The dive is
+  // an R3F effect, so a no-WebGL visitor could not run it anyway.
+  const beginDive = () => setPhase(reducedMotion || !webgl ? 'select' : 'dive')
+
+  const stage: Stage = phase === 'select' ? 'select' : 'equipped'
   // the world tints toward the previewed job on the gate, and stays in the
   // equipped job's light afterwards
   const tintJob = phase === 'select' ? preview : equipped
@@ -86,7 +97,11 @@ export default function App() {
   // for a job it does not belong to would be decorative cosplay, which the
   // metaphor rule forbids. Gating the whole canvas -- not the world inside it
   // -- also avoids the R3F freeze from unmounting EffectComposer mid-Canvas.
-  const showWorld = equipped === null || WORLDS_BUILT.includes(equipped)
+  const worldBuilt = equipped === null || WORLDS_BUILT.includes(equipped)
+  // The start screen is a near-black threshold and the dive owns the full
+  // screen with its own transient canvas, so the persistent world stays
+  // unmounted until the gate (this is the #22 black first frame).
+  const showWorld = worldBuilt && phase !== 'start' && phase !== 'dive'
 
   return (
     <>
@@ -94,7 +109,17 @@ export default function App() {
       {webgl && showWorld && (
         <WorldCanvas stage={stage} job={equipped} tintJob={tintJob} reduced={reducedMotion} />
       )}
-      {phase === 'start' && <StartScreen onAdvance={() => setPhase('select')} />}
+      {phase === 'start' && <StartScreen onAdvance={beginDive} />}
+      {phase === 'dive' && (
+        <Dive
+          onComplete={(whiteOut) => {
+            // only dissolve the gate out of white when the dive actually ended
+            // in white; a skip cuts in cleanly (no dark->white flashbang)
+            setSpawnFlash(whiteOut)
+            setPhase('select')
+          }}
+        />
+      )}
       {(phase === 'select' || phase === 'equipping') && (
         <CharacterSelect
           onEquip={equip}
@@ -102,6 +127,7 @@ export default function App() {
           preview={preview}
           onPreview={setPreview}
           leaving={phase === 'equipping'}
+          flash={spawnFlash}
         />
       )}
       <Panels job={phase === 'equipped' ? job : null} onReset={reset} />

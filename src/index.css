@@ -476,6 +476,122 @@ li {
   }
 }
 
+/* ---- dive (SAO "Link Start") -------------------------------------------- */
+/* Two beats. Boot: a hacker-green log types out; its final line, "link start",
+   is the title element sitting just under the log. Warp: the log fades, the
+   title blooms to centre, and a rainbow tunnel (its own R3F canvas) emanates
+   from the distance and rushes past, ending in a sense-online flash. Never
+   mounts under reduced-motion or no-WebGL (App bypasses to the gate). */
+.dive {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #01010a;
+  cursor: pointer;
+}
+.dive canvas {
+  display: block;
+}
+
+/* boot log: green terminal rows stacked just above centre, revealed in sequence */
+.dive-boot {
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% + 1.6rem);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: min(90vw, 32rem);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: left;
+  color: #57e39a;
+  text-shadow: 0 0 8px rgba(60, 240, 130, 0.4);
+  transition: opacity 0.4s ease;
+}
+.dive-boot-line {
+  opacity: 0;
+  transform: translateX(-6px);
+  /* per-line reveal time comes from an inline animation-delay */
+  animation: dive-boot-line 0.32s ease forwards;
+}
+@keyframes dive-boot-line {
+  to { opacity: 1; transform: translateX(0); }
+}
+.dive.title .dive-boot,
+.dive.warp .dive-boot {
+  opacity: 0;
+}
+
+/* the closing "link start" line: a green terminal row during boot that morphs
+   into the centered hero title on warp */
+.dive-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-transform: none;
+  color: #63f5a6;
+  text-shadow: 0 0 10px rgba(60, 240, 130, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  /* reveal time (as the closing terminal line) comes from an inline delay */
+  animation: dive-title-in 0.4s ease forwards;
+  transition: font-size 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    letter-spacing 0.55s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease,
+    text-shadow 0.5s ease;
+}
+@keyframes dive-title-in {
+  to { opacity: 1; }
+}
+.dive.title .dive-title,
+.dive.warp .dive-title {
+  font-size: clamp(1.1rem, 4vw, 2.1rem);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 18px rgba(180, 200, 255, 0.9), 0 0 46px rgba(120, 150, 255, 0.6);
+}
+
+/* the closing white-out: the tunnel blows out to full white by the end of the
+   warp and holds. The select screen then fades in from its own white overlay
+   (.select-whiteout), so the white carries across the dive->gate boundary as a
+   clean dissolve rather than a flashbang. */
+.dive-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+.dive.warp .dive-flash {
+  animation: dive-flash 3s ease-in forwards;
+}
+@keyframes dive-flash {
+  0%, 62% { opacity: 0; }
+  100% { opacity: 1; }
+}
+/* the gate emerging from the dive's closing white-out */
+.select-whiteout {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: #fff;
+  pointer-events: none;
+  /* the light-stream-end -> gate dissolve, kept at/under a 3s cap */
+  animation: select-whiteout 2.5s ease-out forwards;
+}
+@keyframes select-whiteout {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 /* ---- select screen ----------------------------------------------------- */
 /* Transparent over the live world; a bottom-weighted scrim keeps the job
    cards readable. The no-WebGL path still shows the themed gradient via
@@ -583,6 +699,50 @@ li {
   backdrop-filter: blur(6px);
 }
 .aurora-caption .live-dot { background: var(--accent); }
+
+/* ---- spawn choreography ------------------------------------------------- */
+/* Arriving at the gate (from the dive, or on reset): the name resolves first,
+   then the character and roster form. Motion only; reduced-motion shows the
+   fully-formed gate with no entrance. */
+@media (prefers-reduced-motion: no-preference) {
+  /* `backwards` fill (not forwards): the from-frame hides each element during
+     its delay, but once the entrance ends the element reverts to its resting
+     styles -- so the animation does not keep holding transform: translateY(0)
+     and clobber the job-card :hover/:focus lift. */
+  .select-stage > * {
+    animation: spawn-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  .select-stage .eyebrow { animation-delay: 0.1s; }
+  .select-stage .nameplate { animation-delay: 0.25s; animation-duration: 0.8s; }
+  .select-stage .select-tagline { animation-delay: 0.55s; }
+  /* the character then the roster form after the name lands */
+  .select-stage .select-portraits { animation-delay: 0.85s; }
+  .select-stage .plain-link { animation-delay: 1.15s; }
+  .select-stage .aurora-caption { animation-delay: 1.15s; }
+  /* the roster container itself does not fade; its cards stagger in (below) */
+  .select-stage .job-cards { animation: none; }
+  /* the four cards stagger in as the roster forms */
+  .job-cards .job-card {
+    animation: spawn-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  .job-cards .job-card:nth-child(1) { animation-delay: 0.95s; }
+  .job-cards .job-card:nth-child(2) { animation-delay: 1.07s; }
+  .job-cards .job-card:nth-child(3) { animation-delay: 1.19s; }
+  .job-cards .job-card:nth-child(4) { animation-delay: 1.31s; }
+  /* the autofocused card must show its focus ring immediately, not after its
+     stagger delay -- reveal the focused card without waiting */
+  .job-cards .job-card:focus,
+  .job-cards .job-card:focus-visible { animation-delay: 0s; }
+  /* the leaving gate must not be mid-entrance when it fades out */
+  .select-screen.equip-out .select-stage > *,
+  .select-screen.equip-out .job-cards .job-card {
+    animation: none;
+  }
+}
+@keyframes spawn-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 /* sub-second equip transition: the gate lifts and fades as the world takes
    over. Skipped under reduced motion (the class still mounts; the rule is gated). */
