@@ -476,6 +476,56 @@ li {
   }
 }
 
+/* ---- dive (SAO "Link Start") -------------------------------------------- */
+/* A transient full-screen beat over its own R3F canvas: the rainbow tunnel is
+   drawn in WebGL; the title and the closing sense-online flash are DOM on top.
+   Never mounts under reduced-motion or no-WebGL (App bypasses to the gate). */
+.dive {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #01010a;
+  cursor: pointer;
+}
+.dive canvas {
+  display: block;
+}
+.dive-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: clamp(1.1rem, 4vw, 2.1rem);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 18px rgba(180, 200, 255, 0.9), 0 0 46px rgba(120, 150, 255, 0.6);
+  pointer-events: none;
+  animation: dive-title 2.8s ease-in forwards;
+}
+@keyframes dive-title {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.94); letter-spacing: 0.5em; }
+  14% { opacity: 1; }
+  55% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); letter-spacing: 0.95em; }
+}
+/* the senses-online bloom: a white flash near the end that clears into the gate */
+.dive-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  animation: dive-flash 2.8s ease-in forwards;
+}
+@keyframes dive-flash {
+  0%, 82% { opacity: 0; }
+  95% { opacity: 0.82; }
+  100% { opacity: 0; }
+}
+
 /* ---- select screen ----------------------------------------------------- */
 /* Transparent over the live world; a bottom-weighted scrim keeps the job
    cards readable. The no-WebGL path still shows the themed gradient via
@@ -583,6 +633,45 @@ li {
   backdrop-filter: blur(6px);
 }
 .aurora-caption .live-dot { background: var(--accent); }
+
+/* ---- spawn choreography ------------------------------------------------- */
+/* Arriving at the gate (from the dive, or on reset): the name resolves first,
+   then the character and roster form. Motion only; reduced-motion shows the
+   fully-formed gate with no entrance. */
+@media (prefers-reduced-motion: no-preference) {
+  .select-stage > * {
+    opacity: 0;
+    animation: spawn-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .select-stage .eyebrow { animation-delay: 0.1s; }
+  .select-stage .nameplate { animation-delay: 0.25s; animation-duration: 0.8s; }
+  .select-stage .select-tagline { animation-delay: 0.55s; }
+  /* the character then the roster form after the name lands */
+  .select-stage .select-portraits { animation-delay: 0.85s; }
+  .select-stage .plain-link { animation-delay: 1.15s; }
+  .select-stage .aurora-caption { animation-delay: 1.15s; }
+  /* the roster container itself does not fade; its cards stagger in (below) */
+  .select-stage .job-cards { opacity: 1; animation: none; }
+  /* the four cards stagger in as the roster forms */
+  .job-cards .job-card {
+    opacity: 0;
+    animation: spawn-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .job-cards .job-card:nth-child(1) { animation-delay: 0.95s; }
+  .job-cards .job-card:nth-child(2) { animation-delay: 1.07s; }
+  .job-cards .job-card:nth-child(3) { animation-delay: 1.19s; }
+  .job-cards .job-card:nth-child(4) { animation-delay: 1.31s; }
+  /* the leaving gate must not be held invisible by the entrance rules */
+  .select-screen.equip-out .select-stage > *,
+  .select-screen.equip-out .job-cards .job-card {
+    opacity: 1;
+    animation: none;
+  }
+}
+@keyframes spawn-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 /* sub-second equip transition: the gate lifts and fades as the world takes
    over. Skipped under reduced motion (the class still mounts; the rule is gated). */
