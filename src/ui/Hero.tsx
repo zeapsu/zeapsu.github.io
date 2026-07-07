@@ -2,19 +2,7 @@ import { useEffect, useState } from 'react'
 import { JOBS, PRIMARY_JOB, type JobId } from '../content/jobs'
 import { identity } from '../content/data'
 import { ContactLinks } from './Sections'
-import base from '../assets/portraits/base.jpg'
-import physicist from '../assets/portraits/physicist.jpg'
-import aiSystems from '../assets/portraits/ai-systems.jpg'
-import swe from '../assets/portraits/swe.jpg'
-import robotics from '../assets/portraits/robotics.jpg'
-
-const PORTRAITS: Record<'base' | JobId, string> = {
-  base,
-  physicist,
-  'ai-systems': aiSystems,
-  swe,
-  robotics,
-}
+import photo from '../assets/portrait.jpg'
 
 const reduced =
   typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -61,17 +49,14 @@ export function Hero({
   // reduced motion when a focus is picked.
   const shownId: JobId = lens ?? (reduced ? PRIMARY_JOB : CYCLE[i])
   const shown = JOBS.find((j) => j.id === shownId)!
-  const portrait: 'base' | JobId = lens ?? 'base'
   // The unified thesis holds while idle; a focus's own tagline appears once you
   // engage that facet.
   const tagline = lens ? shown.tagline : identity.tagline
 
   return (
     <header className="hero">
-      <div className="hero-portrait" role="img" aria-label="Painted portrait of Andry Paez">
-        {(Object.keys(PORTRAITS) as Array<'base' | JobId>).map((k) => (
-          <img key={k} src={PORTRAITS[k]} alt="" className={k === portrait ? 'active' : ''} draggable={false} />
-        ))}
+      <div className="hero-portrait">
+        <img src={photo} alt="Andry Paez" draggable={false} />
       </div>
 
       <div className="hero-copy">
