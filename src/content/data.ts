@@ -122,7 +122,7 @@ export const questLog = {
       period: '2026 – present',
       title: 'Research Assistant, SJSU Physics',
       // Deduplicated: the full research story lives in the NOW section above.
-      detail: 'Spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst — the work in Now, above.',
+      detail: 'Spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst. The work in Now, above.',
       status: 'active' as const,
     },
   ],
@@ -238,7 +238,7 @@ export const achievementGroups: { label: string; items: Achievement[] }[] = [
 ]
 // Flat view for the plain fallback.
 export const achievements: Achievement[] = achievementGroups.flatMap((g) =>
-  g.items.map((a) => ({ ...a, detail: `${g.label} — ${a.detail}` })),
+  g.items.map((a) => ({ ...a, detail: `${g.label}: ${a.detail}` })),
 )
 
 export const contact = {
