@@ -1,6 +1,8 @@
-import { useMemo, type CSSProperties } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { JOBS, type JobId } from '../content/jobs'
 import { skillTree } from '../content/data'
+
+const SkillCloud3D = lazy(() => import('./SkillCloud3D'))
 
 // Skills as motes suspended in the dispersed light. Real DOM text (a11y
 // floor: never canvas-baked), scattered on a jittered grid with slow drift.
@@ -64,7 +66,48 @@ function layout(): { job: JobId; branch: string; motes: Mote[] }[] {
 
 const TIER_SIZE = [0.7, 0.82, 0.98] // rem — depth via type scale
 
+// The volumetric R3F cloud when it can honor the floors; the flat 2D field
+// under reduced motion or without WebGL2. Either way the tokens exist as
+// real DOM text (the 2D field directly; the 3D mode via the sr-only list).
 export function SkillField({ lens }: { lens: JobId | null }) {
+  const [mode] = useState<'3d' | '2d'>(() => {
+    if (typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches)
+      return '2d'
+    try {
+      return document.createElement('canvas').getContext('webgl2') ? '3d' : '2d'
+    } catch {
+      return '2d'
+    }
+  })
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+
+  // Don't burn GPU while the cloud is off-screen.
+  useEffect(() => {
+    if (mode !== '3d' || !wrapRef.current) return
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting))
+    io.observe(wrapRef.current)
+    return () => io.disconnect()
+  }, [mode])
+
+  if (mode === '2d') return <FlatSkillField lens={lens} />
+  return (
+    <div className="skill-field skill-field-3d" ref={wrapRef}>
+      <ul className="sr-only">
+        {skillTree.map((b) => (
+          <li key={b.job}>
+            {b.branch}: {b.skills.join(', ')}
+          </li>
+        ))}
+      </ul>
+      <Suspense fallback={null}>
+        <SkillCloud3D lens={lens} active={inView} />
+      </Suspense>
+    </div>
+  )
+}
+
+function FlatSkillField({ lens }: { lens: JobId | null }) {
   const groups = useMemo(layout, [])
   return (
     <div className="skill-field">
