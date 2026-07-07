@@ -13,10 +13,6 @@ export const identity = {
   email: 'andryypaez@gmail.com',
   github: 'https://github.com/zeapsu',
   linkedin: 'https://www.linkedin.com/in/andry-lloyd-paez-744883252',
-  simCaption:
-    'This is a live two-component Gross-Pitaevskii simulation, the same equations I work on at SJSU. Scroll and watch spin domains form.',
-  auroraCaption:
-    'The aurora is a live two-component Gross-Pitaevskii simulation, the same equations I work on at SJSU. Each band is a spin domain forming in real time.',
 }
 
 export const research = {
@@ -105,9 +101,9 @@ export const projects: Project[] = [
 // years are rendered as one honest "time away" line — the Cal Poly stint is
 // on experience.md's exclusions list, so it is named nowhere on the site.
 export const questLog = {
-  eyebrow: 'quest log',
+  eyebrow: 'experience',
   title: 'The route here was not a straight line',
-  intro: 'Community college to a physics degree to a research lab. Every step below is a finished quest.',
+  intro: 'Community college to a physics degree to a research lab.',
   quests: [
     {
       period: 'before 2021',
@@ -210,11 +206,11 @@ export const achievements: Achievement[] = [
 
 export const contact = {
   eyebrow: 'contact',
-  title: 'Party invite',
+  title: 'Get in touch',
   body: 'Open to AI systems and research software roles. The quickest way to reach me:',
-  // The download resolves to the equipped job's resume (see `resumes`); this
-  // line explains the job-aware behavior.
-  resumeNote: 'The resume matches the equipped role. Switch jobs to swap it.',
+  // The download resolves to the active focus's resume (see `resumes`); this
+  // line explains the focus-aware behavior.
+  resumeNote: 'The resume matches the focus you pick above.',
 }
 
 // Job-aware resume downloads (public/resume/, opened in a new tab). One per

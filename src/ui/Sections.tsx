@@ -13,13 +13,12 @@ import {
   hardware,
 } from '../content/data'
 import { JOBS } from '../content/jobs'
-import { RESEARCH_TOP, CARD_BASE, CARD_STEP, CLOSING_TOP } from '../layout'
 
 type LinkKey = 'github' | 'linkedin' | 'email'
 
 // One nav, optionally filtered. Callers with no `show` get all three (the
-// plain fallback and legacy journey view); the gated panels split them so no
-// link repeats (#20): hero = github+linkedin, contact card = email.
+// plain fallback); the main page splits them so no link repeats (#20):
+// hero = github+linkedin, contact = email.
 export function ContactLinks({ show }: { show?: LinkKey[] } = {}) {
   const on = (k: LinkKey) => !show || show.includes(k)
   return (
@@ -59,7 +58,7 @@ export function ProjectCard({
   )
 }
 
-// The Roboticist "real bench" figure. Shared so the equipped panel and the
+// The Roboticist "real bench" figure. Shared so the main page and the
 // ?plain=1 fallback never drift; each caller wraps it in its own <section>.
 // width/height are set so the lazy photos reserve space (no layout shift).
 export function HardwareFigures() {
@@ -79,58 +78,9 @@ export function HardwareFigures() {
   )
 }
 
-// Absolute-positioned over PAGES * 100dvh of scroll, riding drei's <Scroll html>.
-// dvh, not vh: drei's scroll range is pages * container pixel height (the
-// dynamic viewport), while vh is the large viewport on phones — the mismatch
-// pushed the closing section past the maximum scroll on mobile.
-export function Sections() {
-  return (
-    <div className="journey">
-      <section className="hero" style={{ top: 0 }}>
-        <p className="eyebrow">Andry Paez · AI systems + research software</p>
-        <h1>{identity.tagline}</h1>
-        <ContactLinks />
-        <p className="sim-caption">
-          <span className="live-dot" aria-hidden="true" /> {identity.simCaption}
-        </p>
-      </section>
-
-      <section className="panel" style={{ top: `${RESEARCH_TOP}dvh` }}>
-        <p className="eyebrow">{research.eyebrow}</p>
-        <h2>{research.title}</h2>
-        <p>{research.body}</p>
-        <ul>
-          {research.facts.map((f) => (
-            <li key={f}>{f}</li>
-          ))}
-        </ul>
-      </section>
-
-      {projects.map((p, i) => (
-        <div
-          key={p.name}
-          className={`card-slot ${i % 2 ? 'right' : 'left'}`}
-          style={{ top: `${CARD_BASE + i * CARD_STEP}dvh` }}
-        >
-          {i === 0 && <p className="eyebrow">projects</p>}
-          <ProjectCard p={p} />
-        </div>
-      ))}
-
-      <section className="panel closing" style={{ top: `${CLOSING_TOP}dvh` }}>
-        <p className="eyebrow">{howIWork.eyebrow}</p>
-        <h2>{howIWork.title}</h2>
-        <p>{howIWork.body}</p>
-        <p className="open-to">{footer.line}</p>
-        <ContactLinks />
-      </section>
-    </div>
-  )
-}
-
-// Plain document-flow version: the ungated recruiter/SEO/no-WebGL path. It
-// must carry ALL content (accessibility + crawl floor), so every panel the
-// gated experience renders has a plain equivalent here.
+// Plain document-flow version: the ungated recruiter/SEO/no-JS path. It must
+// carry ALL content (accessibility + crawl floor), so every section the main
+// page renders has a plain equivalent here.
 export function StaticFallback() {
   return (
     <main className="fallback">
@@ -171,8 +121,8 @@ export function StaticFallback() {
       ))}
 
       <section className="panel">
-        <p className="eyebrow">skill tree</p>
-        <h2>One character, four branches</h2>
+        <p className="eyebrow">skills</p>
+        <h2>What I work in</h2>
         {skillTree.map((branch) => (
           <div key={branch.job}>
             <h3>{branch.branch}</h3>
@@ -186,8 +136,8 @@ export function StaticFallback() {
       </section>
 
       <section className="panel">
-        <p className="eyebrow">achievements</p>
-        <h2>Records</h2>
+        <p className="eyebrow">recognition</p>
+        <h2>Honors and credentials</h2>
         <ul>
           {achievements.map((a) => (
             <li key={a.title}>

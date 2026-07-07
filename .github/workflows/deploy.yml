@@ -24,7 +24,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: node src/sim/gpe.selfcheck.ts
       - run: node src/content/jobs.selfcheck.ts
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3

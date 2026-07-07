@@ -1,6 +1,5 @@
-import { JOBS, type JobId } from '../content/jobs'
+import { PRIMARY_JOB, type JobId } from '../content/jobs'
 import {
-  identity,
   research,
   projects,
   questLog,
@@ -12,10 +11,9 @@ import {
 } from '../content/data'
 import { ContactLinks, ProjectCard, HardwareFigures } from './Sections'
 
-// The shared skeleton all four jobs render through: About/hero -> quest log ->
-// quest board -> skill tree -> achievements -> contact. Theme, ordering, and
-// emphasis change per job; the skeleton never does. The equipped job's project
-// cards sort first (spec: "the equipped job's cards sort first and glow").
+// The single content column, always fully visible. The active lens never hides
+// anything: it re-sorts projects (matching first + glow), lights its skill
+// branch, and swaps the resume. Hero owns the name/tagline/primary links above.
 
 const JOB_TAGS: Record<string, JobId[]> = {
   'reachy-console': ['robotics', 'ai-systems'],
@@ -25,36 +23,21 @@ const JOB_TAGS: Record<string, JobId[]> = {
   'Quantum computing work': ['physicist'],
 }
 
-function sortedProjects(job: JobId | null) {
-  if (!job) return projects
+function sortedProjects(lens: JobId | null) {
+  if (!lens) return projects
   return [...projects].sort((a, b) => {
-    const av = JOB_TAGS[a.name]?.includes(job) ? 0 : 1
-    const bv = JOB_TAGS[b.name]?.includes(job) ? 0 : 1
+    const av = JOB_TAGS[a.name]?.includes(lens) ? 0 : 1
+    const bv = JOB_TAGS[b.name]?.includes(lens) ? 0 : 1
     return av - bv
   })
 }
 
-export function Panels({ job, onReset }: { job: JobId | null; onReset: () => void }) {
-  const equipped = JOBS.find((j) => j.id === job)
+export function Panels({ lens }: { lens: JobId | null }) {
+  // The resume always resolves to a focus: the active lens, or the primary one.
+  const resumeFocus = lens ?? PRIMARY_JOB
   return (
-    <main className="panels" inert={job === null || undefined}>
-      <section className="game-panel hero-panel">
-        <button type="button" className="select-reset" onClick={onReset}>
-          ← character select
-        </button>
-        <p className="eyebrow">{equipped ? `${equipped.name} · ${equipped.subtitle}` : 'Andry Paez'}</p>
-        <h1 className="hero-name">{identity.name}</h1>
-        <p className="hero-tagline">{equipped ? equipped.tagline : identity.tagline}</p>
-        <ContactLinks show={['github', 'linkedin']} />
-      </section>
-
-      {job === 'robotics' && (
-        <section className="game-panel">
-          <HardwareFigures />
-        </section>
-      )}
-
-      <section className="game-panel">
+    <main className="panels">
+      <section className="panel reveal">
         <p className="eyebrow">{research.eyebrow}</p>
         <h2>{research.title}</h2>
         <p>{research.body}</p>
@@ -65,7 +48,7 @@ export function Panels({ job, onReset }: { job: JobId | null; onReset: () => voi
         </ul>
       </section>
 
-      <section className="game-panel">
+      <section className="panel reveal">
         <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
         <p>{questLog.intro}</p>
@@ -85,29 +68,22 @@ export function Panels({ job, onReset }: { job: JobId | null; onReset: () => voi
         </ol>
       </section>
 
-      <section className="game-panel">
-        <p className="eyebrow">quest board</p>
-        <h2>Projects</h2>
+      <section className="panel reveal">
+        <p className="eyebrow">projects</p>
+        <h2>Selected work</h2>
         <div className="quest-board">
-          {sortedProjects(job).map((p) => (
-            <ProjectCard
-              key={p.name}
-              p={p}
-              featured={!!job && JOB_TAGS[p.name]?.includes(job)}
-            />
+          {sortedProjects(lens).map((p) => (
+            <ProjectCard key={p.name} p={p} featured={!!lens && JOB_TAGS[p.name]?.includes(lens)} />
           ))}
         </div>
       </section>
 
-      <section className="game-panel">
-        <p className="eyebrow">skill tree</p>
-        <h2>One character, four branches</h2>
+      <section className="panel reveal">
+        <p className="eyebrow">skills</p>
+        <h2>What I work in</h2>
         <div className="skill-tree">
           {skillTree.map((branch) => (
-            <div
-              key={branch.job}
-              className={`skill-branch${branch.job === job ? ' lit' : ''}`}
-            >
+            <div key={branch.job} className={`skill-branch${branch.job === lens ? ' lit' : ''}`}>
               <h3 className="skill-branch-name">{branch.branch}</h3>
               <ul>
                 {branch.skills.map((s) => (
@@ -119,9 +95,9 @@ export function Panels({ job, onReset }: { job: JobId | null; onReset: () => voi
         </div>
       </section>
 
-      <section className="game-panel">
-        <p className="eyebrow">achievements</p>
-        <h2>Records</h2>
+      <section className="panel reveal">
+        <p className="eyebrow">recognition</p>
+        <h2>Honors and credentials</h2>
         <div className="trophy-grid">
           {achievements.map((a) => {
             const inner = (
@@ -151,22 +127,24 @@ export function Panels({ job, onReset }: { job: JobId | null; onReset: () => voi
         </div>
       </section>
 
-      <section className="game-panel">
+      <section className="panel reveal">
+        <HardwareFigures />
+      </section>
+
+      <section className="panel reveal">
         <p className="eyebrow">{contact.eyebrow}</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
         <ContactLinks show={['email']} />
-        {job && (
-          <p className="resume-download">
-            <a className="resume-button" href={resumes[job]} target="_blank" rel="noopener">
-              Download resume
-            </a>
-          </p>
-        )}
+        <p className="resume-download">
+          <a className="resume-button" href={resumes[resumeFocus]} target="_blank" rel="noopener">
+            Download resume
+          </a>
+        </p>
         <p className="resume-note">{contact.resumeNote}</p>
       </section>
 
-      <section className="game-panel">
+      <section className="panel reveal">
         <p className="eyebrow">{howIWork.eyebrow}</p>
         <h2>{howIWork.title}</h2>
         <p>{howIWork.body}</p>
