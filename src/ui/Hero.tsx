@@ -63,7 +63,7 @@ export function Hero({
   const weights = JOBS.map((j) => (j.id === shownId ? 1 : lens ? 0.18 : 0.5))
 
   return (
-    <header className="hero" ref={heroRef} data-zone="light">
+    <header className="hero" ref={heroRef}>
       {geom && <BeamCanvas geom={geom} weights={weights} />}
       {geom && (
         <svg
@@ -72,9 +72,26 @@ export function Hero({
           viewBox={`0 0 ${geom.width} ${geom.height}`}
           preserveAspectRatio="none"
         >
+          <defs>
+            {/* the incident beam carries the whole spectrum (recombination:
+                four wavelengths in, one identity) */}
+            <linearGradient
+              id="spectrum"
+              gradientUnits="userSpaceOnUse"
+              x1={geom.entry.x1}
+              y1={geom.entry.y1}
+              x2={geom.entry.x2}
+              y2={geom.entry.y2}
+            >
+              <stop offset="0" stopColor="#ff7a45" />
+              <stop offset="0.35" stopColor="#f0a848" />
+              <stop offset="0.7" stopColor="#4fd8c8" />
+              <stop offset="1" stopColor="#b48cff" />
+            </linearGradient>
+          </defs>
           <g className="beam beam-entry">
-            <line {...seg(geom.entry)} stroke="#f2eefb" strokeWidth={7} opacity={0.14} />
-            <line {...seg(geom.entry)} stroke="#f2eefb" strokeWidth={1.8} opacity={0.85} />
+            <line {...seg(geom.entry)} stroke="url(#spectrum)" strokeWidth={7} opacity={0.3} />
+            <line {...seg(geom.entry)} stroke="url(#spectrum)" strokeWidth={2} opacity={0.9} />
           </g>
           {JOBS.map((j, idx) => {
             const s = geom.exits[idx]
@@ -108,7 +125,6 @@ export function Hero({
         </h1>
         <p className="lead-tagline">{tagline}</p>
         <ContactLinks show={['github', 'linkedin']} />
-        <p className="dispersion-caption">dispersion — one identity, four wavelengths</p>
       </div>
 
       <div className="prism-photo" ref={photoRef}>

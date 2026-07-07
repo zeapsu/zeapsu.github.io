@@ -1,37 +1,27 @@
 import { useEffect } from 'react'
 
-// Theme zones: whichever [data-zone] element spans the viewport's vertical
-// center drives html[data-theme]. Sections between zones keep the last theme
-// (no flicker at borders). rAF-throttled scroll listener over a handful of
-// elements — cheaper and steadier than an IO band for this.
-export function useThemeZones() {
+// Stacked deck: every panel is sticky, so each section pins while the next
+// slides over it. A panel taller than the viewport must scroll through
+// before pinning, which needs its own height: top = -(height - viewport),
+// kept fresh per panel via ResizeObserver and read by the CSS as
+// var(--stick-top). Mobile CSS ignores the variable (panels aren't sticky).
+export function useStackedDeck() {
   useEffect(() => {
-    const els = Array.from(document.querySelectorAll<HTMLElement>('[data-zone]'))
-    if (!els.length) return
-    let raf = 0
-    const update = () => {
-      raf = 0
-      const mid = innerHeight / 2
-      for (const el of els) {
-        const r = el.getBoundingClientRect()
-        if (r.top <= mid && r.bottom >= mid) {
-          const zone = el.dataset.zone!
-          if (document.documentElement.dataset.theme !== zone)
-            document.documentElement.dataset.theme = zone
-          break
-        }
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('.panels .panel'))
+    if (!panels.length) return
+    const set = () => {
+      for (const p of panels) {
+        const over = p.offsetHeight - innerHeight
+        p.style.setProperty('--stick-top', over > 0 ? `${-over}px` : '0px')
       }
     }
-    const queue = () => {
-      if (!raf) raf = requestAnimationFrame(update)
-    }
-    update()
-    addEventListener('scroll', queue, { passive: true })
-    addEventListener('resize', queue, { passive: true })
+    set()
+    const ro = new ResizeObserver(set)
+    panels.forEach((p) => ro.observe(p))
+    addEventListener('resize', set, { passive: true })
     return () => {
-      removeEventListener('scroll', queue)
-      removeEventListener('resize', queue)
-      cancelAnimationFrame(raf)
+      ro.disconnect()
+      removeEventListener('resize', set)
     }
   }, [])
 }

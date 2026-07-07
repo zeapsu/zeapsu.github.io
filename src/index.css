@@ -32,18 +32,29 @@
   --column: 68rem;
 }
 
-/* The paper theme. Scroll zones drive html[data-theme]: the page opens in
-   light (the prism casts its rainbow on paper), descends into the dark for
-   the glow sections, resurfaces for the record, closes dark. */
+/* Themes are per-section: each panel carries data-theme and the CSS vars
+   scope to its subtree; slanted dividers separate the alternating sheets.
+   The light bg matches the portrait's wall (#d8d0c2, sampled) so the photo
+   blends into the hero and the off-white leaves headroom for white light. */
 [data-theme='light'] {
-  --bg: #f2efe7;
-  --bg-raise: #faf8f2;
+  --bg: #d8d0c2;
+  --bg-raise: #e4ddd0;
   --ink: #191524;
-  --muted: #453f55;
-  --faint: #6b6478;
-  --line: rgba(35, 28, 55, 0.16);
-  --line-strong: rgba(35, 28, 55, 0.32);
+  --muted: #443e53;
+  --faint: #635d70;
+  --line: rgba(35, 28, 55, 0.18);
+  --line-strong: rgba(35, 28, 55, 0.34);
   --accent-ink: color-mix(in srgb, var(--accent) 52%, #241d33);
+}
+[data-theme='dark'] {
+  --bg: #0b0a12;
+  --bg-raise: #12111c;
+  --ink: #f2eefb;
+  --muted: #bcb4d2;
+  --faint: #8f88a6;
+  --line: rgba(180, 172, 205, 0.14);
+  --line-strong: rgba(180, 172, 205, 0.28);
+  --accent-ink: var(--accent);
 }
 
 /* Per-focus accents. Order and hexes mirror jobs.ts; the selfcheck asserts each
@@ -306,15 +317,14 @@ li {
     0 0 6px rgba(244, 241, 234, 0.95),
     0 0 14px rgba(244, 241, 234, 0.8);
 }
-/* white light is invisible on paper: the entry reads as a glass caustic */
-[data-theme='light'] .beam-entry line {
-  stroke: #7a7390;
+/* On paper the canvas paints the paper itself (opaque, same color) —
+   no blend mode; white light and the rainbow render directly. */
+[data-theme='light'] .beam-canvas {
+  mix-blend-mode: normal;
 }
 [data-theme='light'] .prism-photo {
-  filter: drop-shadow(0 18px 32px rgba(30, 24, 50, 0.28));
-}
-[data-theme='light'] .beam-canvas {
-  mix-blend-mode: multiply;
+  /* the wall matches the page bg; a hard shadow would break the blend */
+  filter: drop-shadow(0 16px 30px rgba(30, 24, 50, 0.18));
 }
 .beam-btn:focus-visible {
   outline: 2px solid var(--facet);
@@ -327,14 +337,6 @@ li {
   .role {
     white-space: normal;
   }
-}
-
-.dispersion-caption {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: var(--faint);
-  margin-top: 2.2rem;
 }
 
 .lead {
@@ -389,9 +391,44 @@ li {
 
 .panels {
   position: relative;
-  max-width: var(--column);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
+  max-width: none;
+  padding-inline: 0;
+}
+
+/* Each section is an opaque themed sheet with a slanted top edge (the
+   divider); on desktop the sheets stack: each pins (tall ones after
+   scrolling through — see --stick-top in reveal.ts) while the next slides
+   over it. */
+.panels .panel {
+  --slant: clamp(2.2rem, 6vw, 5rem);
+  position: relative;
+  background: var(--bg);
+  border-top: none;
+  clip-path: polygon(0 0, 100% var(--slant), 100% 100%, 0 100%);
+  padding-top: calc(clamp(2.8rem, 6vw, 4.6rem) + var(--slant));
+  padding-inline: max(var(--gutter), calc((100vw - var(--column)) / 2));
+}
+.panels section.panel:nth-of-type(even) {
+  clip-path: polygon(0 var(--slant), 100% 0, 100% 100%, 0 100%);
+}
+/* whole-panel fade is replaced by per-section choreography below */
+.panels .panel.reveal {
+  opacity: 1;
+  transform: none;
+}
+@media (min-width: 781px) {
+  .hero {
+    position: sticky;
+    top: 0;
+  }
+  .panels .panel {
+    position: sticky;
+    top: var(--stick-top, 0px);
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
 /* The active wavelength, carried down the page. Scroll-driven where
@@ -402,6 +439,7 @@ li {
   left: calc(var(--gutter) / 2 - 1px);
   top: 0;
   bottom: 0;
+  z-index: 3; /* the light thread rides over the stacked sheets */
   width: 2px;
   background: linear-gradient(
     to bottom,
@@ -776,6 +814,130 @@ li {
 .reveal.in-view {
   opacity: 1;
   transform: none;
+}
+
+/* ---------- per-section choreography ----------
+   Each sheet enters with its own feel. Hidden states live inside the
+   no-preference gate so reduced motion sees formed content. */
+@media (prefers-reduced-motion: no-preference) {
+  /* NOW: the number develops like an exposure; facts sweep in from the rail */
+  .anim-now .pull-stat-value {
+    display: inline-block;
+    opacity: 0;
+    filter: blur(10px);
+    transform: scale(1.1);
+    transition:
+      opacity 700ms ease 150ms,
+      filter 900ms ease 150ms,
+      transform 900ms cubic-bezier(0.16, 1, 0.3, 1) 150ms;
+  }
+  .anim-now.in-view .pull-stat-value {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .anim-now li {
+    opacity: 0;
+    transform: translateX(-22px);
+    transition:
+      opacity 500ms ease,
+      transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .anim-now.in-view li {
+    opacity: 1;
+    transform: none;
+  }
+  .anim-now li:nth-child(2) { transition-delay: 90ms; }
+  .anim-now li:nth-child(3) { transition-delay: 180ms; }
+  .anim-now li:nth-child(4) { transition-delay: 270ms; }
+  .anim-now li:nth-child(5) { transition-delay: 360ms; }
+
+  /* WORK: cards deal onto the sheet */
+  .anim-work .card {
+    opacity: 0;
+    transform: translateY(28px) rotate(0.5deg);
+    transition:
+      opacity 550ms ease,
+      transform 550ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .anim-work.in-view .card {
+    opacity: 1;
+    transform: none;
+  }
+  .anim-work .card:nth-child(2) { transition-delay: 110ms; }
+  .anim-work .card:nth-child(3) { transition-delay: 220ms; }
+  .anim-work .card:nth-child(4) { transition-delay: 330ms; }
+  .anim-work .card:nth-child(5) { transition-delay: 440ms; }
+
+  /* SKILLS: the cloud condenses */
+  .anim-skills .skill-field {
+    opacity: 0;
+    transform: scale(0.94);
+    transition:
+      opacity 800ms ease,
+      transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .anim-skills.in-view .skill-field {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* PATH: entries wipe in along the rail */
+  .anim-path .quest {
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .anim-path.in-view .quest {
+    clip-path: inset(0 0 0 0);
+  }
+  .anim-path .quest:nth-child(2) { transition-delay: 140ms; }
+  .anim-path .quest:nth-child(3) { transition-delay: 280ms; }
+  .anim-path .quest:nth-child(4) { transition-delay: 420ms; }
+
+  /* RECOGNITION: trophies take the shelf */
+  .anim-recognition .trophy {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+    transition:
+      opacity 450ms ease,
+      transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .anim-recognition.in-view .trophy {
+    opacity: 1;
+    transform: none;
+  }
+  .anim-recognition .trophy-group:nth-of-type(2) .trophy { transition-delay: 150ms; }
+  .anim-recognition .trophy-group:nth-of-type(3) .trophy { transition-delay: 300ms; }
+
+  /* ABOUT: the statement comes into focus */
+  .anim-about p:not(.eyebrow) {
+    opacity: 0;
+    filter: blur(6px);
+    transition:
+      opacity 800ms ease 100ms,
+      filter 800ms ease 100ms;
+  }
+  .anim-about.in-view p:not(.eyebrow) {
+    opacity: 1;
+    filter: none;
+  }
+
+  /* CONTACT: the essentials rise to close */
+  .anim-contact > :not(.eyebrow) {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 500ms ease,
+      transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .anim-contact.in-view > :not(.eyebrow) {
+    opacity: 1;
+    transform: none;
+  }
+  .anim-contact.in-view > :nth-child(3) { transition-delay: 90ms; }
+  .anim-contact.in-view > :nth-child(4) { transition-delay: 180ms; }
+  .anim-contact.in-view > :nth-child(5) { transition-delay: 270ms; }
+  .anim-contact.in-view > :nth-child(6) { transition-delay: 360ms; }
 }
 
 /* ---------- plain fallback (?plain=1) ---------- */
