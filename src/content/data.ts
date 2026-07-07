@@ -142,43 +142,68 @@ export const questLog = {
   ],
 }
 
-// Skill tree: one tree, four branches (the four jobs). The equipped branch
-// lights. Every skill traces to experience.md's skills/projects sections.
+// Skill field: one cloud, four wavelengths (the four jobs). The active
+// facet's motes catch the light; the rest grey out. Tokens are the audited
+// skill strings re-chunked to cloud size — every token traces to
+// experience.md's skills/projects sections, nothing added.
 export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
   {
     job: 'physicist',
     branch: 'Physicist',
     skills: [
-      'Quantum information: Qiskit, QAOA, Shor-code error correction',
-      'Computational physics: NumPy, FFT/spectral methods, Monte Carlo',
-      'Condensate simulation: Gross-Pitaevskii, HDF5, Slurm/HPC',
+      'Quantum information',
+      'Qiskit',
+      'QAOA',
+      'Shor-code error correction',
+      'NumPy',
+      'FFT/spectral methods',
+      'Monte Carlo',
+      'Gross-Pitaevskii simulation',
+      'HDF5',
+      'Slurm/HPC',
     ],
   },
   {
     job: 'ai-systems',
     branch: 'AI Systems',
     skills: [
-      'Local inference: llama.cpp, Ollama, quantization-aware selection',
-      'Agents: ReAct tool loops, MCP, multi-agent review gates',
-      'Edge deployment: Jetson Orin Nano, faster-whisper',
+      'Local inference',
+      'llama.cpp',
+      'Ollama',
+      'quantization-aware selection',
+      'ReAct tool loops',
+      'MCP',
+      'multi-agent review gates',
+      'faster-whisper',
+      'edge deployment',
     ],
   },
   {
     job: 'swe',
     branch: 'Research SWE',
     skills: [
-      'Python, TypeScript, Rust (Tauri), C/C++',
-      'FastAPI, Next.js/React, WebSockets/SSE',
-      'CI, pytest, Playwright-driven runtime verification',
+      'Python',
+      'TypeScript',
+      'Rust (Tauri)',
+      'C/C++',
+      'FastAPI',
+      'Next.js/React',
+      'WebSockets/SSE',
+      'CI',
+      'pytest',
+      'Playwright-driven verification',
     ],
   },
   {
     job: 'robotics',
     branch: 'Roboticist',
     skills: [
-      'A Reachy Mini living on a headless Jetson',
-      'GStreamer, ALSA/PipeWire, kernel-driver debugging',
-      'ESP32 firmware (currently leveling)',
+      'Reachy Mini',
+      'headless Jetson Orin Nano',
+      'GStreamer',
+      'ALSA/PipeWire',
+      'kernel-driver debugging',
+      'ESP32 firmware (leveling)',
     ],
   },
 ]

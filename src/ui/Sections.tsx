@@ -115,6 +115,16 @@ export function StaticFallback() {
       ))}
 
       <section className="panel">
+        <p className="eyebrow">skills</p>
+        <h2>What I work in</h2>
+        {skillTree.map((branch) => (
+          <p key={branch.job}>
+            <strong>{branch.branch}</strong>: {branch.skills.join(' · ')}
+          </p>
+        ))}
+      </section>
+
+      <section className="panel">
         <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
         <p>{questLog.intro}</p>
@@ -153,16 +163,6 @@ export function StaticFallback() {
         <p>{contact.body}</p>
         <ContactLinks />
         <p>{howIWork.body}</p>
-        {skillTree.map((branch) => (
-          <div key={branch.job}>
-            <h3>{branch.branch}</h3>
-            <ul>
-              {branch.skills.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
         <p>Resumes: <a href={resumeDefault} target="_blank" rel="noopener">full CV</a>{' '}
           {JOBS.map((j) => (
             <span key={j.id}>

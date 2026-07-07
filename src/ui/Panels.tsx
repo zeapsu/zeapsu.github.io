@@ -3,13 +3,13 @@ import {
   research,
   projects,
   questLog,
-  skillTree,
   achievements,
   contact,
   howIWork,
   resumes,
 } from '../content/data'
 import { ContactLinks, ProjectCard } from './Sections'
+import { SkillField } from './SkillField'
 
 // The single content column, always fully visible. Section order is the
 // narrative arc: NOW (present-tense job) → WORK → PATH → RECOGNITION →
@@ -73,6 +73,12 @@ export function Panels({ lens }: { lens: JobId | null }) {
       </section>
 
       <section className="panel reveal">
+        <p className="eyebrow">skills</p>
+        <h2>What I work in</h2>
+        <SkillField lens={lens} />
+      </section>
+
+      <section className="panel reveal">
         <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
         <p>{questLog.intro}</p>
@@ -130,18 +136,6 @@ export function Panels({ lens }: { lens: JobId | null }) {
         <p>{contact.body}</p>
         <ContactLinks show={['email']} />
         <p className="about-line">{howIWork.body}</p>
-        <div className="skill-tree">
-          {skillTree.map((branch) => (
-            <div key={branch.job} className={`skill-branch${branch.job === lens ? ' lit' : ''}`}>
-              <h3 className="skill-branch-name">{branch.branch}</h3>
-              <ul>
-                {branch.skills.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
         <p className="resume-download">
           <a className="resume-button" href={resumes[resumeFocus]} target="_blank" rel="noopener">
             Download resume

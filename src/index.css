@@ -238,38 +238,34 @@ li {
   gap: 1.15rem;
   justify-self: end;
 }
+/* Bare text at the beam's end — the light terminates in a word, not a box. */
 .beam-btn {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.82rem;
-  letter-spacing: 0.02em;
+  font-size: 0.84rem;
+  letter-spacing: 0.03em;
   text-align: left;
   color: var(--muted);
-  background: transparent;
-  border: 1px solid var(--line);
-  border-left: 2px solid color-mix(in srgb, var(--facet) 45%, transparent);
-  border-radius: 6px;
-  padding: 0.55rem 1rem;
+  background: none;
+  border: none;
+  padding: 0.2rem 0;
   cursor: pointer;
-  transition:
-    color 160ms ease,
-    border-color 160ms ease,
-    background 160ms ease,
-    box-shadow 160ms ease;
+  text-decoration: none;
+  text-underline-offset: 6px;
+  transition: color 180ms ease;
 }
 .beam-btn:hover,
 .beam-btn.active {
-  color: var(--ink);
-  border-color: var(--facet);
-  box-shadow: 0 0 24px -8px var(--facet);
+  color: var(--facet);
 }
 .beam-btn.locked {
-  color: var(--bg);
-  background: var(--facet);
-  border-color: var(--facet);
+  color: var(--facet);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 .beam-btn:focus-visible {
   outline: 2px solid var(--facet);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .dispersion-caption {
@@ -539,32 +535,45 @@ li {
   margin-top: 1.4rem;
 }
 
-/* skills */
-.skill-tree {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 1.3rem;
+/* skills: motes suspended in the dispersed light. The active facet's motes
+   catch their wavelength; the rest grey out but stay readable. */
+.skill-field {
+  position: relative;
+  height: clamp(24rem, 52vh, 30rem);
   margin-top: 1.5rem;
+  overflow: hidden; /* drift must never cause page-level horizontal scroll */
 }
-.skill-branch {
-  border-top: 2px solid var(--line-strong);
-  padding-top: 0.9rem;
-  transition: border-color 300ms ease;
-}
-.skill-branch.lit {
-  border-top-color: var(--accent);
-}
-.skill-branch-name {
-  display: block;
-  margin: 0 0 0.6rem;
-  color: var(--ink);
-}
-.skill-branch ul {
-  padding-left: 1.05rem;
+.skill-cloud-group {
+  list-style: none;
   margin: 0;
+  padding: 0;
 }
-.skill-branch li {
-  font-size: 0.92rem;
+.skill-cloud-group li {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  max-width: none;
+  font-family: 'IBM Plex Mono', monospace;
+  color: color-mix(in srgb, var(--facet) 60%, var(--muted));
+  transition:
+    color 400ms ease,
+    opacity 400ms ease;
+  animation: mote-drift var(--dd) ease-in-out infinite alternate;
+}
+.skill-cloud-group.lit li {
+  color: var(--facet);
+}
+.skill-cloud-group.dimmed li {
+  color: var(--faint);
+  opacity: 0.35;
+}
+@keyframes mote-drift {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: var(--dx) var(--dy);
+  }
 }
 
 /* recognition */
@@ -741,6 +750,24 @@ li {
     grid-template-columns: 1fr;
     gap: 0.15rem;
   }
+  /* the cloud collapses to wrapped rows per branch */
+  .skill-field {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .skill-cloud-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 1rem;
+  }
+  .skill-cloud-group li {
+    position: static;
+    transform: none;
+    animation: none;
+    font-size: 0.8rem !important; /* flatten the depth tiers when flowed */
+  }
 }
 
 /* ---------- reduced motion ---------- */
@@ -758,7 +785,8 @@ li {
   .trophy-link,
   .resume-button,
   .spine,
-  .panel h2 {
+  .panel h2,
+  .skill-cloud-group li {
     transition: none;
     animation: none;
   }
