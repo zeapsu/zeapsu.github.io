@@ -12,7 +12,7 @@ import {
   resumeDefault,
   hardware,
 } from '../content/data'
-import { JOBS } from '../content/jobs'
+import { JOBS, type JobId } from '../content/jobs'
 
 type LinkKey = 'github' | 'linkedin' | 'email'
 
@@ -33,9 +33,11 @@ export function ContactLinks({ show }: { show?: LinkKey[] } = {}) {
 export function ProjectCard({
   p,
   featured = false,
+  tags = [],
 }: {
   p: (typeof projects)[number]
   featured?: boolean
+  tags?: JobId[]
 }) {
   return (
     <article className={`card${featured ? ' featured' : ''}`}>
@@ -47,6 +49,13 @@ export function ProjectCard({
       <header>
         <h3>{p.link ? <a href={p.link}>{p.name}</a> : p.name}</h3>
         <span className="status">{p.status}</span>
+        {tags.length > 0 && (
+          <span className="facet-ticks" aria-hidden="true">
+            {tags.map((t) => (
+              <i key={t} style={{ background: JOBS.find((j) => j.id === t)!.palette.accent }} />
+            ))}
+          </span>
+        )}
       </header>
       <p>{p.blurb}</p>
       <ul>
@@ -54,27 +63,25 @@ export function ProjectCard({
           <li key={f}>{f}</li>
         ))}
       </ul>
+      {/* The real bench lives with the project it runs (workbench honesty
+          rule); shared by the main page and ?plain=1 so they never drift. */}
+      {p.name === 'reachy-console' && <HardwareFigures />}
     </article>
   )
 }
 
-// The Roboticist "real bench" figure. Shared so the main page and the
-// ?plain=1 fallback never drift; each caller wraps it in its own <section>.
-// width/height are set so the lazy photos reserve space (no layout shift).
+// The Roboticist "real bench" figures, rendered at the foot of the
+// reachy-console card. width/height reserve space (no layout shift).
 export function HardwareFigures() {
   return (
-    <>
-      <p className="eyebrow">hardware</p>
-      <h2>Reachy Mini on a Jetson Orin Nano</h2>
-      <div className="hardware-figures">
-        {hardware.map((h) => (
-          <figure key={h.src} className="hardware">
-            <img src={h.src} alt={h.alt} width={h.w} height={h.h} loading="lazy" />
-            <figcaption>{h.caption}</figcaption>
-          </figure>
-        ))}
-      </div>
-    </>
+    <div className="hardware-figures">
+      {hardware.map((h) => (
+        <figure key={h.src} className="hardware">
+          <img src={h.src} alt={h.alt} width={h.w} height={h.h} loading="lazy" />
+          <figcaption>{h.caption}</figcaption>
+        </figure>
+      ))}
+    </div>
   )
 }
 
@@ -102,6 +109,11 @@ export function StaticFallback() {
         </ul>
       </section>
 
+      <p className="eyebrow">work</p>
+      {projects.map((p) => (
+        <ProjectCard key={p.name} p={p} />
+      ))}
+
       <section className="panel">
         <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
@@ -113,26 +125,6 @@ export function StaticFallback() {
             </li>
           ))}
         </ul>
-      </section>
-
-      <p className="eyebrow">projects</p>
-      {projects.map((p) => (
-        <ProjectCard key={p.name} p={p} />
-      ))}
-
-      <section className="panel">
-        <p className="eyebrow">skills</p>
-        <h2>What I work in</h2>
-        {skillTree.map((branch) => (
-          <div key={branch.job}>
-            <h3>{branch.branch}</h3>
-            <ul>
-              {branch.skills.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
       </section>
 
       <section className="panel">
@@ -155,15 +147,22 @@ export function StaticFallback() {
         </ul>
       </section>
 
-      <section className="panel">
-        <HardwareFigures />
-      </section>
-
-      <section className="panel">
-        <p className="eyebrow">{contact.eyebrow}</p>
+      <section className="panel closing">
+        <p className="eyebrow">about + contact</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
         <ContactLinks />
+        <p>{howIWork.body}</p>
+        {skillTree.map((branch) => (
+          <div key={branch.job}>
+            <h3>{branch.branch}</h3>
+            <ul>
+              {branch.skills.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
         <p>Resumes: <a href={resumeDefault} target="_blank" rel="noopener">full CV</a>{' '}
           {JOBS.map((j) => (
             <span key={j.id}>
@@ -171,14 +170,7 @@ export function StaticFallback() {
             </span>
           ))}
         </p>
-      </section>
-
-      <section className="panel closing">
-        <p className="eyebrow">{howIWork.eyebrow}</p>
-        <h2>{howIWork.title}</h2>
-        <p>{howIWork.body}</p>
         <p className="open-to">{footer.line}</p>
-        <ContactLinks />
       </section>
     </main>
   )

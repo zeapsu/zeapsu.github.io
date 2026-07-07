@@ -16,8 +16,14 @@ export const identity = {
 }
 
 export const research = {
-  eyebrow: 'research',
+  eyebrow: 'now',
   title: 'Simulating ultracold atoms at San Jose State',
+  // Display-type pull-stat for the NOW section; the same fact stays in
+  // `facts` in full (the stat is aria-hidden decoration of a stated fact).
+  pullStat: {
+    value: '1,880×',
+    label: 'sine-DVR kinetic-energy operator, 161 s → 0.09 s, verified bit-exact',
+  },
   body: 'Research assistant in the Dept. of Physics & Astronomy, working on spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst. I build the code that keeps the science running: a CLI and HDF5 pipeline for ground states and Bogoliubov-de Gennes spectra, reproducible environments, and Slurm workflows on the SJSU cluster.',
   facts: [
     'Vectorized the sine-DVR kinetic-energy operator: 161 s down to 0.09 s at 2048 grid points, a 1,880x speedup verified bit-exact by a benchmark harness',
@@ -101,9 +107,10 @@ export const projects: Project[] = [
 // years are rendered as one honest "time away" line — the Cal Poly stint is
 // on experience.md's exclusions list, so it is named nowhere on the site.
 export const questLog = {
-  eyebrow: 'experience',
-  title: 'The route here was not a straight line',
-  intro: 'Community college to a physics degree to a research lab.',
+  eyebrow: 'path',
+  title: 'Experience',
+  intro:
+    'The route here was not a straight line: community college to a physics degree to a research lab.',
   quests: [
     {
       period: 'before 2021',
@@ -128,8 +135,8 @@ export const questLog = {
     {
       period: '2026 – present',
       title: 'Research Assistant, SJSU Physics',
-      detail:
-        'Spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst. The current quest.',
+      // Deduplicated: the full research story lives in the NOW section above.
+      detail: 'Spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst — the work in Now, above.',
       status: 'active' as const,
     },
   ],

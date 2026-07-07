@@ -399,6 +399,46 @@ li {
   font-size: 0.92rem;
 }
 
+/* NOW pull-stat: the one display-type number (aria-hidden; fact is in the list) */
+.pull-stat {
+  margin: 1.6rem 0 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.pull-stat-value {
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  font-weight: 200;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  transition: color 600ms ease;
+}
+.pull-stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--faint);
+  max-width: 40ch;
+}
+
+/* facet wavelength ticks on project cards */
+.facet-ticks {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.facet-ticks i {
+  display: inline-block;
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+/* the verification-first paragraph inside about+contact */
+.about-line {
+  margin-top: 1.4rem;
+}
+
 /* skills */
 .skill-tree {
   display: grid;
