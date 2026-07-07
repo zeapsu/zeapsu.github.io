@@ -48,7 +48,6 @@ export function Hero({
 
   const shownId: JobId = lens ?? (reduced ? PRIMARY_JOB : CYCLE[i])
   const shown = JOBS.find((j) => j.id === shownId)!
-  const tagline = lens ? shown.tagline : identity.tagline
 
   const heroRef = useRef<HTMLElement>(null)
   const photoRef = useRef<HTMLDivElement>(null)
@@ -128,7 +127,11 @@ export function Hero({
             </span>
           </span>
         </h1>
-        <p className="lead-tagline">{tagline}</p>
+        {/* the description travels with the role — cycling, previewing, and
+            locking all swap it together (keyed so it re-fades in step) */}
+        <p className="lead-tagline" key={shownId}>
+          {shown.tagline}
+        </p>
         <ContactLinks show={['github', 'linkedin']} />
       </div>
 

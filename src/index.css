@@ -388,6 +388,15 @@ li {
   max-width: 44ch;
   margin: 0 0 1.8rem;
   min-height: 4.8em; /* reserve 3 lines (the tallest tagline) so role swaps never jump the links row */
+  animation: tagline-in 420ms ease both;
+}
+@keyframes tagline-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .links {
@@ -1190,6 +1199,7 @@ li {
   .prism-photo,
   .beam,
   .role,
+  .lead-tagline,
   .reveal,
   .card,
   .trophy-link,
