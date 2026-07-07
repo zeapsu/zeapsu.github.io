@@ -108,7 +108,7 @@ export const projects: Project[] = [
 // on experience.md's exclusions list, so it is named nowhere on the site.
 export const questLog = {
   eyebrow: 'path',
-  title: 'Experience',
+  title: 'Background',
   intro:
     'The route here was not a straight line: community college to a physics degree to a research lab.',
   quests: [
