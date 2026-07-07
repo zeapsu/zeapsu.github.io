@@ -110,16 +110,21 @@ export function Hero({
         <p className="eyebrow">{identity.name}</p>
         <h1 className="lead">
           Hi, I&rsquo;m Andry.
-          <br />I am{' '}
-          <span className="role-slot">
-            {/* keying on shownId remounts the word so it re-plays the enter
-                animation each cycle; the word wears its own focus hue */}
-            <span
-              key={shownId}
-              className="role"
-              style={{ '--facet': shown.palette.accent } as CSSProperties}
-            >
-              {article(shownId)} {shown.name}
+          {/* the role line is scaled so the longest role ("an AI Systems
+              Engineer") stays on one line — switching never changes the
+              headline's line count */}
+          <span className="role-line">
+            I am{' '}
+            <span className="role-slot">
+              {/* keying on shownId remounts the word so it re-plays the enter
+                  animation each cycle; the word wears its own focus hue */}
+              <span
+                key={shownId}
+                className="role"
+                style={{ '--facet': shown.palette.accent } as CSSProperties}
+              >
+                {article(shownId)} {shown.name}
+              </span>
             </span>
           </span>
         </h1>

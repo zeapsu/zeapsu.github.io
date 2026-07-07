@@ -349,6 +349,14 @@ li {
   margin: 0.2rem 0 1.1rem;
   max-width: 18ch;
 }
+/* The role sentence: its own line, scaled so the longest role ("an AI
+   Systems Engineer") holds one line — switching roles never rewraps. */
+.role-line {
+  display: block;
+  font-size: 0.62em;
+  margin-top: 0.22em;
+  letter-spacing: -0.01em;
+}
 .role-slot {
   display: inline-block;
   vertical-align: baseline;
@@ -379,7 +387,7 @@ li {
   color: var(--muted);
   max-width: 44ch;
   margin: 0 0 1.8rem;
-  min-height: 3.2em; /* reserve so the line swap does not jump the layout */
+  min-height: 4.8em; /* reserve 3 lines (the tallest tagline) so role swaps never jump the links row */
 }
 
 .links {
