@@ -3,6 +3,7 @@ import { JOBS, PRIMARY_JOB, type JobId } from '../content/jobs'
 import { identity } from '../content/data'
 import { ContactLinks } from './Sections'
 import { useBeamGeometry } from './dispersion'
+import { BeamCanvas } from './BeamCanvas'
 import photo from '../assets/portrait.jpg'
 
 const reduced =
@@ -57,9 +58,12 @@ export function Hero({
   // Idle: the shown beam is brightest, the rest lit low. Engaged: the lens
   // beam is brightest, the rest dim — never off (nothing is ever hidden).
   const beamState = (id: JobId) => (id === shownId ? 'beam-active' : lens ? 'beam-dim' : 'beam-idle')
+  // Shader weights mirror the SVG classes: active 1, idle 0.5, dim 0.18.
+  const weights = JOBS.map((j) => (j.id === shownId ? 1 : lens ? 0.18 : 0.5))
 
   return (
     <header className="hero" ref={heroRef}>
+      {geom && <BeamCanvas geom={geom} weights={weights} />}
       {geom && (
         <svg
           className="hero-svg"

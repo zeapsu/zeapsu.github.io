@@ -194,9 +194,20 @@ li {
   pointer-events: none;
   z-index: 0;
 }
-.hero > :not(.hero-svg) {
+.hero > :not(.hero-svg):not(.beam-canvas) {
   position: relative;
   z-index: 1;
+}
+
+/* Layer 2: volumetric light. Opaque black canvas + screen blend = additive. */
+.beam-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
 }
 .beam {
   transition: opacity 400ms ease;
@@ -252,6 +263,10 @@ li {
   text-decoration: none;
   text-underline-offset: 6px;
   transition: color 180ms ease;
+  /* a dark bed so the words stay crisp inside the volumetric glow */
+  text-shadow:
+    0 0 6px rgba(8, 7, 14, 0.95),
+    0 0 14px rgba(8, 7, 14, 0.8);
 }
 .beam-btn:hover,
 .beam-btn.active {
