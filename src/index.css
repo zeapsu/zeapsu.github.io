@@ -309,13 +309,14 @@ li {
 [data-theme='light'] .beam-btn:hover,
 [data-theme='light'] .beam-btn.active,
 [data-theme='light'] .beam-btn.locked {
-  color: color-mix(in srgb, var(--facet) 52%, #241d33);
+  color: color-mix(in srgb, var(--facet) 42%, #17121f);
 }
 [data-theme='light'] .beam-btn {
-  /* light bed for the words inside the rainbow */
+  color: #2e2940;
+  /* paper-colored bed: crisp inside the beam glow without a whitish halo */
   text-shadow:
-    0 0 6px rgba(244, 241, 234, 0.95),
-    0 0 14px rgba(244, 241, 234, 0.8);
+    0 0 6px rgba(216, 208, 194, 0.95),
+    0 0 14px rgba(216, 208, 194, 0.8);
 }
 /* On paper the canvas paints the paper itself (opaque, same color) —
    no blend mode; white light and the rainbow render directly. */
