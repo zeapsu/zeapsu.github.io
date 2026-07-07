@@ -28,6 +28,7 @@ export function useBeamGeometry(
   hero: RefObject<HTMLElement | null>,
   photo: RefObject<HTMLElement | null>,
   buttons: RefObject<(HTMLElement | null)[]>,
+  copy?: RefObject<HTMLElement | null>,
 ): BeamGeometry | null {
   const [geom, setGeom] = useState<BeamGeometry | null>(null)
 
@@ -55,9 +56,25 @@ export function useBeamGeometry(
       const strike = vertical
         ? { x: P.left + P.width * STRIKE_T + P.width * SLANT, y: P.top + 2 }
         : { x: P.left + P.width * SLANT * (1 - STRIKE_T), y: P.top + P.height * STRIKE_T }
-      const entry: Segment = vertical
+      let entry: Segment = vertical
         ? { x1: hr.width * 0.96, y1: 0, x2: strike.x, y2: strike.y }
         : { x1: 0, y1: hr.height * 0.04, x2: strike.x, y2: strike.y }
+
+      // The beam must never strike through the headline: if the default line
+      // would cross the copy block's top-right corner, re-aim the start so
+      // the line passes above it (entering from offscreen-top when needed).
+      if (!vertical && copy?.current) {
+        const cr = copy.current.getBoundingClientRect()
+        const C = { x: cr.right - hr.left + 16, y: cr.top - hr.top - 28 }
+        if (C.x < strike.x) {
+          const yAtC = entry.y1 + ((strike.y - entry.y1) * C.x) / strike.x
+          if (yAtC > C.y) {
+            // line through C and the strike point, extended back to x = 0
+            const y0 = C.y - (C.x * (strike.y - C.y)) / (strike.x - C.x)
+            entry = { x1: 0, y1: y0, x2: strike.x, y2: strike.y }
+          }
+        }
+      }
 
       // exits: one origin on the far face → each button
       const origin = vertical

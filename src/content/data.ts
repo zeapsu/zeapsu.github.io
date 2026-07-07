@@ -218,23 +218,42 @@ export interface Achievement {
   credential?: string
 }
 
-export const achievements: Achievement[] = [
-  { title: 'Dean’s Scholar', detail: 'SJSU, Fall 2024 and Fall 2025' },
-  { title: 'Four degrees with honors', detail: 'MJC: CS, Mathematics, Physics, Language & Rationality' },
-  { title: 'President’s List × 5', detail: 'Modesto Junior College' },
+// Grouped by source so SJSU and MJC honors read separately (the Background
+// timeline tells the story; this grid is the award summary).
+export const achievementGroups: { label: string; items: Achievement[] }[] = [
   {
-    title: '2025 Quantum Program, WISER',
-    detail: 'Quantum algorithms for portfolio optimization, 2025',
-    credential: '/certificates/wiser-project-2025.jpg',
+    label: 'San Jose State',
+    items: [{ title: 'Dean’s Scholar', detail: 'Fall 2024 and Fall 2025' }],
   },
-  { title: 'QBronze169 Diploma', detail: 'QWorld, 2025', credential: '/certificates/qbronze169.jpg' },
   {
-    title: 'PennyLane LCU Challenge',
-    detail: 'Womanium & WISER, 2025',
-    // SVG (vector): the source PDF renders cut off in-browser.
-    credential: '/certificates/pennylane-lcu.svg',
+    label: 'Modesto Junior College',
+    items: [
+      { title: 'Four degrees with honors', detail: 'CS, Mathematics, Physics, Language & Rationality' },
+      { title: 'President’s List × 5', detail: '2021 – 2024' },
+    ],
+  },
+  {
+    label: 'Programs & certificates',
+    items: [
+      {
+        title: '2025 Quantum Program, WISER',
+        detail: 'Quantum algorithms for portfolio optimization, 2025',
+        credential: '/certificates/wiser-project-2025.jpg',
+      },
+      { title: 'QBronze169 Diploma', detail: 'QWorld, 2025', credential: '/certificates/qbronze169.jpg' },
+      {
+        title: 'PennyLane LCU Challenge',
+        detail: 'Womanium & WISER, 2025',
+        // SVG (vector): the source PDF renders cut off in-browser.
+        credential: '/certificates/pennylane-lcu.svg',
+      },
+    ],
   },
 ]
+// Flat view for the plain fallback.
+export const achievements: Achievement[] = achievementGroups.flatMap((g) =>
+  g.items.map((a) => ({ ...a, detail: `${g.label} — ${a.detail}` })),
+)
 
 export const contact = {
   eyebrow: 'contact',

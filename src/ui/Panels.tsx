@@ -3,7 +3,7 @@ import {
   research,
   projects,
   questLog,
-  achievements,
+  achievementGroups,
   contact,
   howIWork,
   resumes,
@@ -101,41 +101,51 @@ export function Panels({ lens }: { lens: JobId | null }) {
       <section className="panel reveal">
         <p className="eyebrow">recognition</p>
         <h2>Honors and credentials</h2>
-        <div className="trophy-grid">
-          {achievements.map((a) => {
-            const inner = (
-              <>
-                <span className="trophy-title">{a.title}</span>
-                <span className="trophy-detail">{a.detail}</span>
-              </>
-            )
-            return a.credential ? (
-              <a
-                key={a.title}
-                className="trophy trophy-link"
-                href={a.credential}
-                target="_blank"
-                rel="noopener"
-                aria-label={`${a.title}, ${a.detail}. View credential.`}
-              >
-                {inner}
-                <span className="trophy-view" aria-hidden="true">view credential</span>
-              </a>
-            ) : (
-              <div key={a.title} className="trophy">
-                {inner}
-              </div>
-            )
-          })}
-        </div>
+        {achievementGroups.map((g) => (
+          <div key={g.label} className="trophy-group">
+            <p className="trophy-group-label">{g.label}</p>
+            <div className="trophy-grid">
+              {g.items.map((a) => {
+                const inner = (
+                  <>
+                    <span className="trophy-title">{a.title}</span>
+                    <span className="trophy-detail">{a.detail}</span>
+                  </>
+                )
+                return a.credential ? (
+                  <a
+                    key={a.title}
+                    className="trophy trophy-link"
+                    href={a.credential}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={`${a.title}, ${a.detail}. View credential.`}
+                  >
+                    {inner}
+                    <span className="trophy-view" aria-hidden="true">view credential</span>
+                  </a>
+                ) : (
+                  <div key={a.title} className="trophy">
+                    {inner}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </section>
 
       <section className="panel reveal">
-        <p className="eyebrow">about + contact</p>
+        <p className="eyebrow">about</p>
+        <h2>{howIWork.title}</h2>
+        <p>{howIWork.body}</p>
+      </section>
+
+      <section className="panel reveal">
+        <p className="eyebrow">{contact.eyebrow}</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
         <ContactLinks show={['email']} />
-        <p className="about-line">{howIWork.body}</p>
         <p className="resume-download">
           <a className="resume-button" href={resumes[resumeFocus]} target="_blank" rel="noopener">
             Download resume

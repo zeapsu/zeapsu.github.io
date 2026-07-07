@@ -157,12 +157,17 @@ export function StaticFallback() {
         </ul>
       </section>
 
+      <section className="panel">
+        <p className="eyebrow">{howIWork.eyebrow}</p>
+        <h2>{howIWork.title}</h2>
+        <p>{howIWork.body}</p>
+      </section>
+
       <section className="panel closing">
-        <p className="eyebrow">about + contact</p>
+        <p className="eyebrow">{contact.eyebrow}</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
         <ContactLinks />
-        <p>{howIWork.body}</p>
         <p>Resumes: <a href={resumeDefault} target="_blank" rel="noopener">full CV</a>{' '}
           {JOBS.map((j) => (
             <span key={j.id}>

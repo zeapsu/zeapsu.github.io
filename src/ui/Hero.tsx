@@ -52,8 +52,9 @@ export function Hero({
 
   const heroRef = useRef<HTMLElement>(null)
   const photoRef = useRef<HTMLDivElement>(null)
+  const copyRef = useRef<HTMLDivElement>(null)
   const btnRefs = useRef<(HTMLElement | null)[]>([])
-  const geom = useBeamGeometry(heroRef, photoRef, btnRefs)
+  const geom = useBeamGeometry(heroRef, photoRef, btnRefs, copyRef)
 
   // Idle: the shown beam is brightest, the rest lit low. Engaged: the lens
   // beam is brightest, the rest dim — never off (nothing is ever hidden).
@@ -88,7 +89,7 @@ export function Hero({
         </svg>
       )}
 
-      <div className="hero-copy">
+      <div className="hero-copy" ref={copyRef}>
         <p className="eyebrow">{identity.name}</p>
         <h1 className="lead">
           Hi, I&rsquo;m Andry.
