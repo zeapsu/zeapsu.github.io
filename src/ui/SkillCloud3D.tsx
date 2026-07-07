@@ -65,7 +65,7 @@ function Cloud({ lens }: { lens: JobId | null }) {
     pointer.current.y += (state.pointer.y - pointer.current.y) * 0.03
     g.rotation.x = pointer.current.y * -0.18
     g.rotation.z = pointer.current.x * 0.06
-    const fit = Math.min(1, state.viewport.width / 7.2)
+    const fit = Math.min(1, state.viewport.width / 6.2)
     g.scale.setScalar(fit)
 
     const active = lensRef.current

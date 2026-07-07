@@ -654,6 +654,12 @@ li {
 .skill-field-3d canvas {
   display: block;
 }
+/* Long tokens can swing past the canvas edge on narrow viewports; fade them
+   out of the light instead of hard-clipping mid-word. */
+.skill-field-3d {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent);
+}
 
 /* visually hidden, screen-reader available */
 .sr-only {
@@ -1143,8 +1149,9 @@ li {
     grid-template-columns: 1fr;
     gap: 0.15rem;
   }
-  /* the cloud collapses to wrapped rows per branch */
-  .skill-field {
+  /* the 2D field collapses to wrapped rows per branch; the 3D cloud keeps
+     its base height (auto would crush the canvas to nothing) */
+  .skill-field:not(.skill-field-3d) {
     height: auto;
     display: flex;
     flex-direction: column;

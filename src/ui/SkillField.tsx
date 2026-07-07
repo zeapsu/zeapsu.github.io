@@ -67,33 +67,21 @@ function layout(): { job: JobId; branch: string; motes: Mote[] }[] {
 const TIER_SIZE = [0.7, 0.82, 0.98] // rem — depth via type scale
 
 // The volumetric R3F cloud when it can honor the floors; the flat 2D field
-// under reduced motion, without WebGL2, or on small screens (the mobile CSS
-// flows the 2D field into wrapped rows per branch — the cloud needs desktop
-// room). Either way the tokens exist as real DOM text (the 2D field
-// directly; the 3D mode via the sr-only list).
-function pickMode(): '3d' | '2d' {
-  if (typeof matchMedia === 'undefined') return '2d'
-  if (matchMedia('(max-width: 780px)').matches) return '2d'
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return '2d'
-  try {
-    return document.createElement('canvas').getContext('webgl2') ? '3d' : '2d'
-  } catch {
-    return '2d'
-  }
-}
-
+// under reduced motion or without WebGL2 (on mobile the 2D field flows into
+// wrapped rows per branch). Either way the tokens exist as real DOM text
+// (the 2D field directly; the 3D mode via the sr-only list).
 export function SkillField({ lens }: { lens: JobId | null }) {
-  const [mode, setMode] = useState<'3d' | '2d'>(pickMode)
+  const [mode] = useState<'3d' | '2d'>(() => {
+    if (typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches)
+      return '2d'
+    try {
+      return document.createElement('canvas').getContext('webgl2') ? '3d' : '2d'
+    } catch {
+      return '2d'
+    }
+  })
   const wrapRef = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
-
-  // Re-pick when the viewport crosses the mobile breakpoint (rotation, resize).
-  useEffect(() => {
-    const mq = matchMedia('(max-width: 780px)')
-    const update = () => setMode(pickMode())
-    mq.addEventListener('change', update)
-    return () => mq.removeEventListener('change', update)
-  }, [])
 
   // Don't burn GPU while the cloud is off-screen.
   useEffect(() => {
