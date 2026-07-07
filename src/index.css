@@ -430,6 +430,15 @@ li {
     flex-direction: column;
     justify-content: center;
   }
+  /* Dwell: extra scroll distance while a sheet is pinned, so there is time
+     to read it before the next sheet slides over. The gap never shows —
+     the pinned sheet fills the viewport beneath it. */
+  .panels {
+    margin-top: 45vh;
+  }
+  .panels section.panel + section.panel {
+    margin-top: 55vh;
+  }
 }
 
 /* The active wavelength, carried down the page. Scroll-driven where
@@ -934,6 +943,141 @@ li {
   .anim-contact.in-view > :nth-child(4) { transition-delay: 180ms; }
   .anim-contact.in-view > :nth-child(5) { transition-delay: 270ms; }
   .anim-contact.in-view > :nth-child(6) { transition-delay: 360ms; }
+
+  /* Scroll-scrubbed variant: each sheet exposes its entry as a named view
+     timeline and its children ride it, so every entrance tracks scroll
+     position exactly — rewinding when you scroll back up. A sheet's entry
+     (0% = top edge at viewport bottom, 100% = fully entered = pinned) spans
+     one viewport of scrolling, so all ranges complete by the time it pins.
+     CSS animations beat the transition rules above for the same properties,
+     so those IO transitions remain the fallback where view() is missing. */
+  @supports (animation-timeline: view()) {
+    .panels .panel {
+      view-timeline: --sheet;
+    }
+    .panels .panel h2,
+    .panels .panel h2.in-view {
+      animation: catch-light linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 12% entry 50%;
+    }
+
+    .anim-now .pull-stat-value {
+      animation: k-exposure linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 20% entry 70%;
+    }
+    .anim-now li {
+      animation: k-slide-in linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 10% entry 50%;
+    }
+    .anim-now li:nth-child(2) { animation-range: entry 18% entry 58%; }
+    .anim-now li:nth-child(3) { animation-range: entry 26% entry 66%; }
+    .anim-now li:nth-child(4) { animation-range: entry 34% entry 74%; }
+    .anim-now li:nth-child(5) { animation-range: entry 42% entry 82%; }
+
+    .anim-work .card {
+      animation: k-deal linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 10% entry 55%;
+    }
+    .anim-work .card:nth-child(2) { animation-range: entry 19% entry 64%; }
+    .anim-work .card:nth-child(3) { animation-range: entry 28% entry 73%; }
+    .anim-work .card:nth-child(4) { animation-range: entry 37% entry 82%; }
+    .anim-work .card:nth-child(5) { animation-range: entry 46% entry 91%; }
+
+    .anim-skills .skill-field {
+      animation: k-condense linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 10% entry 75%;
+    }
+
+    .anim-path .quest {
+      animation: k-wipe linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 10% entry 55%;
+    }
+    .anim-path .quest:nth-child(2) { animation-range: entry 20% entry 65%; }
+    .anim-path .quest:nth-child(3) { animation-range: entry 30% entry 75%; }
+    .anim-path .quest:nth-child(4) { animation-range: entry 40% entry 85%; }
+
+    .anim-recognition .trophy {
+      animation: k-shelf linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 10% entry 50%;
+    }
+    .anim-recognition .trophy-group:nth-of-type(2) .trophy { animation-range: entry 20% entry 60%; }
+    .anim-recognition .trophy-group:nth-of-type(3) .trophy { animation-range: entry 30% entry 70%; }
+
+    .anim-about p:not(.eyebrow) {
+      animation: k-focus linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 15% entry 65%;
+    }
+
+    .anim-contact > :not(.eyebrow) {
+      animation: k-rise linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 10% entry 50%;
+    }
+    .anim-contact > :nth-child(3) { animation-range: entry 18% entry 58%; }
+    .anim-contact > :nth-child(4) { animation-range: entry 26% entry 66%; }
+    .anim-contact > :nth-child(5) { animation-range: entry 34% entry 74%; }
+    .anim-contact > :nth-child(6) { animation-range: entry 42% entry 82%; }
+
+    /* Mobile stacks tall panels in normal flow, so a sheet-wide timeline
+       would leave lower content unformed for most of the sheet; each child
+       tracks its own viewport entry instead (DOM order staggers naturally). */
+    @media (max-width: 780px) {
+      .panels .panel h2,
+      .panels .panel h2.in-view,
+      .anim-now .pull-stat-value,
+      .anim-now li,
+      .anim-work .card,
+      .anim-skills .skill-field,
+      .anim-path .quest,
+      .anim-recognition .trophy,
+      .anim-about p:not(.eyebrow),
+      .anim-contact > :not(.eyebrow) {
+        animation-timeline: view();
+        animation-range: entry 0% cover 30%;
+      }
+    }
+
+    @keyframes k-exposure {
+      from { opacity: 0; filter: blur(10px); transform: scale(1.1); }
+      to { opacity: 1; filter: none; transform: none; }
+    }
+    @keyframes k-slide-in {
+      from { opacity: 0; transform: translateX(-22px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes k-deal {
+      from { opacity: 0; transform: translateY(28px) rotate(0.5deg); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes k-condense {
+      from { opacity: 0; transform: scale(0.94); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes k-wipe {
+      from { clip-path: inset(0 100% 0 0); }
+      to { clip-path: inset(0 0 0 0); }
+    }
+    @keyframes k-shelf {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes k-focus {
+      from { opacity: 0; filter: blur(6px); }
+      to { opacity: 1; filter: none; }
+    }
+    @keyframes k-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+  }
 }
 
 /* ---------- plain fallback (?plain=1) ---------- */
