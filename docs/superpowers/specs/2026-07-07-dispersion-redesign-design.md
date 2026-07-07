@@ -93,8 +93,23 @@ headers.
 
 ## Implementation constraints
 
-- No new dependencies. SVG + CSS (+ the existing ~30-line reveal helper).
-  Bundle stays in the ~210 kB neighborhood.
+Amended 2026-07-07: Andry wants the visuals to genuinely pop and is open to
+external deps (even R3F). The architecture is layered so ambition never costs
+the floors:
+
+- **Layer 0 — DOM:** photo, headline, role buttons, all content. Always.
+- **Layer 1 — static SVG beams:** the beam geometry, dispersion fan, and glow
+  as a crisp static composition. Always rendered; it IS the reduced-motion
+  state and the no-WebGL fallback, and it anchors the button positions.
+- **Layer 2 — WebGL shader:** a full-viewport fragment-shader quad behind the
+  DOM adding volumetric light, dust motes drifting in the beam, dispersion
+  shimmer, and pointer parallax; it tracks the lens state (collapses to one
+  wavelength on lock). Progressive enhancement: absent without WebGL, holds
+  one formed static frame under reduced motion. Raw WebGL2 in one module (or
+  `ogl`, ~30 kB, if it saves real time) — R3F is not resurrected for a single
+  quad. A literally refractive 3D prism mesh is the future R3F upgrade path
+  if this ever escalates; it is out of scope now.
+- Perf floor per AGENTS.md: 60 fps at deviceScaleFactor 2 on the MacBook.
 - `jobs.selfcheck.ts` must keep passing (palette blocks stay in sync).
 - Verification per AGENTS.md: `npm run build` clean; drive the real page on
   the MacBook (Playwright MCP, `emulateMedia` for motion), check reduced
@@ -103,5 +118,6 @@ headers.
 ## Risks
 
 This concept is the rabbit-hole-shaped kind. The scope ceiling is structural:
-SVG+CSS only, one page, no new deps, six sections. If a beam effect demands
-WebGL or a new library, the answer is a simpler beam, not a bigger toolbox.
+one page, six sections, one shader module with a hard fallback ladder
+(DOM → SVG → shader). If an effect demands a scene graph or a second canvas,
+the answer is a better fragment shader, not a bigger toolbox.
