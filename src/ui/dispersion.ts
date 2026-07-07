@@ -45,29 +45,43 @@ export function useBeamGeometry(
         height: pr.height,
       }
 
-      // entry: viewport-left → the photo's slanted left face
-      const strike = {
-        x: P.left + P.width * SLANT * (1 - STRIKE_T),
-        y: P.top + P.height * STRIKE_T,
-      }
-      // Starts near the top-left corner so the diagonal crosses the empty
-      // space above the headline instead of striking through the copy.
-      const entry: Segment = { x1: 0, y1: hr.height * 0.04, x2: strike.x, y2: strike.y }
+      // ≤780px the hero is a vertical stack: light enters from the top-right,
+      // strikes the photo's top face, and fans downward to the button row.
+      const vertical = matchMedia('(max-width: 780px)').matches
 
-      // exits: one origin on the slanted right face → each button's left-center
-      const origin = {
-        x: P.left + P.width * (1 - SLANT * ORIGIN_T),
-        y: P.top + P.height * ORIGIN_T,
-      }
+      // Desktop: entry starts near the top-left corner so the diagonal
+      // crosses the empty space above the headline, striking the slanted
+      // left face of the photo.
+      const strike = vertical
+        ? { x: P.left + P.width * STRIKE_T + P.width * SLANT, y: P.top + 2 }
+        : { x: P.left + P.width * SLANT * (1 - STRIKE_T), y: P.top + P.height * STRIKE_T }
+      const entry: Segment = vertical
+        ? { x1: hr.width * 0.96, y1: 0, x2: strike.x, y2: strike.y }
+        : { x1: 0, y1: hr.height * 0.04, x2: strike.x, y2: strike.y }
+
+      // exits: one origin on the far face → each button
+      const origin = vertical
+        ? { x: P.left + P.width * ORIGIN_T, y: P.top + P.height - 2 }
+        : {
+            x: P.left + P.width * (1 - SLANT * ORIGIN_T),
+            y: P.top + P.height * ORIGIN_T,
+          }
       const exits = (buttons.current ?? []).map((b) => {
         if (!b) return { x1: origin.x, y1: origin.y, x2: origin.x, y2: origin.y }
         const br = b.getBoundingClientRect()
-        return {
-          x1: origin.x,
-          y1: origin.y,
-          x2: br.left - hr.left - 10,
-          y2: br.top - hr.top + br.height / 2,
-        }
+        return vertical
+          ? {
+              x1: origin.x,
+              y1: origin.y,
+              x2: br.left - hr.left + br.width / 2,
+              y2: br.top - hr.top - 6,
+            }
+          : {
+              x1: origin.x,
+              y1: origin.y,
+              x2: br.left - hr.left - 10,
+              y2: br.top - hr.top + br.height / 2,
+            }
       })
 
       setGeom({ entry, exits, width: hr.width, height: hr.height })
