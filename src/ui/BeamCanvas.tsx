@@ -142,11 +142,12 @@ void main() {
   float g = (hash(gl_FragCoord.xy + fract(uTime)) - 0.5);
   col += g * mix(0.02, 0.006, min(field, 1.0));
 
-  vec3 dark = max(col, 0.0);
-  // paper: the canvas paints the page background itself, light brightens it
-  // toward white, exit-beam pigment saturates it
+  // Both themes paint the page background themselves (opaque, no CSS blend:
+  // the sticky hero isolates mix-blend-mode from the page behind it, which
+  // left a seam). Dark: light adds over the ground. Light: pigment + shine.
+  vec3 night = max(uPaper + col, 0.0);
   vec3 paper = clamp(uPaper - min(absorb, vec3(0.65)) + shine, 0.0, 1.0) + g * 0.014;
-  outColor = vec4(mix(dark, paper, uLightMode), 1.0);
+  outColor = vec4(mix(night, paper, uLightMode), 1.0);
 }`
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -272,9 +273,17 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
     }
 
     let settle: ReturnType<typeof setTimeout> | undefined
+    let themeMo: MutationObserver | undefined
     if (reduced) {
       draw() // one formed frame, no loop...
       settle = setTimeout(draw, 900) // ...re-drawn once the bg transition lands
+      // the lights toggle flips data-theme with no render loop running
+      themeMo = new MutationObserver(() => {
+        draw()
+        clearTimeout(settle)
+        settle = setTimeout(draw, 900)
+      })
+      themeMo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     } else {
       const loop = () => {
         if (running) draw()
@@ -292,6 +301,7 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
     return () => {
       cancelAnimationFrame(raf)
       clearTimeout(settle)
+      themeMo?.disconnect()
       io.disconnect()
       removeEventListener('pointermove', onMove)
       // Deliberately NOT losing the GL context: StrictMode remounts reuse

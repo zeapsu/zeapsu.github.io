@@ -20,6 +20,25 @@ export default function App() {
   const lens = preview ?? locked
   const accent = lens ?? PRIMARY_JOB
 
+  // Global theme flip: every sheet swaps light<->dark but the section-by-
+  // section alternation is preserved. index.html applies the saved choice
+  // pre-paint; this state just keeps React and the toggle in sync.
+  const [lightsOff, setLightsOff] = useState(() => {
+    try {
+      return localStorage.lightsOff === '1'
+    } catch {
+      return false
+    }
+  })
+  useEffect(() => {
+    document.documentElement.dataset.theme = lightsOff ? 'dark' : 'light'
+    try {
+      localStorage.lightsOff = lightsOff ? '1' : '0'
+    } catch {
+      /* private mode: the choice just doesn't persist */
+    }
+  }, [lightsOff])
+
   useEffect(() => {
     document.documentElement.dataset.job = accent
   }, [accent])
@@ -31,13 +50,20 @@ export default function App() {
 
   return (
     <>
+      <button
+        className="mode-toggle"
+        aria-pressed={lightsOff}
+        onClick={() => setLightsOff((v) => !v)}
+      >
+        {lightsOff ? 'lights on' : 'lights off'}
+      </button>
       <Hero
         locked={locked}
         preview={preview}
         onPreview={setPreview}
         onLock={(id) => setLocked((cur) => (cur === id ? null : id))}
       />
-      <Panels lens={lens} />
+      <Panels lens={lens} inverted={lightsOff} />
     </>
   )
 }

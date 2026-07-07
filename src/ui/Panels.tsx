@@ -32,15 +32,17 @@ function sortedProjects(lens: JobId | null) {
   })
 }
 
-export function Panels({ lens }: { lens: JobId | null }) {
+export function Panels({ lens, inverted = false }: { lens: JobId | null; inverted?: boolean }) {
   // The resume always resolves to a focus: the active lens, or the primary one.
   const resumeFocus = lens ?? PRIMARY_JOB
+  // "lights off" flips every sheet while keeping the alternation.
+  const t = (base: 'dark' | 'light') => (inverted ? (base === 'dark' ? 'light' : 'dark') : base)
   return (
     <main className="panels">
       {/* the active wavelength, carried down the page (decorative) */}
       <div className="spine" aria-hidden="true" />
 
-      <section className="panel reveal anim-now" data-theme="dark">
+      <section className="panel reveal anim-now" data-theme={t('dark')}>
         <p className="eyebrow">{research.eyebrow}</p>
         <h2>{research.title}</h2>
         <p>{research.body}</p>
@@ -56,7 +58,7 @@ export function Panels({ lens }: { lens: JobId | null }) {
         </ul>
       </section>
 
-      <section className="panel reveal anim-work" data-theme="light">
+      <section className="panel reveal anim-work" data-theme={t('light')}>
         <p className="eyebrow">work</p>
         <h2>Selected work</h2>
         <div className="quest-board">
@@ -71,13 +73,15 @@ export function Panels({ lens }: { lens: JobId | null }) {
         </div>
       </section>
 
-      <section className="panel reveal anim-skills" data-theme="dark">
+      <section className="panel reveal anim-skills" data-theme={t('dark')}>
         <p className="eyebrow">skills</p>
         <h2>What I work in</h2>
-        <SkillField lens={lens} />
+        {/* the 3D cloud's material colors can't read CSS vars; tell it the
+            sheet's effective theme */}
+        <SkillField lens={lens} light={t('dark') === 'light'} />
       </section>
 
-      <section className="panel reveal anim-path" data-theme="light">
+      <section className="panel reveal anim-path" data-theme={t('light')}>
         <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
         <p>{questLog.intro}</p>
@@ -97,9 +101,10 @@ export function Panels({ lens }: { lens: JobId | null }) {
         </ol>
       </section>
 
-      <section className="panel reveal anim-recognition" data-theme="dark">
+      <section className="panel reveal anim-recognition" data-theme={t('dark')}>
         <p className="eyebrow">recognition</p>
         <h2>Honors and credentials</h2>
+        <div className="trophy-groups">
         {achievementGroups.map((g) => (
           <div key={g.label} className="trophy-group">
             <p className="trophy-group-label">{g.label}</p>
@@ -132,15 +137,16 @@ export function Panels({ lens }: { lens: JobId | null }) {
             </div>
           </div>
         ))}
+        </div>
       </section>
 
-      <section className="panel reveal anim-about" data-theme="light">
+      <section className="panel reveal anim-about" data-theme={t('light')}>
         <p className="eyebrow">about</p>
         <h2>{howIWork.title}</h2>
         <p>{howIWork.body}</p>
       </section>
 
-      <section className="panel reveal anim-contact" data-theme="dark">
+      <section className="panel reveal anim-contact" data-theme={t('dark')}>
         <p className="eyebrow">{contact.eyebrow}</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>

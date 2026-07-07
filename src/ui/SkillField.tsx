@@ -70,7 +70,7 @@ const TIER_SIZE = [0.7, 0.82, 0.98] // rem — depth via type scale
 // under reduced motion or without WebGL2 (on mobile the 2D field flows into
 // wrapped rows per branch). Either way the tokens exist as real DOM text
 // (the 2D field directly; the 3D mode via the sr-only list).
-export function SkillField({ lens }: { lens: JobId | null }) {
+export function SkillField({ lens, light = false }: { lens: JobId | null; light?: boolean }) {
   const [mode] = useState<'3d' | '2d'>(() => {
     if (typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches)
       return '2d'
@@ -102,7 +102,7 @@ export function SkillField({ lens }: { lens: JobId | null }) {
         ))}
       </ul>
       <Suspense fallback={null}>
-        <SkillCloud3D lens={lens} active={inView} />
+        <SkillCloud3D lens={lens} active={inView} light={light} />
       </Suspense>
     </div>
   )

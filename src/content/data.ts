@@ -204,8 +204,9 @@ export interface Achievement {
   credential?: string
 }
 
-// Grouped by source so SJSU and MJC honors read separately (the Background
-// timeline tells the story; this grid is the award summary).
+// Grouped by source so SJSU and MJC honors read separately. Degrees live in
+// the Background timeline only (the MJC entry lists all four); this grid is
+// honors and certificates, no duplication.
 export const achievementGroups: { label: string; items: Achievement[] }[] = [
   {
     label: 'San Jose State',
@@ -213,10 +214,7 @@ export const achievementGroups: { label: string; items: Achievement[] }[] = [
   },
   {
     label: 'Modesto Junior College',
-    items: [
-      { title: 'Four degrees with honors', detail: 'CS, Mathematics, Physics, Language & Rationality' },
-      { title: 'President’s List × 5', detail: '2021 – 2024' },
-    ],
+    items: [{ title: 'President’s List × 5', detail: '2021 – 2024' }],
   },
   {
     label: 'Programs & certificates',

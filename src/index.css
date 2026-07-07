@@ -230,7 +230,9 @@ li {
   z-index: 1;
 }
 
-/* Layer 2: volumetric light. Opaque black canvas + screen blend = additive. */
+/* Layer 2: volumetric light. Opaque: the shader paints the page background
+   plus the light itself (no blend mode — the sticky hero's stacking context
+   would isolate one from the page and leave seams). */
 .beam-canvas {
   position: absolute;
   inset: 0;
@@ -238,7 +240,6 @@ li {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  mix-blend-mode: screen;
 }
 .beam {
   transition: opacity 400ms ease;
@@ -319,11 +320,6 @@ li {
   text-shadow:
     0 0 6px rgba(216, 208, 194, 0.95),
     0 0 14px rgba(216, 208, 194, 0.8);
-}
-/* On paper the canvas paints the paper itself (opaque, same color) —
-   no blend mode; white light and the rainbow render directly. */
-[data-theme='light'] .beam-canvas {
-  mix-blend-mode: normal;
 }
 [data-theme='light'] .prism-photo {
   /* the wall matches the page bg; a hard shadow would break the blend */
@@ -423,6 +419,8 @@ li {
   --slant: clamp(2.2rem, 6vw, 5rem);
   position: relative;
   background: var(--bg);
+  /* the lights toggle flips each sheet's theme; fade the ground */
+  transition: background-color 350ms ease;
   border-top: none;
   clip-path: polygon(0 0, 100% var(--slant), 100% 100%, 0 100%);
   padding-top: calc(clamp(2.8rem, 6vw, 4.6rem) + var(--slant));
@@ -458,6 +456,34 @@ li {
   .panels section.panel + section.panel {
     margin-top: 55vh;
   }
+}
+
+/* Lights toggle: bare mono text, fixed above the deck. White + difference
+   blend keeps it legible over every sheet, light or dark, without a chip. */
+.mode-toggle {
+  position: fixed;
+  top: 1.1rem;
+  right: max(var(--gutter), 1.6rem);
+  z-index: 5;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: #fff;
+  mix-blend-mode: difference;
+  background: none;
+  border: none;
+  padding: 0.25rem 0.1rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 200ms ease;
+}
+.mode-toggle:hover {
+  opacity: 1;
+}
+.mode-toggle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  opacity: 1;
 }
 
 /* The active wavelength, carried down the page. Scroll-driven where
@@ -568,10 +594,10 @@ li {
   margin-top: 0.2rem;
 }
 
-/* projects */
+/* projects: 2x2 — four cards, no orphan row */
 .quest-board {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.4rem;
   margin-top: 1.5rem;
   align-items: start; /* ragged bottoms over stretched voids */
@@ -724,7 +750,15 @@ li {
   }
 }
 
-/* recognition */
+/* recognition: the two single-honor groups share a row; certificates span */
+.trophy-groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.4rem;
+}
+.trophy-groups .trophy-group:nth-of-type(3) {
+  grid-column: 1 / -1;
+}
 .trophy-group {
   margin-top: 1.6rem;
 }
@@ -1143,6 +1177,10 @@ li {
     min-height: 0;
     gap: 1.6rem;
     justify-items: start;
+  }
+  .quest-board,
+  .trophy-groups {
+    grid-template-columns: 1fr;
   }
   .prism-photo {
     order: 1;

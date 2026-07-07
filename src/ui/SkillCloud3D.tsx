@@ -11,7 +11,11 @@ import monoFont from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-no
 // motes catch their wavelength while the rest grey out. Decorative twin of
 // the sr-only DOM list rendered by SkillField.
 
+// dimmed-mote grey per sheet theme: readable-but-quiet on either ground
 const GREY = '#453f55'
+const GREY_LIGHT = '#8f8a80'
+// on paper, lit accents mix toward ink (the CSS accent-ink move, in three)
+const INK = '#241d33'
 
 interface Mote {
   token: string
@@ -45,15 +49,18 @@ function motes(): Mote[] {
   })
 }
 
-function Cloud({ lens }: { lens: JobId | null }) {
+function Cloud({ lens, light }: { lens: JobId | null; light: boolean }) {
   const group = useRef<Group>(null)
   const items = useMemo(motes, [])
   const texts = useRef<(Mesh | null)[]>([])
   // Per-frame targets live in a ref so useFrame never sees stale props.
   const lensRef = useRef(lens)
   lensRef.current = lens
+  const lightRef = useRef(light)
+  lightRef.current = light
   const pointer = useRef({ x: 0, y: 0 })
   const scratch = useMemo(() => new Color(), [])
+  const ink = useMemo(() => new Color(INK), [])
 
   useFrame((state, dt) => {
     const g = group.current
@@ -76,7 +83,12 @@ function Cloud({ lens }: { lens: JobId | null }) {
       const mat = t?.material as { color?: Color } | undefined
       if (!mat?.color) return
       const lit = active === null || active === m.job
-      scratch.set(lit ? m.accent : GREY)
+      if (lit) {
+        scratch.set(m.accent)
+        if (lightRef.current) scratch.lerp(ink, 0.45)
+      } else {
+        scratch.set(lightRef.current ? GREY_LIGHT : GREY)
+      }
       mat.color.lerp(scratch, step)
     })
   })
@@ -103,7 +115,15 @@ function Cloud({ lens }: { lens: JobId | null }) {
   )
 }
 
-export default function SkillCloud3D({ lens, active }: { lens: JobId | null; active: boolean }) {
+export default function SkillCloud3D({
+  lens,
+  active,
+  light = false,
+}: {
+  lens: JobId | null
+  active: boolean
+  light?: boolean
+}) {
   // A lost GL context never recovers in place (StrictMode's dev double-mount
   // force-loses it; real GPU eviction can too) — remount a fresh canvas node.
   const [epoch, setEpoch] = useState(0)
@@ -128,7 +148,7 @@ export default function SkillCloud3D({ lens, active }: { lens: JobId | null; act
         )
       }}
     >
-      <Cloud lens={lens} />
+      <Cloud lens={lens} light={light} />
     </Canvas>
   )
 }
