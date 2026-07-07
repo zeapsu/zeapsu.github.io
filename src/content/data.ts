@@ -182,7 +182,7 @@ export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
   },
   {
     job: 'robotics',
-    branch: 'Roboticist',
+    branch: 'Robotics Engineer',
     skills: [
       'Reachy Mini',
       'headless Jetson Orin Nano',
