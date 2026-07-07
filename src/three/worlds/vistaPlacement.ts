@@ -43,6 +43,16 @@ export const TREES: Placed[] = [
   { asset: 'poplar', x: 13, y: 82, s: 1.5, rz: 0 },
   { asset: 'oak', x: -17, y: 88, s: 1.4, rz: 1.2 },
   { asset: 'pine', x: 28, y: 92, s: 1.4, rz: 0 },
+  // wider flanks so the left/right of frame isn't bare (spread through depth)
+  { asset: 'pine', x: -31, y: 15, s: 2.6, rz: 0.3 },
+  { asset: 'maple', x: 32, y: 17, s: 2.7, rz: 2.2 },
+  { asset: 'bushtree', x: -35, y: 33, s: 2.3, rz: 1.0 },
+  { asset: 'willow', x: 35, y: 39, s: 2.4, rz: 4.0 },
+  { asset: 'birch', x: -39, y: 52, s: 1.9, rz: 0 },
+  { asset: 'oak', x: 38, y: 57, s: 2.0, rz: 2.5 },
+  // small midground greenery framing the arch area
+  { asset: 'bushtree', x: -13, y: 58, s: 1.3, rz: 1.0 },
+  { asset: 'pine', x: 15, y: 62, s: 1.4, rz: 0 },
 ]
 
 // bank rocks & cairns, also spread through depth
@@ -56,6 +66,11 @@ export const ROCKS: Placed[] = [
   { asset: 'rock-cluster', x: 22, y: 52, s: 1.8 },
   { asset: 'cairn', x: -8, y: 62, s: 1.3 },
   { asset: 'mossy-rock', x: 16, y: 74, s: 1.6 },
+  // flank rocks filling the wide left/right
+  { asset: 'rock-cluster', x: -28, y: 19, s: 1.8 },
+  { asset: 'mossy-rock', x: 29, y: 25, s: 1.9 },
+  { asset: 'cairn', x: -33, y: 43, s: 1.5 },
+  { asset: 'rock-cluster', x: 33, y: 49, s: 1.7 },
 ]
 
 // distant depth: a mountain WALL pulled forward and scaled up so the back reads
@@ -66,20 +81,33 @@ export const BACKGROUND: Placed[] = [
   { asset: 'mountain', x: -34, y: 90, s: 33, rz: 0.4, yAbs: -4 },
   { asset: 'mountain2', x: 32, y: 102, s: 40, rz: 2.1, yAbs: -5 },
   { asset: 'mountain', x: 2, y: 120, s: 46, rz: 1.0, yAbs: -7 },
+  // deeper horizon layer so the far distance isn't empty sky
+  { asset: 'mountain2', x: -10, y: 150, s: 54, rz: 0.6, yAbs: -9 },
+  { asset: 'mountain', x: 48, y: 138, s: 46, rz: 1.7, yAbs: -6 },
+  { asset: 'mountain2', x: -52, y: 132, s: 44, rz: 2.6, yAbs: -8 },
   { asset: 'spire', x: -24, y: 50, s: 5.5, rz: 0.7 },
   { asset: 'spire', x: 27, y: 64, s: 6.5, rz: 2.4 },
+  { asset: 'spire', x: -42, y: 82, s: 7.2, rz: 1.2 },
+  { asset: 'spire', x: 40, y: 98, s: 6.0, rz: 0.5 },
 ]
 
 // hazy focal arch + a field of floating islands stepped back through depth and
 // height, so the mid-to-far distance is populated and vast, not empty.
 export const FLOATERS: Placed[] = [
   { asset: 'arch', x: 2, y: 68, s: 4.6, rz: 0, yAbs: 11 },
-  { asset: 'island', x: -9, y: 60, s: 2.6, rz: 0.6, yAbs: 12 },
-  { asset: 'island2', x: 13, y: 72, s: 2.3, rz: 2.2, yAbs: 11 },
+  // the two arch-companion islands: pushed deep behind the arch and up into the
+  // haze (was crowding the arch crown, then clipping the flanking spires) — kept
+  // near centre (x ±12) so they clear every spire (x -24/-42/27/40)
+  { asset: 'island', x: -12, y: 88, s: 2.8, rz: 0.6, yAbs: 25 },
+  { asset: 'island2', x: 12, y: 94, s: 2.6, rz: 2.2, yAbs: 29 },
   { asset: 'island3', x: -20, y: 86, s: 3.3, rz: 1.1, yAbs: 21 },
   { asset: 'island', x: 24, y: 94, s: 3.6, rz: 3.0, yAbs: 26 },
   { asset: 'island2', x: -7, y: 106, s: 2.9, rz: 2.0, yAbs: 31 },
   { asset: 'island3', x: 18, y: 116, s: 3.1, rz: 0.8, yAbs: 34 },
+  // far high islands filling the deep background sky
+  { asset: 'island', x: -32, y: 130, s: 3.4, rz: 1.5, yAbs: 42 },
+  { asset: 'island2', x: 34, y: 142, s: 3.2, rz: 2.6, yAbs: 47 },
+  { asset: 'island3', x: 8, y: 152, s: 3.6, rz: 0.4, yAbs: 53 },
 ]
 
 // lily pads drift in the channel; laid flat, resting on the water surface

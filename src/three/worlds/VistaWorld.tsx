@@ -107,20 +107,37 @@ function useGroundDetail(): Placed[] {
     const out: Placed[] = []
     const detail = ['fern', 'grass-tuft', 'flowers']
     const base: Record<string, number> = { fern: 0.9, 'grass-tuft': 0.85, flowers: 0.9 }
-    for (let y = 6; y < 48; y += 5) {
+    // denser bank foliage: closer spacing, more clumps per cell, wider spread up
+    // the banks so the ground reads full rather than bare between assets
+    for (let y = 5; y < 50; y += 3.5) {
       for (const side of [-1, 1]) {
-        if (rand() < 0.35) continue
-        const bx = channelX(y) + side * (4.6 + rand() * 2.2)
-        const n = 1 + Math.floor(rand() * 3)
+        if (rand() < 0.18) continue
+        const bx = channelX(y) + side * (4.4 + rand() * 6)
+        const n = 2 + Math.floor(rand() * 3)
         for (let k = 0; k < n; k++) {
           const a = detail[Math.floor(rand() * 3)]
-          out.push({ asset: a, x: bx + (rand() - 0.5) * 2.4, y: y + (rand() - 0.5) * 3, s: base[a] * (0.7 + rand() * 0.55), rz: rand() * 6.28 })
+          out.push({ asset: a, x: bx + (rand() - 0.5) * 3, y: y + (rand() - 0.5) * 3.2, s: base[a] * (0.7 + rand() * 0.55), rz: rand() * 6.28 })
         }
       }
     }
-    for (const [cx0, cy] of [[-10, 19], [12, 44]] as const) {
-      for (let k = 0; k < 6; k++) {
-        out.push({ asset: 'flowers', x: cx0 + (rand() - 0.5) * 5, y: cy + (rand() - 0.5) * 5, s: 0.7 + rand() * 0.4, rz: rand() * 6.28 })
+    for (const [cx0, cy] of [[-10, 19], [12, 44], [-16, 34], [16, 12]] as const) {
+      for (let k = 0; k < 7; k++) {
+        out.push({ asset: 'flowers', x: cx0 + (rand() - 0.5) * 6, y: cy + (rand() - 0.5) * 6, s: 0.7 + rand() * 0.4, rz: rand() * 6.28 })
+      }
+    }
+    // subtle detail clustered around the arch's midground base so it isn't bare
+    for (const [ax, ay] of [[-8, 58], [10, 60], [-2, 54], [6, 64], [-12, 62], [13, 56]] as const) {
+      const a = detail[Math.floor(rand() * 3)]
+      out.push({ asset: a, x: ax + (rand() - 0.5) * 3, y: ay + (rand() - 0.5) * 3, s: base[a] * (0.7 + rand() * 0.5), rz: rand() * 6.28 })
+      out.push({ asset: rand() < 0.5 ? 'mossy-rock' : 'cairn', x: ax + (rand() - 0.5) * 4, y: ay + (rand() - 0.5) * 3, s: 0.22 + rand() * 0.3, rz: rand() * 6.28 })
+    }
+    // tiny scattered rocks & pebbles for fine ground detail (small scale, static)
+    for (let y = 4; y < 50; y += 2.6) {
+      for (const side of [-1, 1]) {
+        if (rand() < 0.55) continue
+        const rx = channelX(y) + side * (3.8 + rand() * 11)
+        const a = rand() < 0.5 ? 'mossy-rock' : 'rock-cluster'
+        out.push({ asset: a, x: rx + (rand() - 0.5) * 3, y: y + (rand() - 0.5) * 3, s: 0.16 + rand() * 0.26, rz: rand() * 6.28 })
       }
     }
     for (const [tx, ty] of [[-13, 6], [14, 8], [16, 22], [-15, 24], [6.6, 30]] as const) {
@@ -161,9 +178,10 @@ function Terrain() {
     const col = new Float32Array((nx + 1) * (ny + 1) * 3)
     // light tints: they multiply the grass photo to bias hue per zone (green
     // flats / dry mid-ground / stony steep faces) without darkening the detail
-    const grass = new THREE.Color('#8fce3e')
-    const grassDry = new THREE.Color('#c2c256')
-    const rock = new THREE.Color('#cdb894')
+    const grass = new THREE.Color('#7fc23a')
+    const grassDry = new THREE.Color('#b7bd5a')
+    const rock = new THREE.Color('#c3ad8a')
+    const shoreGreen = new THREE.Color('#5f9a34') // lush mossy bank at the waterline
     const c = new THREE.Color()
     let i = 0
     for (let iy = 0; iy <= ny; iy++) {
@@ -174,8 +192,15 @@ function Terrain() {
         pos[i * 3] = x; pos[i * 3 + 1] = h; pos[i * 3 + 2] = -by
         uv[i * 2] = x * TILE; uv[i * 2 + 1] = by * TILE
         const sl = slope(x, by)
-        c.copy(grass).lerp(grassDry, THREE.MathUtils.clamp((by - 10) / 60, 0, 0.45))
-        c.lerp(rock, THREE.MathUtils.smoothstep(sl, 0.5, 0.85))
+        c.copy(grass).lerp(grassDry, THREE.MathUtils.clamp((by - 10) / 60, 0, 0.32))
+        // dirt/rock only on true cliffs — channel banks (slope ~0.5) stay green
+        // to the waterline instead of reading as bare canyon walls
+        c.lerp(rock, THREE.MathUtils.smoothstep(sl, 0.72, 0.95))
+        // lush mossy shoreline: within ~5.5m of the water pull back to green so
+        // the banks never read as bare mud at the waterline
+        const ad = Math.abs(x - channelX(by))
+        const shoreT = 1 - THREE.MathUtils.smoothstep(ad, channelHalf(by), channelHalf(by) + 5.5)
+        c.lerp(shoreGreen, shoreT * 0.7)
         col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b
         i++
       }
@@ -223,7 +248,10 @@ function Water() {
     const pos: number[] = [], uv: number[] = [], idx: number[] = []
     for (let s = 0; s <= steps; s++) {
       const t = s / steps, by = Y0 + (Y1 - Y0) * t, cx = channelX(by), z = waterZ(by)
-      const half = channelHalf(by) - 0.8 // sit just inside the banks (widens to a foreground pool)
+      const half = channelHalf(by) - 0.1 // edge just inside the bank: keeps the smooth
+      // ribbon geometry (lapping further out clips jaggedly against the coarse terrain
+      // grid) while sitting close enough that the wide soft alpha fade + foam dissolve
+      // it into the bank instead of floating proud of the bed
       // offset each edge PERPENDICULAR to the centreline tangent, not along
       // world-X — otherwise the ribbon folds/notches on the meander's bends
       const e = 0.5
@@ -251,8 +279,8 @@ function Water() {
         uTime: windTime,
         uNormals: { value: normals },
         uSun: { value: SUN_DIR },
-        uDeep: { value: new THREE.Color('#0f6f88') },
-        uShallow: { value: new THREE.Color('#48c4c6') },
+        uDeep: { value: new THREE.Color('#0a5670') },
+        uShallow: { value: new THREE.Color('#3aa8b6') },
         uGlow: { value: new THREE.Color('#fff2d6') },
         uFog: { value: new THREE.Color('#f2c39a') },
       },
@@ -274,8 +302,8 @@ function Water() {
           float hy = clamp(R.y*0.5+0.5,0.0,1.0);
           vec3 sky = hy<0.5 ? mix(SKY_BOT,SKY_MID,hy*2.0) : mix(SKY_MID,SKY_TOP,(hy-0.5)*2.0);
           sky += uGlow * pow(max(dot(R,uSun),0.0), 60.0) * 1.6;
-          float fres = 0.03 + 0.55*pow(1.0 - max(dot(V,N),0.0), 4.0);
-          float shore = smoothstep(0.0,0.2,vUv.x)*smoothstep(1.0,0.8,vUv.x);
+          float fres = 0.02 + 0.42*pow(1.0 - max(dot(V,N),0.0), 5.0);
+          float shore = smoothstep(0.0,0.34,vUv.x)*smoothstep(1.0,0.66,vUv.x);
           vec3 col = mix(mix(uShallow,uDeep,shore), sky, fres);
           vec3 H = normalize(V + uSun);
           col += uGlow * pow(max(dot(N,H),0.0), 130.0) * 1.3;
@@ -285,9 +313,9 @@ function Water() {
           col = mix(col, vec3(0.96,0.98,1.0), foam*0.6);
           float fog = 1.0 - exp(-0.000064*vDepth*vDepth); // matches fogExp2 0.008
           col = mix(col, uFog, clamp(fog,0.0,1.0));
-          float edgeA = smoothstep(0.0,0.05,vUv.x)*smoothstep(1.0,0.95,vUv.x);
+          float edgeA = smoothstep(0.0,0.14,vUv.x)*smoothstep(1.0,0.86,vUv.x);
           float endA = smoothstep(0.0,0.03,vUv.y)*smoothstep(1.0,0.92,vUv.y);
-          gl_FragColor = vec4(col, clamp(0.9*edgeA*endA + foam*0.5, 0.0, 0.96));
+          gl_FragColor = vec4(col, clamp(0.9*edgeA*endA + foam*0.4, 0.0, 0.96));
         }`,
     })
     return { geom: g, mat: m }
@@ -335,7 +363,7 @@ function GrassField() {
     const rand = mulberry32(7)
     const placed: { x: number; y: number; s: number; hy: number; r: number }[] = []
     let attempts = 0
-    while (placed.length < 8000 && attempts < 120000) {
+    while (placed.length < 11000 && attempts < 200000) {
       attempts++
       const bx = -44 + rand() * 88
       const by = -14 + rand() * 106
