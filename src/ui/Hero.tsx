@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { JOBS, PRIMARY_JOB, type JobId } from '../content/jobs'
 import { identity } from '../content/data'
 import { ContactLinks } from './Sections'
+import { useBeamGeometry } from './dispersion'
 import photo from '../assets/portrait.jpg'
 
 const reduced =
@@ -13,10 +14,10 @@ const CYCLE: JobId[] = [PRIMARY_JOB, ...JOBS.map((j) => j.id).filter((id) => id 
 // Only "AI Systems Engineer" takes "an"; the other three take "a".
 const article = (id: JobId) => (id === 'ai-systems' ? 'an' : 'a')
 
-// The hero states one identity and cycles its four facets. The role word
-// doubles as the filter control: hovering/focusing a chip previews that focus
-// (transient), clicking locks it (persistent, clears on re-click). The word
-// auto-cycles only while nothing is previewed or locked.
+// The prism hero: white light enters from the left, strikes the portrait,
+// and disperses into four wavelength beams — one per facet. The beam-end
+// labels are the filter (hover/focus previews, click locks); the headline
+// rotator and the brightest beam always agree because both key on `shownId`.
 export function Hero({
   locked,
   preview,
@@ -38,26 +39,50 @@ export function Hero({
     return () => clearInterval(t)
   }, [cycling])
 
-  // Re-enter the cycle on the primary focus every time we return to idle, so it
-  // never resumes mid-rotation on a random role.
+  // Re-enter the cycle on the primary focus every time we return to idle, so
+  // it never resumes mid-rotation on a random role.
   useEffect(() => {
     if (lens === null) setI(0)
   }, [lens])
 
-  // A locked/previewed focus always wins; otherwise cycle (motion) or hold the
-  // primary focus (reduced motion). This keeps the headline honest under
-  // reduced motion when a focus is picked.
   const shownId: JobId = lens ?? (reduced ? PRIMARY_JOB : CYCLE[i])
   const shown = JOBS.find((j) => j.id === shownId)!
-  // The unified thesis holds while idle; a focus's own tagline appears once you
-  // engage that facet.
   const tagline = lens ? shown.tagline : identity.tagline
 
+  const heroRef = useRef<HTMLElement>(null)
+  const photoRef = useRef<HTMLDivElement>(null)
+  const btnRefs = useRef<(HTMLElement | null)[]>([])
+  const geom = useBeamGeometry(heroRef, photoRef, btnRefs)
+
+  // Idle: the shown beam is brightest, the rest lit low. Engaged: the lens
+  // beam is brightest, the rest dim — never off (nothing is ever hidden).
+  const beamState = (id: JobId) => (id === shownId ? 'beam-active' : lens ? 'beam-dim' : 'beam-idle')
+
   return (
-    <header className="hero">
-      <div className="hero-portrait">
-        <img src={photo} alt="Andry Paez" draggable={false} />
-      </div>
+    <header className="hero" ref={heroRef}>
+      {geom && (
+        <svg
+          className="hero-svg"
+          aria-hidden="true"
+          viewBox={`0 0 ${geom.width} ${geom.height}`}
+          preserveAspectRatio="none"
+        >
+          <g className="beam beam-entry">
+            <line {...seg(geom.entry)} stroke="#f2eefb" strokeWidth={7} opacity={0.14} />
+            <line {...seg(geom.entry)} stroke="#f2eefb" strokeWidth={1.8} opacity={0.85} />
+          </g>
+          {JOBS.map((j, idx) => {
+            const s = geom.exits[idx]
+            if (!s) return null
+            return (
+              <g key={j.id} className={`beam ${beamState(j.id)}`}>
+                <line {...seg(s)} stroke={j.palette.accent} strokeWidth={8} opacity={0.16} />
+                <line {...seg(s)} stroke={j.palette.accent} strokeWidth={1.8} />
+              </g>
+            )
+          })}
+        </svg>
+      )}
 
       <div className="hero-copy">
         <p className="eyebrow">{identity.name}</p>
@@ -73,27 +98,39 @@ export function Hero({
           </span>
         </h1>
         <p className="lead-tagline">{tagline}</p>
-
-        <div className="focus-row" role="group" aria-label="Filter by focus">
-          {JOBS.map((j) => (
-            <button
-              key={j.id}
-              type="button"
-              className={`focus-chip${j.id === locked ? ' locked' : ''}${j.id === lens ? ' active' : ''}`}
-              aria-pressed={j.id === locked}
-              onMouseEnter={() => onPreview(j.id)}
-              onMouseLeave={() => onPreview(null)}
-              onFocus={() => onPreview(j.id)}
-              onBlur={() => onPreview(null)}
-              onClick={() => onLock(j.id)}
-            >
-              {j.name}
-            </button>
-          ))}
-        </div>
-
         <ContactLinks show={['github', 'linkedin']} />
+        <p className="dispersion-caption">dispersion — one identity, four wavelengths</p>
+      </div>
+
+      <div className="prism-photo" ref={photoRef}>
+        <img src={photo} alt="Andry Paez" draggable={false} />
+      </div>
+
+      <div className="beam-btns" role="group" aria-label="Filter by focus">
+        {JOBS.map((j, idx) => (
+          <button
+            key={j.id}
+            ref={(el) => {
+              btnRefs.current[idx] = el
+            }}
+            type="button"
+            className={`beam-btn${j.id === locked ? ' locked' : ''}${j.id === lens ? ' active' : ''}`}
+            style={{ '--facet': j.palette.accent } as CSSProperties}
+            aria-pressed={j.id === locked}
+            onMouseEnter={() => onPreview(j.id)}
+            onMouseLeave={() => onPreview(null)}
+            onFocus={() => onPreview(j.id)}
+            onBlur={() => onPreview(null)}
+            onClick={() => onLock(j.id)}
+          >
+            {j.name}
+          </button>
+        ))}
       </div>
     </header>
   )
+}
+
+function seg(s: { x1: number; y1: number; x2: number; y2: number }) {
+  return { x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2 }
 }
