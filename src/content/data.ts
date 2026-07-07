@@ -36,12 +36,11 @@ export const research = {
 
 export interface Project {
   name: string
-  status: string
   blurb: string
   facts: string[]
   link?: string
-  // A real UI screenshot of the shipped project (private projects show their
-  // UI only; the "ask me about it" caveat stays in `status`).
+  // A real UI screenshot of the shipped project (private projects show
+  // their UI only; privacy is conveyed by the absence of a link).
   image?: string
   imageAlt?: string
 }
@@ -49,7 +48,6 @@ export interface Project {
 export const projects: Project[] = [
   {
     name: 'reachy-console',
-    status: 'private, ask me about it',
     blurb: 'Control console and voice assistant for a Reachy Mini robot living on a headless Jetson Orin Nano.',
     facts: [
       'FastAPI + vanilla JS web console, a pure HTTP/WS proxy that never grabs the robot lock; 162 controller tests green',
@@ -61,7 +59,6 @@ export const projects: Project[] = [
   },
   {
     name: 'Kalshi weather markets',
-    status: 'private, honest caveat: no validated P&L',
     blurb: 'An end-to-end quantitative ML system for trading weather prediction markets. Not a profitable bot, and I say so.',
     facts: [
       'NWS and commercial forecast ingestion, a Gaussian edge model, and stacked LSTM temperature models in PyTorch with per-city artifacts',
@@ -72,7 +69,6 @@ export const projects: Project[] = [
   },
   {
     name: 'Sage',
-    status: 'paused on purpose',
     blurb: 'Local-first desktop knowledge agent: add sources, chat with citations, generate quizzes and audio narration.',
     facts: [
       'Tauri + Next.js + FastAPI + SQLite with embeddings; provider abstraction across OpenAI, Anthropic, DeepSeek, Ollama',
@@ -83,17 +79,7 @@ export const projects: Project[] = [
     imageAlt: 'The Sage desktop app home screen: the Tome chat prompt and skill actions (Sources, Report, Quiz, Flashcards, Audio, Chat).',
   },
   {
-    name: 'daily-hub',
-    status: 'private, active',
-    blurb: 'Static-site generator for a daily opportunity hub, built around a strict public/private boundary.',
-    facts: [
-      'Whitelist-only renderer plus a CI leak check that fails the build if private tokens ever reach public output',
-      'Stdlib RSS ingestion hardened against XXE, redirects, and oversize responses; test suite grew 37 to 116 across three increments',
-    ],
-  },
-  {
     name: 'Quantum computing work',
-    status: 'WISER program + coursework',
     blurb: 'QAOA portfolio optimization and quantum error correction on real hardware.',
     facts: [
       'QAOA as a new ansatz family benchmarked against CPLEX on a 31-bond portfolio: 0.02% median objective gap after local search',

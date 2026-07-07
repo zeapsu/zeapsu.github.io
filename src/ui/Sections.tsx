@@ -48,7 +48,6 @@ export function ProjectCard({
       )}
       <header>
         <h3>{p.link ? <a href={p.link}>{p.name}</a> : p.name}</h3>
-        <span className="status">{p.status}</span>
         {tags.length > 0 && (
           <span className="facet-ticks" aria-hidden="true">
             {tags.map((t) => (

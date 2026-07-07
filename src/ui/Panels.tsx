@@ -20,7 +20,6 @@ export const JOB_TAGS: Record<string, JobId[]> = {
   'reachy-console': ['robotics', 'ai-systems'],
   'Kalshi weather markets': ['ai-systems', 'swe'],
   Sage: ['ai-systems', 'swe'],
-  'daily-hub': ['swe'],
   'Quantum computing work': ['physicist'],
 }
 
