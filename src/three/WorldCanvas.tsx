@@ -35,9 +35,9 @@ interface Framing {
 // gate framings ride on the entry world (frozen deep)
 const GATE_FRAMINGS: Record<'start' | 'select', Framing> = {
   start: { pos: new THREE.Vector3(4.5, 2.0, 25), look: new THREE.Vector3(-3, 7.5, -22) },
-  // across-the-valley view matching the Blender vista camera: low, looking down
-  // the river to the arch with the mountains on the horizon
-  select: { pos: new THREE.Vector3(0, 7.5, 24), look: new THREE.Vector3(0, -1.5, -30) },
+  // low, near the water looking down the river to the arch and the hazy
+  // mountains — water dominant in the foreground, closer to eye level (reference)
+  select: { pos: new THREE.Vector3(0, 4.5, 19), look: new THREE.Vector3(0, 0.8, -34) },
 }
 
 // each world's equipped framing (panels scroll over it)
@@ -121,7 +121,11 @@ export function WorldCanvas({
     <div className="world-canvas" aria-hidden="true">
       <Canvas
         shadows
-        dpr={[1, maxDpr()]}
+        // The character-select vista (start/select stage) is fill-rate bound at
+        // dpr 2, so it renders at up to ~1.8 — near-invisible (aliasing is
+        // invisible at dpr 2 per the machine notes) but ~20% less fill, back
+        // over the 60fps floor. Equipped worlds have headroom, so they keep 2.0.
+        dpr={stage === 'equipped' ? [1, maxDpr()] : [1, Math.min(1.8, maxDpr())]}
         camera={{ fov: 50, near: 0.1, far: 600, position: [0, 1.8, 27] }}
         frameloop={reduced ? 'demand' : 'always'}
         gl={{ alpha: true }}
