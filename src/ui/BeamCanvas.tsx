@@ -90,7 +90,9 @@ void main() {
     vec2 close = uEntryA + ba * tt;
     vec2 perp = normalize(vec2(-ba.y, ba.x));
     float s = dot(p - close, perp);           // signed px across the beam
-    float dE = abs(s);
+    // distance to the SEGMENT, not the infinite line — the incident beam
+    // must stop at the prism (only the refracted beams continue)
+    float dE = length(p - close);
     float fall = smoothstep(0.0, 0.10, tt) * (1.0 - 0.25 * tt);
     float I = (exp(-dE * 0.07) + 0.18 * exp(-dE * 0.010)) * fall * uWhite;
     vec3 hue = spectrum(s / 26.0 + 0.5);
@@ -198,9 +200,21 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
 
     const u = (name: string) => gl.getUniformLocation(prog, name)
     const colors = JOBS.map((j) => hexToRgb(j.palette.accent))
-    // the paper color = the page background where the hero lives
-    const bg = getComputedStyle(document.documentElement).backgroundColor.match(/\d+/g)
-    const paper = bg ? bg.slice(0, 3).map((v) => Number(v) / 255) : [0.85, 0.82, 0.76]
+    // The paper color = the page background where the hero lives. Read per
+    // frame (cached on the string): at mount the stylesheet may not have
+    // applied yet (dev injects CSS post-paint and html transitions its
+    // background), and a one-shot read races that — black paper, dark hero.
+    let bgStr = ''
+    let paper: [number, number, number] = [0.85, 0.82, 0.76]
+    const readPaper = () => {
+      const s = getComputedStyle(document.documentElement).backgroundColor
+      if (s === bgStr) return
+      bgStr = s
+      const m = s.match(/\d+(\.\d+)?/g)
+      if (m && m.length >= 3 && m[3] !== '0') {
+        paper = [Number(m[0]) / 255, Number(m[1]) / 255, Number(m[2]) / 255]
+      }
+    }
 
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
     const dpr = Math.min(devicePixelRatio || 1, 2)
@@ -252,12 +266,15 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
       }
       gl.uniform1f(u('uWhite'), 0.9)
       gl.uniform1f(u('uLightMode'), lightShown)
+      readPaper()
       gl.uniform3f(u('uPaper'), paper[0], paper[1], paper[2])
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     }
 
+    let settle: ReturnType<typeof setTimeout> | undefined
     if (reduced) {
-      draw() // one formed frame, no loop
+      draw() // one formed frame, no loop...
+      settle = setTimeout(draw, 900) // ...re-drawn once the bg transition lands
     } else {
       const loop = () => {
         if (running) draw()
@@ -274,6 +291,7 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
 
     return () => {
       cancelAnimationFrame(raf)
+      clearTimeout(settle)
       io.disconnect()
       removeEventListener('pointermove', onMove)
       // Deliberately NOT losing the GL context: StrictMode remounts reuse
