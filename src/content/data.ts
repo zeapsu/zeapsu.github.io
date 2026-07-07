@@ -2,6 +2,7 @@
 // ~/Documents/personal/experience.md. Do not add claims that are not in that file.
 import type { JobId } from './jobs'
 import sageShot from '../assets/screenshots/sage.jpg'
+import qaoaShot from '../assets/screenshots/qaoa.png'
 import kalshiShot from '../assets/screenshots/kalshi.jpg'
 import reachyConsoleShot from '../assets/screenshots/reachy-console.jpg'
 import reachyPhoto from '../assets/hardware/reachy.jpg'
@@ -86,6 +87,9 @@ export const projects: Project[] = [
       "Shor's 9-qubit code run on IBM hardware via Qiskit Runtime, measuring a 36% fidelity improvement",
     ],
     link: 'https://github.com/zeapsu/Quantum-Portfolio-Optimization',
+    image: qaoaShot,
+    imageAlt:
+      'QAOA benchmark boxplot: optimizer iterations to last improvement versus circuit depth, p = 1 to 5.',
   },
 ]
 
