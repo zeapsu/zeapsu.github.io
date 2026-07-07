@@ -28,6 +28,7 @@ uniform vec2 uExit[4];
 uniform vec3 uColor[4];
 uniform float uWeight[4];
 uniform float uWhite;
+uniform float uLightMode; // 0 = additive over dark, 1 = absorption on paper
 
 float segDist(vec2 p, vec2 a, vec2 b, out float t) {
   vec2 pa = p - a, ba = b - a;
@@ -64,12 +65,14 @@ void main() {
   vec2 p = vec2(gl_FragCoord.x / uDpr, uSize.y - gl_FragCoord.y / uDpr);
   p += (uPointer - 0.5) * 14.0; // parallax
 
-  vec3 col = vec3(0.0);
+  vec3 col = vec3(0.0);     // additive light (dark theme, screen blend)
+  vec3 absorb = vec3(0.0);  // pigment (light theme, multiply blend)
   float field = 0.0;
 
-  // white entry light
+  // white entry light; on paper it reads as a neutral glass caustic
   float wb = beam(p, uEntryA, uEntryB, 0.07, 0.010) * uWhite;
   col += vec3(0.92, 0.90, 0.97) * wb * 1.05;
+  absorb += vec3(0.13, 0.12, 0.16) * wb * 0.8;
   field += wb;
 
   // four dispersed wavelengths, gently shimmering
@@ -78,6 +81,7 @@ void main() {
     float w = uWeight[i] * (0.94 + 0.06 * sin(uTime * 1.7 + float(i) * 2.1));
     float b = beam(p, uOrigin, uExit[i], 0.055, 0.008) * w;
     col += uColor[i] * b * 1.5;
+    absorb += (vec3(1.0) - uColor[i]) * b * 1.2; // subtractive: rainbow on paper
     field += b;
     tint += uColor[i] * w;
   }
@@ -85,19 +89,24 @@ void main() {
   // faint atmosphere so the whole field feels lit by the dispersed hues
   float vign = 1.0 - smoothstep(0.2, 0.85, length((p / uSize) - vec2(0.62, 0.45)));
   col += tint * 0.012 * vign;
+  absorb += (vec3(1.0) - tint / 4.0) * 0.008 * vign;
 
-  // dust only sparkles inside the light
+  // dust only sparkles inside the light (additive theme only)
   float motes = dust(p, uTime, 26.0, vec2(9.0, 2.5)) + dust(p, uTime, 47.0, vec2(-5.0, 4.0));
   col += vec3(0.95) * motes * min(field * 1.6, 1.0) * 0.9;
 
   // soften the canvas' bottom boundary so the light never ends on a hard line
-  col *= smoothstep(uSize.y, uSize.y - 110.0, p.y);
+  float edge = smoothstep(uSize.y, uSize.y - 110.0, p.y);
+  col *= edge;
+  absorb *= edge;
 
-  // fine grain dithers the wide halo tails; strongest where the light is dim
+  // fine grain dithers the halo tails; strongest where the light is dim
   float g = (hash(gl_FragCoord.xy + fract(uTime)) - 0.5);
   col += g * mix(0.02, 0.006, min(field, 1.0));
 
-  outColor = vec4(max(col, 0.0), 1.0);
+  vec3 dark = max(col, 0.0);
+  vec3 paper = vec3(1.0) - min(absorb, vec3(0.8)) + g * 0.012;
+  outColor = vec4(mix(dark, paper, uLightMode), 1.0);
 }`
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -158,6 +167,7 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
     // Displayed weights ease toward targets so a lock collapses the light
     // smoothly instead of snapping.
     const shown = [...targets.current.weights]
+    let lightShown = document.documentElement.dataset.theme === 'light' ? 1 : 0
     const pointer = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 }
     const onMove = (e: PointerEvent) => {
       pointer.tx = e.clientX / innerWidth
@@ -179,6 +189,8 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
         gl.viewport(0, 0, w, h)
       }
       for (let k = 0; k < 4; k++) shown[k] += (tw[k] - shown[k]) * (reduced ? 1 : 0.08)
+      const lightTarget = document.documentElement.dataset.theme === 'light' ? 1 : 0
+      lightShown += (lightTarget - lightShown) * (reduced ? 1 : 0.1)
       pointer.x += (pointer.tx - pointer.x) * 0.06
       pointer.y += (pointer.ty - pointer.y) * 0.06
 
@@ -198,6 +210,7 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
         gl.uniform1f(u(`uWeight[${k}]`), shown[k])
       }
       gl.uniform1f(u('uWhite'), 0.9)
+      gl.uniform1f(u('uLightMode'), lightShown)
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     }
 

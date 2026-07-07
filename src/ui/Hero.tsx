@@ -63,7 +63,7 @@ export function Hero({
   const weights = JOBS.map((j) => (j.id === shownId ? 1 : lens ? 0.18 : 0.5))
 
   return (
-    <header className="hero" ref={heroRef}>
+    <header className="hero" ref={heroRef} data-zone="light">
       {geom && <BeamCanvas geom={geom} weights={weights} />}
       {geom && (
         <svg
@@ -97,7 +97,11 @@ export function Hero({
           <span className="role-slot">
             {/* keying on shownId remounts the word so it re-plays the enter
                 animation each cycle; the word wears its own focus hue */}
-            <span key={shownId} className="role" style={{ color: shown.palette.accent }}>
+            <span
+              key={shownId}
+              className="role"
+              style={{ '--facet': shown.palette.accent } as CSSProperties}
+            >
               {article(shownId)} {shown.name}
             </span>
           </span>

@@ -41,7 +41,7 @@ export function Panels({ lens }: { lens: JobId | null }) {
       {/* the active wavelength, carried down the page (decorative) */}
       <div className="spine" aria-hidden="true" />
 
-      <section className="panel reveal">
+      <section className="panel reveal" data-zone="dark">
         <p className="eyebrow">{research.eyebrow}</p>
         <h2>{research.title}</h2>
         <p>{research.body}</p>
@@ -57,7 +57,7 @@ export function Panels({ lens }: { lens: JobId | null }) {
         </ul>
       </section>
 
-      <section className="panel reveal">
+      <section className="panel reveal" data-zone="dark">
         <p className="eyebrow">work</p>
         <h2>Selected work</h2>
         <div className="quest-board">
@@ -72,13 +72,13 @@ export function Panels({ lens }: { lens: JobId | null }) {
         </div>
       </section>
 
-      <section className="panel reveal">
+      <section className="panel reveal" data-zone="dark">
         <p className="eyebrow">skills</p>
         <h2>What I work in</h2>
         <SkillField lens={lens} />
       </section>
 
-      <section className="panel reveal">
+      <section className="panel reveal" data-zone="light">
         <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
         <p>{questLog.intro}</p>
@@ -98,7 +98,7 @@ export function Panels({ lens }: { lens: JobId | null }) {
         </ol>
       </section>
 
-      <section className="panel reveal">
+      <section className="panel reveal" data-zone="light">
         <p className="eyebrow">recognition</p>
         <h2>Honors and credentials</h2>
         {achievementGroups.map((g) => (
@@ -135,13 +135,13 @@ export function Panels({ lens }: { lens: JobId | null }) {
         ))}
       </section>
 
-      <section className="panel reveal">
+      <section className="panel reveal" data-zone="dark">
         <p className="eyebrow">about</p>
         <h2>{howIWork.title}</h2>
         <p>{howIWork.body}</p>
       </section>
 
-      <section className="panel reveal">
+      <section className="panel reveal" data-zone="dark">
         <p className="eyebrow">{contact.eyebrow}</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>

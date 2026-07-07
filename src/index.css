@@ -26,8 +26,24 @@
   --line-strong: rgba(180, 172, 205, 0.28);
   --accent: #b48cff;
   --accent-dim: #6b4a9e;
+  /* accent when used AS text: full accent on dark, inked-down on paper */
+  --accent-ink: var(--accent);
   --gutter: clamp(1.25rem, 5vw, 3rem);
   --column: 68rem;
+}
+
+/* The paper theme. Scroll zones drive html[data-theme]: the page opens in
+   light (the prism casts its rainbow on paper), descends into the dark for
+   the glow sections, resurfaces for the record, closes dark. */
+[data-theme='light'] {
+  --bg: #f2efe7;
+  --bg-raise: #faf8f2;
+  --ink: #191524;
+  --muted: #453f55;
+  --faint: #6b6478;
+  --line: rgba(35, 28, 55, 0.16);
+  --line-strong: rgba(35, 28, 55, 0.32);
+  --accent-ink: color-mix(in srgb, var(--accent) 52%, #241d33);
 }
 
 /* Per-focus accents. Order and hexes mirror jobs.ts; the selfcheck asserts each
@@ -64,7 +80,8 @@ html {
   background: var(--bg);
   transition:
     --accent 600ms ease,
-    --accent-dim 600ms ease;
+    --accent-dim 600ms ease,
+    background 700ms ease;
 }
 
 body {
@@ -74,6 +91,7 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: color 700ms ease;
 }
 
 /* A quiet accent wash behind the top of the page; breathes with the focus. */
@@ -98,9 +116,9 @@ body::before {
 }
 
 a {
-  color: var(--accent);
+  color: var(--accent-ink);
   text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-ink) 36%, transparent);
   transition:
     color 160ms ease,
     border-color 160ms ease;
@@ -269,13 +287,34 @@ li {
     0 0 14px rgba(8, 7, 14, 0.8);
 }
 .beam-btn:hover,
-.beam-btn.active {
+.beam-btn.active,
+.beam-btn.locked {
   color: var(--facet);
 }
 .beam-btn.locked {
-  color: var(--facet);
   text-decoration: underline;
   text-decoration-thickness: 2px;
+}
+[data-theme='light'] .beam-btn:hover,
+[data-theme='light'] .beam-btn.active,
+[data-theme='light'] .beam-btn.locked {
+  color: color-mix(in srgb, var(--facet) 52%, #241d33);
+}
+[data-theme='light'] .beam-btn {
+  /* light bed for the words inside the rainbow */
+  text-shadow:
+    0 0 6px rgba(244, 241, 234, 0.95),
+    0 0 14px rgba(244, 241, 234, 0.8);
+}
+/* white light is invisible on paper: the entry reads as a glass caustic */
+[data-theme='light'] .beam-entry line {
+  stroke: #7a7390;
+}
+[data-theme='light'] .prism-photo {
+  filter: drop-shadow(0 18px 32px rgba(30, 24, 50, 0.28));
+}
+[data-theme='light'] .beam-canvas {
+  mix-blend-mode: multiply;
 }
 .beam-btn:focus-visible {
   outline: 2px solid var(--facet);
@@ -312,9 +351,12 @@ li {
 .role {
   display: inline-block;
   white-space: nowrap;
-  color: var(--accent);
+  color: var(--facet, var(--accent));
   font-style: italic;
   animation: role-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+[data-theme='light'] .role {
+  color: color-mix(in srgb, var(--facet, var(--accent)) 55%, #241d33);
 }
 @keyframes role-in {
   from {
@@ -474,7 +516,8 @@ li {
   padding: 1.3rem;
   transition:
     border-color 300ms ease,
-    transform 300ms ease;
+    transform 300ms ease,
+    background 700ms ease;
 }
 .card.featured {
   border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
@@ -649,7 +692,7 @@ li {
   font-size: 0.66rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-ink);
   margin-top: 0.35rem;
 }
 

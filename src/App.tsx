@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Hero } from './ui/Hero'
 import { Panels } from './ui/Panels'
 import { StaticFallback } from './ui/Sections'
-import { useReveal } from './ui/reveal'
+import { useReveal, useThemeZones } from './ui/reveal'
 import { PRIMARY_JOB, type JobId } from './content/jobs'
 
 // Flat, content-first portfolio: one identity, four facets. No gate, no worlds.
@@ -25,6 +25,7 @@ export default function App() {
   }, [accent])
 
   useReveal()
+  useThemeZones()
 
   if (new URLSearchParams(location.search).has('plain')) return <StaticFallback />
 
