@@ -126,6 +126,31 @@ h3 {
 h2 {
   font-size: clamp(1.7rem, 3.4vw, 2.5rem);
 }
+
+/* Section headings "catch the light": a one-shot accent glint sweeps across
+   the text as the heading enters view (class added by reveal.ts). */
+.panel h2 {
+  opacity: 0.3;
+  background: linear-gradient(100deg, var(--ink) 46%, var(--accent) 50%, var(--ink) 54%) 100% 0 /
+    300% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.panel h2.in-view {
+  animation: catch-light 900ms ease-out both;
+}
+@keyframes catch-light {
+  from {
+    background-position-x: 100%;
+    opacity: 0.2;
+  }
+  to {
+    background-position-x: 0%;
+    opacity: 1;
+  }
+}
 h3 {
   font-size: 1.2rem;
 }
@@ -303,9 +328,48 @@ li {
 /* ---------- content column ---------- */
 
 .panels {
+  position: relative;
   max-width: var(--column);
   margin-inline: auto;
   padding-inline: var(--gutter);
+}
+
+/* The active wavelength, carried down the page. Scroll-driven where
+   supported; otherwise (and under reduced motion) it simply shows fully
+   lit — the same formed state. */
+.spine {
+  position: absolute;
+  left: calc(var(--gutter) / 2 - 1px);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 30%, transparent)
+  );
+  transform-origin: top;
+  opacity: 0.7;
+  transition: background 600ms ease;
+}
+@supports (animation-timeline: scroll()) {
+  .spine {
+    animation: spine-grow linear both;
+    animation-timeline: scroll();
+  }
+  @keyframes spine-grow {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+}
+@media (max-width: 780px) {
+  .spine {
+    display: none;
+  }
 }
 .panel {
   padding-block: clamp(2.8rem, 6vw, 4.6rem);
@@ -338,7 +402,9 @@ li {
   grid-template-columns: 9rem 1fr;
   gap: 0.4rem 1.4rem;
   padding-left: 1.2rem;
-  border-left: 1px solid var(--line-strong);
+  /* the timeline rail reads as the spine's continuation */
+  border-left: 2px solid color-mix(in srgb, var(--accent) 40%, var(--line-strong));
+  transition: border-color 600ms ease;
 }
 .quest-active {
   border-left-color: var(--accent);
@@ -381,6 +447,7 @@ li {
   grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
   gap: 1.4rem;
   margin-top: 1.5rem;
+  align-items: start; /* ragged bottoms over stretched voids */
 }
 .card {
   border: 1px solid var(--line);
@@ -544,12 +611,16 @@ li {
   margin-top: 0.35rem;
 }
 
-/* hardware */
+/* hardware: the real bench, compact 2-up at the foot of the reachy card */
 .hardware-figures {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: 1.2rem;
-  margin-top: 1.5rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+.hardware img {
+  aspect-ratio: 1;
+  object-fit: cover;
 }
 .hardware {
   margin: 0;
@@ -685,12 +756,19 @@ li {
   .reveal,
   .card,
   .trophy-link,
-  .resume-button {
+  .resume-button,
+  .spine,
+  .panel h2 {
     transition: none;
     animation: none;
   }
   .reveal {
     opacity: 1;
     transform: none;
+  }
+  /* formed states: spine fully lit, headings fully lit */
+  .panel h2 {
+    opacity: 1;
+    background-position-x: 0%;
   }
 }

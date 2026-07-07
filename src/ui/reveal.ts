@@ -6,7 +6,9 @@ import { useEffect } from 'react'
 // intersection on observe). Reduced-motion or no-IO: reveal everything at once.
 export function useReveal() {
   useEffect(() => {
-    const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'))
+    // `.reveal` panels fade up; `.panel h2` headings additionally "catch the
+    // light" (a one-shot brightness sweep) when they enter view.
+    const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal, .panel h2'))
     if (!els.length) return
 
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
