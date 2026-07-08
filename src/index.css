@@ -15,6 +15,14 @@
   inherits: true;
   initial-value: #6b4a9e;
 }
+/* the NOW pull-stat's counting readout: an integer custom property animated
+   by k-count and read by .stat-live's ::before counter. Must inherit: the
+   animation runs on the element but the counter renders on its ::before */
+@property --num {
+  syntax: '<integer>';
+  inherits: true;
+  initial-value: 0;
+}
 
 :root {
   --bg: #0b0a12;
@@ -447,6 +455,26 @@ li {
     flex-direction: column;
     justify-content: center;
   }
+  /* Two-column sheet: a wide content column plus an aside (e.g. the pull
+     stat) pinned into the second column, vertically centered against it. */
+  .panels .panel.panel-split {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) 1fr;
+    column-gap: clamp(2.5rem, 6vw, 5rem);
+    align-content: center;
+  }
+  .panel-split > * {
+    grid-column: 1;
+  }
+  .panel-split > .panel-aside {
+    grid-column: 2;
+    grid-row: 1 / span var(--aside-span, 6);
+    align-self: center;
+    justify-self: center;
+  }
+  .panel-split .pull-stat-value {
+    font-size: clamp(4.5rem, 10vw, 9rem);
+  }
   /* Dwell: extra scroll distance while a sheet is pinned, so there is time
      to read it before the next sheet slides over. The gap never shows —
      the pinned sheet fills the viewport beneath it. */
@@ -665,12 +693,26 @@ li {
   gap: 0.3rem;
 }
 .pull-stat-value {
+  display: grid;
   font-size: clamp(3.5rem, 9vw, 7rem);
   font-weight: 200;
   line-height: 0.95;
   letter-spacing: -0.03em;
-  color: var(--accent);
+  /* accent-ink, not raw accent: under lights-off this sheet flips to paper
+     and the raw accent washes out against it */
+  color: var(--accent-ink);
   transition: color 600ms ease;
+}
+/* live (counting) and formed (final) numbers share one grid cell; only one
+   is ever visible at a time */
+.stat-live,
+.stat-formed {
+  grid-area: 1 / 1;
+}
+/* the counting text is scroll-scrub only (see @supports below); every
+   fallback tier (no view-timelines, reduced motion) shows the formed value */
+.stat-live {
+  display: none;
 }
 .pull-stat-label {
   font-family: 'IBM Plex Mono', monospace;
@@ -897,7 +939,7 @@ li {
    no-preference gate so reduced motion sees formed content. */
 @media (prefers-reduced-motion: no-preference) {
   /* NOW: the number develops like an exposure; facts sweep in from the rail */
-  .anim-now .pull-stat-value {
+  .anim-now .stat-formed {
     display: inline-block;
     opacity: 0;
     filter: blur(10px);
@@ -907,7 +949,7 @@ li {
       filter 900ms ease 150ms,
       transform 900ms cubic-bezier(0.16, 1, 0.3, 1) 150ms;
   }
-  .anim-now.in-view .pull-stat-value {
+  .anim-now.in-view .stat-formed {
     opacity: 1;
     filter: none;
     transform: none;
@@ -1039,10 +1081,29 @@ li {
       animation-range: entry 12% entry 50%;
     }
 
-    .anim-now .pull-stat-value {
+    /* the stat "counts up" as the sheet scrubs in: a live counting readout
+       (::before content, driven by an animated counter-style custom
+       property) fades out just as the real formed value fades in */
+    .anim-now .stat-live {
+      display: inline;
+    }
+    .anim-now .stat-live::before {
+      counter-reset: n var(--num);
+      content: counter(n) '\00d7';
+    }
+    .anim-now .stat-live {
+      /* the stat sits mid-sheet, on screen only from ~entry 50%; the count
+         must run while it is visible, not while it is still below the fold */
+      animation:
+        k-count cubic-bezier(0.2, 0.6, 0.3, 1) both,
+        k-live-out linear both;
+      animation-timeline: --sheet, --sheet;
+      animation-range: entry 52% entry 88%, entry 84% entry 94%;
+    }
+    .anim-now .stat-formed {
       animation: k-exposure linear both;
       animation-timeline: --sheet;
-      animation-range: entry 20% entry 70%;
+      animation-range: entry 82% entry 96%;
     }
     .anim-now li {
       animation: k-slide-in linear both;
@@ -1110,7 +1171,8 @@ li {
     @media (max-width: 780px) {
       .panels .panel h2,
       .panels .panel h2.in-view,
-      .anim-now .pull-stat-value,
+      .anim-now .stat-live,
+      .anim-now .stat-formed,
       .anim-now li,
       .anim-work .card,
       .anim-skills .skill-field,
@@ -1126,6 +1188,14 @@ li {
       }
     }
 
+    @keyframes k-count {
+      from { --num: 0; }
+      to { --num: 1880; }
+    }
+    @keyframes k-live-out {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
     @keyframes k-exposure {
       from { opacity: 0; filter: blur(10px); transform: scale(1.1); }
       to { opacity: 1; filter: none; transform: none; }

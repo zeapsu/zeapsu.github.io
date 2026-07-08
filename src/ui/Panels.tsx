@@ -35,13 +35,16 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
       {/* the active wavelength, carried down the page (decorative) */}
       <div className="spine" aria-hidden="true" />
 
-      <section className="panel reveal anim-now" data-theme={t('dark')}>
+      <section className="panel reveal anim-now panel-split" data-theme={t('dark')}>
         <p className="eyebrow">{research.eyebrow}</p>
         <h2>{research.title}</h2>
         <p>{research.body}</p>
         {/* aria-hidden: the identical fact is read out in the list below */}
-        <p className="pull-stat" aria-hidden="true">
-          <span className="pull-stat-value">{research.pullStat.value}</span>
+        <p className="pull-stat panel-aside" aria-hidden="true">
+          <span className="pull-stat-value">
+            <span className="stat-live" />
+            <span className="stat-formed">{research.pullStat.value}</span>
+          </span>
           <span className="pull-stat-label">{research.pullStat.label}</span>
         </p>
         <ul>
@@ -52,7 +55,6 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
       </section>
 
       <section className="panel reveal anim-work" data-theme={t('light')}>
-        <p className="eyebrow">work</p>
         <h2>Selected work</h2>
         <div className="quest-board">
           {sortedProjects(lens).map((p) => (
@@ -67,7 +69,6 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
       </section>
 
       <section className="panel reveal anim-skills" data-theme={t('dark')}>
-        <p className="eyebrow">skills</p>
         <h2>What I work in</h2>
         {/* the 3D cloud's material colors can't read CSS vars; tell it the
             sheet's effective theme */}
@@ -75,7 +76,6 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
       </section>
 
       <section className="panel reveal anim-path" data-theme={t('light')}>
-        <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
         <p>{questLog.intro}</p>
         <ol className="quest-chain">
@@ -95,7 +95,6 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
       </section>
 
       <section className="panel reveal anim-recognition" data-theme={t('dark')}>
-        <p className="eyebrow">recognition</p>
         <h2>Honors and credentials</h2>
         <div className="trophy-groups">
         {achievementGroups.map((g) => (
@@ -137,7 +136,6 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
           essentials. The anim-about choreography keys off the child classes
           (about-body, contact-lead, links, resume-download, resume-note). */}
       <section className="panel reveal anim-about" data-theme={t('light')}>
-        <p className="eyebrow">{about.eyebrow}</p>
         <h2>{about.title}</h2>
         <p className="about-body">{about.body}</p>
         <p className="contact-lead">{contact.body}</p>
