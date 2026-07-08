@@ -27,7 +27,7 @@ export const research = {
   },
   body: 'Research assistant in the Dept. of Physics & Astronomy, working on spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst. I build the code that keeps the science running: a CLI and HDF5 pipeline for ground states and Bogoliubov-de Gennes spectra, reproducible environments, and Slurm workflows on the SJSU cluster.',
   facts: [
-    'Vectorized the sine-DVR kinetic-energy operator: 161 s down to 0.09 s at 2048 grid points, a 1,880x speedup verified bit-exact by a benchmark harness',
+    'Vectorized the sine-DVR kinetic-energy operator: 161 s down to 0.09 s at 2048 grid points, a 1,880× speedup verified bit-exact by a benchmark harness',
     'Validated spinor ground states to machine precision (norm error 2.2e-16) with correct miscible and immiscible domain-wall structure',
     'Hash-addressed initial-condition catalog with a rebuildable SQLite index and a write-then-index HPC workflow that avoids concurrent-writer contention',
     'Ran a c2-quench study of spontaneous symmetry breaking with Truncated Wigner vacuum-noise seeding and domain-wall counting, recovering Kibble-Zurek scaling (exponent 1/4)',
@@ -67,7 +67,7 @@ export const projects: Project[] = [
     name: 'Kalshi weather markets',
     jobs: ['ai-systems', 'swe'],
     blurb:
-      'An end-to-end quantitative ML system for trading weather prediction markets. Not a profitable bot, and I say so. Private repo, ask me about it.',
+      'ML forecasting and a trading engine for weather prediction markets. Not a profitable bot, and I say so. Private repo, ask me about it.',
     facts: [
       'NWS and commercial forecast ingestion, a Gaussian edge model, and stacked LSTM temperature models in PyTorch with per-city artifacts',
       'A trading engine with bracket parsing and ASOS rounding compensation, plus a Streamlit dashboard',
@@ -81,7 +81,7 @@ export const projects: Project[] = [
     blurb: 'Local-first desktop knowledge agent: add sources, chat with citations, generate quizzes and audio narration.',
     facts: [
       'Tauri + Next.js + FastAPI + SQLite with embeddings; provider abstraction across OpenAI, Anthropic, DeepSeek, Ollama',
-      '130 commits over 15 months, then a documented strategic pause with written market rationale. The kill decision is in the repo.',
+      '130 commits over 15 months, then a deliberate stop. The kill decision and its rationale are in the repo.',
     ],
     link: 'https://github.com/zeapsu/Sage',
     image: sageShot,
@@ -303,6 +303,3 @@ export const about = {
   body: 'Away from the keyboard: Marvel and scary movies, souls-like games, pickleball, judo (one tournament, zero wins, undeterred), and time with family and the cats. Music runs all day: R&B, UK garage, EDM, dubstep, jazz, classical, JRPG soundtracks. I genuinely enjoy grocery shopping.',
 }
 
-export const footer = {
-  line: 'Open to AI systems and research software roles.',
-}

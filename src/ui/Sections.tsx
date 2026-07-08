@@ -7,7 +7,6 @@ import {
   achievements,
   contact,
   about,
-  footer,
   resumes,
   resumeDefault,
   hardware,
@@ -169,7 +168,6 @@ export function StaticFallback() {
             </span>
           ))}
         </p>
-        <p className="open-to">{footer.line}</p>
       </section>
     </main>
   )

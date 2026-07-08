@@ -1178,10 +1178,6 @@ li {
   font-size: 0.8rem;
   margin-top: 0.8rem;
 }
-.open-to {
-  color: var(--ink);
-}
-
 /* ---------- responsive ---------- */
 
 @media (max-width: 780px) {
