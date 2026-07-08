@@ -8,7 +8,7 @@ Andry's portfolio site, live at https://zeapsu.github.io. The Dispersion redesig
 
 Rollback lineage, oldest first: `journey-v1` (3D scroll journey), `vista-r3f-v1` (Blender vista), `themed-3d-v1` (character-select worlds + live GPE sim — the pre-redesign live site), each with a matching `legacy/*` branch. The Gross-Pitaevskii sim was deliberately dropped from the site 2026-07-06; do not resurrect it here (its honest-physics guardrail retired with it).
 
-Current backlog: #31 (content fine-tuning) and #32 (per-section signature animations; the half-empty right sides of NOW/PATH/ABOUT/CONTACT are the target). Open issues numbered below #30 predate the redesign and mostly describe the retired 3D site — triage against the current code before acting on one.
+Current backlog: #31 (content fine-tuning) and #32 (per-section signature animations; the half-empty right sides of NOW/PATH/ABOUT/CONTACT are the target). The pre-redesign issues that described the retired 3D site were triaged and closed 2026-07-07.
 
 ## Commands
 
