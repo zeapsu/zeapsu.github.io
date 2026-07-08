@@ -973,35 +973,33 @@ li {
   .anim-recognition .trophy-group:nth-of-type(2) .trophy { transition-delay: 150ms; }
   .anim-recognition .trophy-group:nth-of-type(3) .trophy { transition-delay: 300ms; }
 
-  /* ABOUT: the statement comes into focus */
-  .anim-about p:not(.eyebrow) {
+  /* ABOUT + CONTACT (one closing sheet): the statement comes into focus,
+     then the essentials rise to close */
+  .anim-about .about-body {
     opacity: 0;
     filter: blur(6px);
     transition:
       opacity 800ms ease 100ms,
       filter 800ms ease 100ms;
   }
-  .anim-about.in-view p:not(.eyebrow) {
+  .anim-about.in-view .about-body {
     opacity: 1;
     filter: none;
   }
-
-  /* CONTACT: the essentials rise to close */
-  .anim-contact > :not(.eyebrow) {
+  .anim-about > :nth-child(n + 4) {
     opacity: 0;
     transform: translateY(14px);
     transition:
       opacity 500ms ease,
       transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .anim-contact.in-view > :not(.eyebrow) {
+  .anim-about.in-view > :nth-child(n + 4) {
     opacity: 1;
     transform: none;
   }
-  .anim-contact.in-view > :nth-child(3) { transition-delay: 90ms; }
-  .anim-contact.in-view > :nth-child(4) { transition-delay: 180ms; }
-  .anim-contact.in-view > :nth-child(5) { transition-delay: 270ms; }
-  .anim-contact.in-view > :nth-child(6) { transition-delay: 360ms; }
+  .anim-about.in-view > :nth-child(5) { transition-delay: 90ms; }
+  .anim-about.in-view > :nth-child(6) { transition-delay: 180ms; }
+  .anim-about.in-view > :nth-child(7) { transition-delay: 270ms; }
 
   /* Scroll-scrubbed variant: each sheet exposes its entry as a named view
      timeline and its children ride it, so every entrance tracks scroll
@@ -1069,21 +1067,19 @@ li {
     .anim-recognition .trophy-group:nth-of-type(2) .trophy { animation-range: entry 20% entry 60%; }
     .anim-recognition .trophy-group:nth-of-type(3) .trophy { animation-range: entry 30% entry 70%; }
 
-    .anim-about p:not(.eyebrow) {
+    .anim-about .about-body {
       animation: k-focus linear both;
       animation-timeline: --sheet;
       animation-range: entry 15% entry 65%;
     }
-
-    .anim-contact > :not(.eyebrow) {
+    .anim-about > :nth-child(n + 4) {
       animation: k-rise linear both;
       animation-timeline: --sheet;
-      animation-range: entry 10% entry 50%;
+      animation-range: entry 25% entry 60%;
     }
-    .anim-contact > :nth-child(3) { animation-range: entry 18% entry 58%; }
-    .anim-contact > :nth-child(4) { animation-range: entry 26% entry 66%; }
-    .anim-contact > :nth-child(5) { animation-range: entry 34% entry 74%; }
-    .anim-contact > :nth-child(6) { animation-range: entry 42% entry 82%; }
+    .anim-about > :nth-child(5) { animation-range: entry 33% entry 68%; }
+    .anim-about > :nth-child(6) { animation-range: entry 41% entry 76%; }
+    .anim-about > :nth-child(7) { animation-range: entry 49% entry 84%; }
 
     /* Mobile stacks tall panels in normal flow, so a sheet-wide timeline
        would leave lower content unformed for most of the sheet; each child
@@ -1097,8 +1093,8 @@ li {
       .anim-skills .skill-field,
       .anim-path .quest,
       .anim-recognition .trophy,
-      .anim-about p:not(.eyebrow),
-      .anim-contact > :not(.eyebrow) {
+      .anim-about .about-body,
+      .anim-about > :nth-child(n + 4) {
         animation-timeline: view();
         animation-range: entry 0% cover 30%;
       }

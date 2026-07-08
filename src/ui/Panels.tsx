@@ -5,7 +5,7 @@ import {
   questLog,
   achievementGroups,
   contact,
-  howIWork,
+  about,
   resumes,
 } from '../content/data'
 import { ContactLinks, ProjectCard } from './Sections'
@@ -133,16 +133,13 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
         </div>
       </section>
 
+      {/* ABOUT + CONTACT share the closing sheet: the person, then the
+          essentials. Child order matters to the anim-about choreography. */}
       <section className="panel reveal anim-about" data-theme={t('light')}>
-        <p className="eyebrow">about</p>
-        <h2>{howIWork.title}</h2>
-        <p>{howIWork.body}</p>
-      </section>
-
-      <section className="panel reveal anim-contact" data-theme={t('dark')}>
-        <p className="eyebrow">{contact.eyebrow}</p>
-        <h2>{contact.title}</h2>
-        <p>{contact.body}</p>
+        <p className="eyebrow">{about.eyebrow}</p>
+        <h2>{about.title}</h2>
+        <p className="about-body">{about.body}</p>
+        <p className="contact-lead">{contact.body}</p>
         <ContactLinks show={['email']} />
         <p className="resume-download">
           <a className="resume-button" href={resumes[resumeFocus]} target="_blank" rel="noopener">
