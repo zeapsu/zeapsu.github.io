@@ -629,6 +629,15 @@ li {
   object-fit: cover;
   object-position: 50% 0;
 }
+/* Pure-white screenshot grounds (Kalshi, QAOA plots) punch a hole in the
+   light paper sheet; multiply retints white to the paper tone. Light-only:
+   multiply against a near-black ground would crush the image. */
+[data-theme='light'] .card-shot {
+  background: var(--bg-raise);
+}
+[data-theme='light'] .card-shot img {
+  mix-blend-mode: multiply;
+}
 .card header {
   display: flex;
   flex-wrap: wrap;
