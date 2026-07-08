@@ -31,7 +31,7 @@ export const research = {
     'Validated spinor ground states to machine precision (norm error 2.2e-16) with correct miscible and immiscible domain-wall structure',
     'Hash-addressed initial-condition catalog with a rebuildable SQLite index and a write-then-index HPC workflow that avoids concurrent-writer contention',
     'Ran a c2-quench study of spontaneous symmetry breaking with Truncated Wigner vacuum-noise seeding and domain-wall counting, recovering Kibble-Zurek scaling (exponent 1/4)',
-    'Around 13 dated technical reports so far: benchmarks, validations, design recommendations',
+    'More than a dozen dated technical reports: benchmarks, validations, design recommendations',
   ],
 }
 
