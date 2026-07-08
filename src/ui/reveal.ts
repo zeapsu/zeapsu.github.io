@@ -52,7 +52,12 @@ export function useReveal() {
           }
         }
       },
-      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' },
+      // threshold 0: a sheet much taller than the viewport can never reach a
+      // fractional visibility threshold (max ratio is viewportH/elementH), so
+      // any positive value would leave tall sheets permanently hidden in
+      // browsers without scroll-driven animations. rootMargin still keeps the
+      // reveal below the fold edge.
+      { threshold: 0, rootMargin: '0px 0px -10% 0px' },
     )
     els.forEach((el) => io.observe(el))
     return () => io.disconnect()

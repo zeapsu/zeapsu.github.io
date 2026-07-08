@@ -83,12 +83,37 @@ export function SkillField({ lens, light = false }: { lens: JobId | null; light?
   const wrapRef = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
 
-  // Don't burn GPU while the cloud is off-screen.
+  // Don't burn GPU while the cloud can't be seen. The sticky skills sheet
+  // never leaves the viewport once pinned, so intersection alone can't detect
+  // "scrolled past": also watch the next sheet crossing the viewport-top line
+  // (rootMargin collapses the root to that line) — once it pins, the cloud is
+  // fully covered.
   useEffect(() => {
     if (mode !== '3d' || !wrapRef.current) return
-    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting))
+    let seen = false
+    let covered = false
+    const gate = () => setInView(seen && !covered)
+    const io = new IntersectionObserver(([e]) => {
+      seen = e.isIntersecting
+      gate()
+    })
     io.observe(wrapRef.current)
-    return () => io.disconnect()
+    let coverIo: IntersectionObserver | undefined
+    const next = document.querySelector('.anim-path')
+    if (next) {
+      coverIo = new IntersectionObserver(
+        ([e]) => {
+          covered = e.isIntersecting
+          gate()
+        },
+        { rootMargin: '0px 0px -100% 0px' },
+      )
+      coverIo.observe(next)
+    }
+    return () => {
+      io.disconnect()
+      coverIo?.disconnect()
+    }
   }, [mode])
 
   if (mode === '2d') return <FlatSkillField lens={lens} />

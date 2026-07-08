@@ -155,11 +155,20 @@ function hexToRgb(hex: string): [number, number, number] {
   return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]
 }
 
+const REDUCED =
+  typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
+
 export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: number[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   // Live targets read by the render loop without re-creating the GL state.
   const targets = useRef({ geom, weights })
   targets.current = { geom, weights }
+  // With no render loop under reduced motion, prop changes (resize re-measure,
+  // role hover/lock) must trigger their own redraw or the frame goes stale.
+  const drawRef = useRef<(() => void) | null>(null)
+  useEffect(() => {
+    if (REDUCED) drawRef.current?.()
+  }, [geom, weights])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -217,8 +226,7 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
       }
     }
 
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-    const dpr = Math.min(devicePixelRatio || 1, 2)
+    const reduced = REDUCED
 
     // Displayed weights ease toward targets so a lock collapses the light
     // smoothly instead of snapping.
@@ -237,6 +245,9 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
 
     const draw = () => {
       const { geom: g, weights: tw } = targets.current
+      // read per draw: the window can move between displays (or zoom), and a
+      // mount-time value would leave the hero blurry or overdrawn until reload
+      const dpr = Math.min(devicePixelRatio || 1, 2)
       const w = Math.round(g.width * dpr)
       const h = Math.round(g.height * dpr)
       if (canvas.width !== w || canvas.height !== h) {
@@ -272,6 +283,8 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     }
 
+    drawRef.current = draw
+
     let settle: ReturnType<typeof setTimeout> | undefined
     let themeMo: MutationObserver | undefined
     if (reduced) {
@@ -292,17 +305,42 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
       raf = requestAnimationFrame(loop)
     }
 
-    // Don't burn GPU while the hero is off-screen.
+    // Don't burn GPU while the hero can't be seen. The sticky hero never
+    // leaves the viewport on desktop, so intersection alone can't detect
+    // "scrolled past": also watch the first sheet crossing the viewport-top
+    // line (rootMargin collapses the root to that line) — once it pins, the
+    // hero is fully covered. (The seam's slanted corner may freeze a beat
+    // early; it is gone within ~80px of scroll.)
+    let onScreen = true
+    let covered = false
+    const gate = () => {
+      running = onScreen && !covered
+    }
     const io = new IntersectionObserver(([e]) => {
-      running = e.isIntersecting
+      onScreen = e.isIntersecting
+      gate()
     })
     io.observe(canvas)
+    let coverIo: IntersectionObserver | undefined
+    const firstSheet = document.querySelector('.panels .panel')
+    if (firstSheet) {
+      coverIo = new IntersectionObserver(
+        ([e]) => {
+          covered = e.isIntersecting
+          gate()
+        },
+        { rootMargin: '0px 0px -100% 0px' },
+      )
+      coverIo.observe(firstSheet)
+    }
 
     return () => {
+      drawRef.current = null
       cancelAnimationFrame(raf)
       clearTimeout(settle)
       themeMo?.disconnect()
       io.disconnect()
+      coverIo?.disconnect()
       removeEventListener('pointermove', onMove)
       // Deliberately NOT losing the GL context: StrictMode remounts reuse
       // the same canvas, and a lost context can't compile shaders again.

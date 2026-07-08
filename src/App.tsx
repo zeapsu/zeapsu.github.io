@@ -12,9 +12,11 @@ import { PRIMARY_JOB, type JobId } from './content/jobs'
 // plain-text path (a11y + crawl floor).
 
 export default function App() {
-  // `locked` is the clicked focus (persists); `preview` is the hovered/focused
-  // one (transient). The active lens is preview-over-locked; when neither is
-  // set the hero cycles and the accent falls back to the primary focus.
+  // `locked` is the clicked focus (outlives the hover); `preview` is the
+  // hovered/focused one (transient). The active lens is preview-over-locked;
+  // when neither is set the hero cycles and the accent falls back to the
+  // primary focus. Deliberately NOT persisted across reloads: a fresh visit
+  // re-enters the idle cycle (only the lights choice persists).
   const [locked, setLocked] = useState<JobId | null>(null)
   const [preview, setPreview] = useState<JobId | null>(null)
   const lens = preview ?? locked
@@ -32,6 +34,11 @@ export default function App() {
   })
   useEffect(() => {
     document.documentElement.dataset.theme = lightsOff ? 'dark' : 'light'
+    // keep the browser chrome (mobile status/address bar) on the page ground;
+    // hexes mirror --bg in index.css
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', lightsOff ? '#0b0a12' : '#d8d0c2')
     try {
       localStorage.lightsOff = lightsOff ? '1' : '0'
     } catch {

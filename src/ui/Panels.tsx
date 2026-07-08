@@ -16,18 +16,11 @@ import { SkillField } from './SkillField'
 // ABOUT+CONTACT. The active lens never hides anything: it re-sorts projects
 // (matching first + glow), lights its skill branch, and swaps the resume.
 
-export const JOB_TAGS: Record<string, JobId[]> = {
-  'reachy-console': ['robotics', 'ai-systems'],
-  'Kalshi weather markets': ['ai-systems', 'swe'],
-  Sage: ['ai-systems', 'swe'],
-  'Quantum computing work': ['physicist'],
-}
-
 function sortedProjects(lens: JobId | null) {
   if (!lens) return projects
   return [...projects].sort((a, b) => {
-    const av = JOB_TAGS[a.name]?.includes(lens) ? 0 : 1
-    const bv = JOB_TAGS[b.name]?.includes(lens) ? 0 : 1
+    const av = a.jobs.includes(lens) ? 0 : 1
+    const bv = b.jobs.includes(lens) ? 0 : 1
     return av - bv
   })
 }
@@ -66,8 +59,8 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
             <ProjectCard
               key={p.name}
               p={p}
-              featured={!!lens && JOB_TAGS[p.name]?.includes(lens)}
-              tags={JOB_TAGS[p.name] ?? []}
+              featured={!!lens && p.jobs.includes(lens)}
+              tags={p.jobs}
             />
           ))}
         </div>

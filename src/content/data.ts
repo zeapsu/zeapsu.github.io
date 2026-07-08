@@ -39,6 +39,9 @@ export interface Project {
   name: string
   blurb: string
   facts: string[]
+  /** facet tags: which lenses feature/sort this project (rename-proof — the
+   *  association lives on the project, not on a display-name lookup) */
+  jobs: JobId[]
   link?: string
   // A real UI screenshot of the shipped project (private projects show
   // their UI only; privacy is conveyed by the absence of a link).
@@ -49,7 +52,9 @@ export interface Project {
 export const projects: Project[] = [
   {
     name: 'reachy-console',
-    blurb: 'Control console and voice assistant for a Reachy Mini robot living on a headless Jetson Orin Nano.',
+    jobs: ['robotics', 'ai-systems'],
+    blurb:
+      'Control console and voice assistant for a Reachy Mini robot living on a headless Jetson Orin Nano. Private repo, ask me about it.',
     facts: [
       'FastAPI + vanilla JS web console, a pure HTTP/WS proxy that never grabs the robot lock; 162 controller tests green',
       'Voice pipeline: mic to faster-whisper to LLM to TTS, with live camera frames for visual questions; 286 tests',
@@ -60,7 +65,9 @@ export const projects: Project[] = [
   },
   {
     name: 'Kalshi weather markets',
-    blurb: 'An end-to-end quantitative ML system for trading weather prediction markets. Not a profitable bot, and I say so.',
+    jobs: ['ai-systems', 'swe'],
+    blurb:
+      'An end-to-end quantitative ML system for trading weather prediction markets. Not a profitable bot, and I say so. Private repo, ask me about it.',
     facts: [
       'NWS and commercial forecast ingestion, a Gaussian edge model, and stacked LSTM temperature models in PyTorch with per-city artifacts',
       'A 1,336-line trading engine with bracket parsing and ASOS rounding compensation, plus a Streamlit dashboard',
@@ -70,6 +77,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Sage',
+    jobs: ['ai-systems', 'swe'],
     blurb: 'Local-first desktop knowledge agent: add sources, chat with citations, generate quizzes and audio narration.',
     facts: [
       'Tauri + Next.js + FastAPI + SQLite with embeddings; provider abstraction across OpenAI, Anthropic, DeepSeek, Ollama',
@@ -81,6 +89,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Quantum computing work',
+    jobs: ['physicist'],
     blurb: 'QAOA portfolio optimization and quantum error correction on real hardware.',
     facts: [
       'QAOA as a new ansatz family benchmarked against CPLEX on a 31-bond portfolio: 0.02% median objective gap after local search',
