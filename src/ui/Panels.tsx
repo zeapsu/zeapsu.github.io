@@ -134,7 +134,8 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
       </section>
 
       {/* ABOUT + CONTACT share the closing sheet: the person, then the
-          essentials. Child order matters to the anim-about choreography. */}
+          essentials. The anim-about choreography keys off the child classes
+          (about-body, contact-lead, links, resume-download, resume-note). */}
       <section className="panel reveal anim-about" data-theme={t('light')}>
         <p className="eyebrow">{about.eyebrow}</p>
         <h2>{about.title}</h2>

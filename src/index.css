@@ -849,7 +849,10 @@ li {
   border-bottom: none; /* neutralize the global a underline */
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.85rem;
-  color: var(--bg);
+  /* deliberately theme-invariant: the accent fill is the same bright hue on
+     both grounds, so the legible label is always the dark ink (var(--bg)
+     would go beige on light sheets: ~1.7:1) */
+  color: #0b0a12;
   background: var(--accent);
   border-radius: 8px;
   padding: 0.6rem 1.2rem;
@@ -986,20 +989,28 @@ li {
     opacity: 1;
     filter: none;
   }
-  .anim-about > :nth-child(n + 4) {
+  .anim-about .contact-lead,
+  .anim-about .links,
+  .anim-about .resume-download,
+  .anim-about .resume-note {
     opacity: 0;
     transform: translateY(14px);
     transition:
       opacity 500ms ease,
       transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .anim-about.in-view > :nth-child(n + 4) {
+  .anim-about.in-view .contact-lead,
+  .anim-about.in-view .links,
+  .anim-about.in-view .resume-download,
+  .anim-about.in-view .resume-note {
     opacity: 1;
     transform: none;
   }
-  .anim-about.in-view > :nth-child(5) { transition-delay: 90ms; }
-  .anim-about.in-view > :nth-child(6) { transition-delay: 180ms; }
-  .anim-about.in-view > :nth-child(7) { transition-delay: 270ms; }
+  /* the essentials wait for the statement to mostly resolve, then stagger */
+  .anim-about.in-view .contact-lead { transition-delay: 250ms; }
+  .anim-about.in-view .links { transition-delay: 340ms; }
+  .anim-about.in-view .resume-download { transition-delay: 430ms; }
+  .anim-about.in-view .resume-note { transition-delay: 520ms; }
 
   /* Scroll-scrubbed variant: each sheet exposes its entry as a named view
      timeline and its children ride it, so every entrance tracks scroll
@@ -1072,14 +1083,17 @@ li {
       animation-timeline: --sheet;
       animation-range: entry 15% entry 65%;
     }
-    .anim-about > :nth-child(n + 4) {
+    .anim-about .contact-lead,
+    .anim-about .links,
+    .anim-about .resume-download,
+    .anim-about .resume-note {
       animation: k-rise linear both;
       animation-timeline: --sheet;
       animation-range: entry 25% entry 60%;
     }
-    .anim-about > :nth-child(5) { animation-range: entry 33% entry 68%; }
-    .anim-about > :nth-child(6) { animation-range: entry 41% entry 76%; }
-    .anim-about > :nth-child(7) { animation-range: entry 49% entry 84%; }
+    .anim-about .links { animation-range: entry 33% entry 68%; }
+    .anim-about .resume-download { animation-range: entry 41% entry 76%; }
+    .anim-about .resume-note { animation-range: entry 49% entry 84%; }
 
     /* Mobile stacks tall panels in normal flow, so a sheet-wide timeline
        would leave lower content unformed for most of the sheet; each child
@@ -1094,7 +1108,10 @@ li {
       .anim-path .quest,
       .anim-recognition .trophy,
       .anim-about .about-body,
-      .anim-about > :nth-child(n + 4) {
+      .anim-about .contact-lead,
+      .anim-about .links,
+      .anim-about .resume-download,
+      .anim-about .resume-note {
         animation-timeline: view();
         animation-range: entry 0% cover 30%;
       }
