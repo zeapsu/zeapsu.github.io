@@ -8,7 +8,7 @@ Andry's portfolio site, live at https://zeapsu.github.io. The Dispersion redesig
 
 Rollback lineage, oldest first: `journey-v1` (3D scroll journey), `vista-r3f-v1` (Blender vista), `themed-3d-v1` (character-select worlds + live GPE sim — the pre-redesign live site), each with a matching `legacy/*` branch. The Gross-Pitaevskii sim was deliberately dropped from the site 2026-07-06; do not resurrect it here (its honest-physics guardrail retired with it).
 
-Current backlog: #31 (content fine-tuning) and #32 (per-section signature animations; the half-empty right sides of NOW/PATH/ABOUT/CONTACT are the target). The pre-redesign issues that described the retired 3D site were triaged and closed 2026-07-07.
+Current backlog: #31 (content fine-tuning; the first big slice landed 2026-07-08 via PR #34 — honesty fixes, the robotics facet reframed to physical AI, Sigma Pi Sigma, and About+Contact merged into one "Off the clock" closing sheet, so the deck is six sheets) and #32 (per-section signature animations; the half-empty right sides of NOW/PATH and the merged closer are the target). The pre-redesign issues that described the retired 3D site were triaged and closed 2026-07-07.
 
 ## Commands
 
@@ -32,7 +32,8 @@ Deploy is automatic: push to main runs `.github/workflows/deploy.yml` (selfcheck
 ## Content rules (strict)
 
 - All site copy lives in `src/content/data.ts` and must be traceable to `~/Documents/personal/experience.md` (private repo, available on both machines). Never invent claims. Respect that file's exclusions section (daily-hub came off the site under it — #30).
-- The Kibble-Zurek / quench research bullet is cleared and ON the site (wording cleared 2026-07-04); it lives in `research.facts`. Contact info is cleared for publication; job-aware resume PDFs still need wiring (#24).
+- The Kibble-Zurek / quench research bullet is cleared and ON the site (wording cleared 2026-07-04); it lives in `research.facts`. Contact info is cleared for publication; the job-aware resume PDFs are wired (contact button resolves per focus, PDFs in `public/resume/`).
+- The About section is personal off-the-clock content (interests trace to experience.md's Personal section); the robotics facet leads with physical AI / intelligence on edge devices, not specific hardware — Reachy/Jetson stay at the project-card level.
 - Voice: the github.com/zeapsu/zeapsu README. Direct, personal, understated. No em dashes anywhere in visible copy, no filler, authenticity over polish.
 - Private projects (reachy-console, Kalshi) are described without links; the "ask me about it" framing lives in their blurbs.
 - Work-card images are real artifacts only (actual UI screenshots, actual plots) — no mockups, no decorative renders, nothing with empty axes.
