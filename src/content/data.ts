@@ -70,7 +70,7 @@ export const projects: Project[] = [
       'An end-to-end quantitative ML system for trading weather prediction markets. Not a profitable bot, and I say so. Private repo, ask me about it.',
     facts: [
       'NWS and commercial forecast ingestion, a Gaussian edge model, and stacked LSTM temperature models in PyTorch with per-city artifacts',
-      'A 1,336-line trading engine with bracket parsing and ASOS rounding compensation, plus a Streamlit dashboard',
+      'A trading engine with bracket parsing and ASOS rounding compensation, plus a Streamlit dashboard',
     ],
     image: kalshiShot,
     imageAlt: 'The Kalshi weather-markets dashboard: market overview.',
@@ -92,7 +92,7 @@ export const projects: Project[] = [
     jobs: ['physicist'],
     blurb: 'QAOA portfolio optimization and quantum error correction on real hardware.',
     facts: [
-      'QAOA as a new ansatz family benchmarked against CPLEX on a 31-bond portfolio: 0.02% median objective gap after local search',
+      'QAOA as a new ansatz family benchmarked against CPLEX on a 31-bond portfolio: 5.6% median objective gap from QAOA alone, 0.02% after about 20 local-search evaluations',
       "Shor's 9-qubit code run on IBM hardware via Qiskit Runtime, measuring a 36% fidelity improvement",
     ],
     link: 'https://github.com/zeapsu/Quantum-Portfolio-Optimization',
@@ -121,7 +121,7 @@ export const questLog = {
       period: '2021 – 2024',
       title: 'Modesto Junior College',
       detail:
-        'Four transfer degrees, all with honors: Computer Science, Mathematics, Physics, and Language & Rationality. President’s List five times, GPA 3.73.',
+        'Four associate degrees, all with honors: Computer Science, Mathematics, Physics, and Language & Rationality. President’s List five times, GPA 3.73.',
       status: 'done' as const,
     },
     {
@@ -197,12 +197,13 @@ export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
     job: 'robotics',
     branch: 'Robotics Engineer',
     skills: [
-      'Reachy Mini',
-      'headless Jetson Orin Nano',
+      'edge inference',
+      'voice + vision pipelines',
+      'Jetson Orin Nano',
       'GStreamer',
       'ALSA/PipeWire',
       'kernel-driver debugging',
-      'ESP32 firmware (leveling)',
+      'ESP32 firmware',
     ],
   },
 ]
@@ -223,7 +224,10 @@ export interface Achievement {
 export const achievementGroups: { label: string; items: Achievement[] }[] = [
   {
     label: 'San Jose State',
-    items: [{ title: 'Dean’s Scholar', detail: 'Fall 2024 and Fall 2025' }],
+    items: [
+      { title: 'Dean’s Scholar', detail: 'Fall 2024 and Fall 2025' },
+      { title: 'Sigma Pi Sigma', detail: 'Physics honor society (AIP/SPS), lifetime member, 2026' },
+    ],
   },
   {
     label: 'Modesto Junior College',
@@ -253,8 +257,6 @@ export const achievements: Achievement[] = achievementGroups.flatMap((g) =>
 )
 
 export const contact = {
-  eyebrow: 'contact',
-  title: 'Get in touch',
   body: 'Open to AI systems and research software roles. The quickest way to reach me:',
   // The download resolves to the active focus's resume (see `resumes`); this
   // line explains the focus-aware behavior.
@@ -293,10 +295,12 @@ export const hardware: { src: string; alt: string; caption: string; w: number; h
   },
 ]
 
-export const howIWork = {
-  eyebrow: 'how I work',
-  title: 'Verification first',
-  body: 'I orchestrate coding agents with review gates and never trust an unverified pass: I re-run the tests, drive the live app, and read the diff. The habits come from physics, where a plot is not a result until you know why every feature is there. Off the clock: judo (one tournament, zero wins, undeterred), lifting, Guild Wars 2.',
+// The closing sheet: who I am off the clock, then the contact essentials.
+// Interests trace to experience.md's Personal section (cleared 2026-07-07).
+export const about = {
+  eyebrow: 'about',
+  title: 'Off the clock',
+  body: 'Away from the keyboard: Marvel and scary movies, souls-like games, pickleball, judo (one tournament, zero wins, undeterred), and time with family and the cats. Music runs all day: R&B, UK garage, EDM, dubstep, jazz, classical, JRPG soundtracks. I genuinely enjoy grocery shopping.',
 }
 
 export const footer = {

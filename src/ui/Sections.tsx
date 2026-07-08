@@ -6,7 +6,7 @@ import {
   skillTree,
   achievements,
   contact,
-  howIWork,
+  about,
   footer,
   resumes,
   resumeDefault,
@@ -156,15 +156,10 @@ export function StaticFallback() {
         </ul>
       </section>
 
-      <section className="panel">
-        <p className="eyebrow">{howIWork.eyebrow}</p>
-        <h2>{howIWork.title}</h2>
-        <p>{howIWork.body}</p>
-      </section>
-
       <section className="panel closing">
-        <p className="eyebrow">{contact.eyebrow}</p>
-        <h2>{contact.title}</h2>
+        <p className="eyebrow">{about.eyebrow}</p>
+        <h2>{about.title}</h2>
+        <p>{about.body}</p>
         <p>{contact.body}</p>
         <ContactLinks />
         <p>Resumes: <a href={resumeDefault} target="_blank" rel="noopener">full CV</a>{' '}

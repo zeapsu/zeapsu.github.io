@@ -35,7 +35,7 @@ export const JOBS: Job[] = [
   {
     id: 'robotics',
     name: 'Robotics Engineer',
-    tagline: 'Currently leveling: a Reachy Mini living on a Jetson Orin Nano.',
+    tagline: 'Physical AI: putting intelligence on edge devices and robots.',
     palette: { accent: '#ff7a45', accentDim: '#9e4a26' },
   },
 ]
