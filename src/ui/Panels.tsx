@@ -75,23 +75,44 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
         <SkillField lens={lens} light={t('dark') === 'light'} />
       </section>
 
-      <section className="panel reveal anim-path" data-theme={t('light')}>
+      <section className="panel reveal anim-path panel-split" data-theme={t('light')}>
         <h2>{questLog.title}</h2>
         <p>{questLog.intro}</p>
-        <ol className="quest-chain">
-          {questLog.quests.map((q) => (
-            <li key={q.title} className={`quest quest-${q.status}`}>
-              <span className="quest-period">{q.period}</span>
-              <span className="quest-body">
-                <span className="quest-title">
-                  {q.title}
-                  {q.status === 'active' && <span className="quest-badge">active</span>}
+        {/* not aria-hidden: the quest list inside is real content, only the
+            drawn route itself is decorative */}
+        <div className="panel-aside route">
+          <svg
+            className="route-map"
+            viewBox="0 0 400 640"
+            preserveAspectRatio="xMidYMid meet"
+            aria-hidden="true"
+          >
+            <path
+              className="route-line"
+              pathLength="1"
+              fill="none"
+              d="M 60 50 C 50 145, 130 195, 330 225 C 365 295, 250 345, 140 420 C 95 485, 240 540, 300 590"
+            />
+            <circle className="route-node" cx="60" cy="50" r="7" />
+            <circle className="route-node" cx="330" cy="225" r="7" />
+            <circle className="route-node" cx="140" cy="420" r="7" />
+            <circle className="route-node route-node-active" cx="300" cy="590" r="9" />
+          </svg>
+          <ol className="quest-chain route-stops">
+            {questLog.quests.map((q) => (
+              <li key={q.title} className={`quest quest-${q.status}`}>
+                <span className="quest-period">{q.period}</span>
+                <span className="quest-body">
+                  <span className="quest-title">
+                    {q.title}
+                    {q.status === 'active' && <span className="quest-badge">active</span>}
+                  </span>
+                  <span className="quest-detail">{q.detail}</span>
                 </span>
-                <span className="quest-detail">{q.detail}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
       <section className="panel reveal anim-recognition" data-theme={t('dark')}>
