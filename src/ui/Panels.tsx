@@ -1,63 +1,49 @@
-import { JOBS, type JobId } from '../content/jobs'
+import { PRIMARY_JOB, type JobId } from '../content/jobs'
 import {
-  identity,
   research,
   projects,
   questLog,
-  skillTree,
-  achievements,
+  achievementGroups,
   contact,
   howIWork,
   resumes,
 } from '../content/data'
-import { ContactLinks, ProjectCard, HardwareFigures } from './Sections'
+import { ContactLinks, ProjectCard } from './Sections'
+import { SkillField } from './SkillField'
 
-// The shared skeleton all four jobs render through: About/hero -> quest log ->
-// quest board -> skill tree -> achievements -> contact. Theme, ordering, and
-// emphasis change per job; the skeleton never does. The equipped job's project
-// cards sort first (spec: "the equipped job's cards sort first and glow").
+// The single content column, always fully visible. Section order is the
+// narrative arc: NOW (present-tense job) → WORK → PATH → RECOGNITION →
+// ABOUT+CONTACT. The active lens never hides anything: it re-sorts projects
+// (matching first + glow), lights its skill branch, and swaps the resume.
 
-const JOB_TAGS: Record<string, JobId[]> = {
-  'reachy-console': ['robotics', 'ai-systems'],
-  'Kalshi weather markets': ['ai-systems', 'swe'],
-  Sage: ['ai-systems', 'swe'],
-  'daily-hub': ['swe'],
-  'Quantum computing work': ['physicist'],
-}
-
-function sortedProjects(job: JobId | null) {
-  if (!job) return projects
+function sortedProjects(lens: JobId | null) {
+  if (!lens) return projects
   return [...projects].sort((a, b) => {
-    const av = JOB_TAGS[a.name]?.includes(job) ? 0 : 1
-    const bv = JOB_TAGS[b.name]?.includes(job) ? 0 : 1
+    const av = a.jobs.includes(lens) ? 0 : 1
+    const bv = b.jobs.includes(lens) ? 0 : 1
     return av - bv
   })
 }
 
-export function Panels({ job, onReset }: { job: JobId | null; onReset: () => void }) {
-  const equipped = JOBS.find((j) => j.id === job)
+export function Panels({ lens, inverted = false }: { lens: JobId | null; inverted?: boolean }) {
+  // The resume always resolves to a focus: the active lens, or the primary one.
+  const resumeFocus = lens ?? PRIMARY_JOB
+  // "lights off" flips every sheet while keeping the alternation.
+  const t = (base: 'dark' | 'light') => (inverted ? (base === 'dark' ? 'light' : 'dark') : base)
   return (
-    <main className="panels" inert={job === null || undefined}>
-      <section className="game-panel hero-panel">
-        <button type="button" className="select-reset" onClick={onReset}>
-          ← character select
-        </button>
-        <p className="eyebrow">{equipped ? `${equipped.name} · ${equipped.subtitle}` : 'Andry Paez'}</p>
-        <h1 className="hero-name">{identity.name}</h1>
-        <p className="hero-tagline">{equipped ? equipped.tagline : identity.tagline}</p>
-        <ContactLinks show={['github', 'linkedin']} />
-      </section>
+    <main className="panels">
+      {/* the active wavelength, carried down the page (decorative) */}
+      <div className="spine" aria-hidden="true" />
 
-      {job === 'robotics' && (
-        <section className="game-panel">
-          <HardwareFigures />
-        </section>
-      )}
-
-      <section className="game-panel">
+      <section className="panel reveal anim-now" data-theme={t('dark')}>
         <p className="eyebrow">{research.eyebrow}</p>
         <h2>{research.title}</h2>
         <p>{research.body}</p>
+        {/* aria-hidden: the identical fact is read out in the list below */}
+        <p className="pull-stat" aria-hidden="true">
+          <span className="pull-stat-value">{research.pullStat.value}</span>
+          <span className="pull-stat-label">{research.pullStat.label}</span>
+        </p>
         <ul>
           {research.facts.map((f) => (
             <li key={f}>{f}</li>
@@ -65,7 +51,30 @@ export function Panels({ job, onReset }: { job: JobId | null; onReset: () => voi
         </ul>
       </section>
 
-      <section className="game-panel">
+      <section className="panel reveal anim-work" data-theme={t('light')}>
+        <p className="eyebrow">work</p>
+        <h2>Selected work</h2>
+        <div className="quest-board">
+          {sortedProjects(lens).map((p) => (
+            <ProjectCard
+              key={p.name}
+              p={p}
+              featured={!!lens && p.jobs.includes(lens)}
+              tags={p.jobs}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="panel reveal anim-skills" data-theme={t('dark')}>
+        <p className="eyebrow">skills</p>
+        <h2>What I work in</h2>
+        {/* the 3D cloud's material colors can't read CSS vars; tell it the
+            sheet's effective theme */}
+        <SkillField lens={lens} light={t('dark') === 'light'} />
+      </section>
+
+      <section className="panel reveal anim-path" data-theme={t('light')}>
         <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
         <p>{questLog.intro}</p>
@@ -85,91 +94,62 @@ export function Panels({ job, onReset }: { job: JobId | null; onReset: () => voi
         </ol>
       </section>
 
-      <section className="game-panel">
-        <p className="eyebrow">quest board</p>
-        <h2>Projects</h2>
-        <div className="quest-board">
-          {sortedProjects(job).map((p) => (
-            <ProjectCard
-              key={p.name}
-              p={p}
-              featured={!!job && JOB_TAGS[p.name]?.includes(job)}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="game-panel">
-        <p className="eyebrow">skill tree</p>
-        <h2>One character, four branches</h2>
-        <div className="skill-tree">
-          {skillTree.map((branch) => (
-            <div
-              key={branch.job}
-              className={`skill-branch${branch.job === job ? ' lit' : ''}`}
-            >
-              <h3 className="skill-branch-name">{branch.branch}</h3>
-              <ul>
-                {branch.skills.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
+      <section className="panel reveal anim-recognition" data-theme={t('dark')}>
+        <p className="eyebrow">recognition</p>
+        <h2>Honors and credentials</h2>
+        <div className="trophy-groups">
+        {achievementGroups.map((g) => (
+          <div key={g.label} className="trophy-group">
+            <p className="trophy-group-label">{g.label}</p>
+            <div className="trophy-grid">
+              {g.items.map((a) => {
+                const inner = (
+                  <>
+                    <span className="trophy-title">{a.title}</span>
+                    <span className="trophy-detail">{a.detail}</span>
+                  </>
+                )
+                return a.credential ? (
+                  <a
+                    key={a.title}
+                    className="trophy trophy-link"
+                    href={a.credential}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={`${a.title}, ${a.detail}. View credential.`}
+                  >
+                    {inner}
+                    <span className="trophy-view" aria-hidden="true">view credential</span>
+                  </a>
+                ) : (
+                  <div key={a.title} className="trophy">
+                    {inner}
+                  </div>
+                )
+              })}
             </div>
-          ))}
+          </div>
+        ))}
         </div>
       </section>
 
-      <section className="game-panel">
-        <p className="eyebrow">achievements</p>
-        <h2>Records</h2>
-        <div className="trophy-grid">
-          {achievements.map((a) => {
-            const inner = (
-              <>
-                <span className="trophy-title">{a.title}</span>
-                <span className="trophy-detail">{a.detail}</span>
-              </>
-            )
-            return a.credential ? (
-              <a
-                key={a.title}
-                className="trophy trophy-link"
-                href={a.credential}
-                target="_blank"
-                rel="noopener"
-                aria-label={`${a.title}, ${a.detail}. View credential.`}
-              >
-                {inner}
-                <span className="trophy-view" aria-hidden="true">view credential</span>
-              </a>
-            ) : (
-              <div key={a.title} className="trophy">
-                {inner}
-              </div>
-            )
-          })}
-        </div>
+      <section className="panel reveal anim-about" data-theme={t('light')}>
+        <p className="eyebrow">about</p>
+        <h2>{howIWork.title}</h2>
+        <p>{howIWork.body}</p>
       </section>
 
-      <section className="game-panel">
+      <section className="panel reveal anim-contact" data-theme={t('dark')}>
         <p className="eyebrow">{contact.eyebrow}</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
         <ContactLinks show={['email']} />
-        {job && (
-          <p className="resume-download">
-            <a className="resume-button" href={resumes[job]} target="_blank" rel="noopener">
-              Download resume
-            </a>
-          </p>
-        )}
+        <p className="resume-download">
+          <a className="resume-button" href={resumes[resumeFocus]} target="_blank" rel="noopener">
+            Download resume
+          </a>
+        </p>
         <p className="resume-note">{contact.resumeNote}</p>
-      </section>
-
-      <section className="game-panel">
-        <p className="eyebrow">{howIWork.eyebrow}</p>
-        <h2>{howIWork.title}</h2>
-        <p>{howIWork.body}</p>
       </section>
     </main>
   )

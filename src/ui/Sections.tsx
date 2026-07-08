@@ -12,14 +12,13 @@ import {
   resumeDefault,
   hardware,
 } from '../content/data'
-import { JOBS } from '../content/jobs'
-import { RESEARCH_TOP, CARD_BASE, CARD_STEP, CLOSING_TOP } from '../layout'
+import { JOBS, type JobId } from '../content/jobs'
 
 type LinkKey = 'github' | 'linkedin' | 'email'
 
 // One nav, optionally filtered. Callers with no `show` get all three (the
-// plain fallback and legacy journey view); the gated panels split them so no
-// link repeats (#20): hero = github+linkedin, contact card = email.
+// plain fallback); the main page splits them so no link repeats (#20):
+// hero = github+linkedin, contact = email.
 export function ContactLinks({ show }: { show?: LinkKey[] } = {}) {
   const on = (k: LinkKey) => !show || show.includes(k)
   return (
@@ -34,9 +33,11 @@ export function ContactLinks({ show }: { show?: LinkKey[] } = {}) {
 export function ProjectCard({
   p,
   featured = false,
+  tags = [],
 }: {
   p: (typeof projects)[number]
   featured?: boolean
+  tags?: JobId[]
 }) {
   return (
     <article className={`card${featured ? ' featured' : ''}`}>
@@ -47,7 +48,13 @@ export function ProjectCard({
       )}
       <header>
         <h3>{p.link ? <a href={p.link}>{p.name}</a> : p.name}</h3>
-        <span className="status">{p.status}</span>
+        {tags.length > 0 && (
+          <span className="facet-ticks" aria-hidden="true">
+            {tags.map((t) => (
+              <i key={t} style={{ background: JOBS.find((j) => j.id === t)!.palette.accent }} />
+            ))}
+          </span>
+        )}
       </header>
       <p>{p.blurb}</p>
       <ul>
@@ -55,82 +62,31 @@ export function ProjectCard({
           <li key={f}>{f}</li>
         ))}
       </ul>
+      {/* The real bench lives with the project it runs (workbench honesty
+          rule); shared by the main page and ?plain=1 so they never drift. */}
+      {p.name === 'reachy-console' && <HardwareFigures />}
     </article>
   )
 }
 
-// The Roboticist "real bench" figure. Shared so the equipped panel and the
-// ?plain=1 fallback never drift; each caller wraps it in its own <section>.
-// width/height are set so the lazy photos reserve space (no layout shift).
+// The Roboticist "real bench" figures, rendered at the foot of the
+// reachy-console card. width/height reserve space (no layout shift).
 export function HardwareFigures() {
   return (
-    <>
-      <p className="eyebrow">hardware</p>
-      <h2>Reachy Mini on a Jetson Orin Nano</h2>
-      <div className="hardware-figures">
-        {hardware.map((h) => (
-          <figure key={h.src} className="hardware">
-            <img src={h.src} alt={h.alt} width={h.w} height={h.h} loading="lazy" />
-            <figcaption>{h.caption}</figcaption>
-          </figure>
-        ))}
-      </div>
-    </>
-  )
-}
-
-// Absolute-positioned over PAGES * 100dvh of scroll, riding drei's <Scroll html>.
-// dvh, not vh: drei's scroll range is pages * container pixel height (the
-// dynamic viewport), while vh is the large viewport on phones — the mismatch
-// pushed the closing section past the maximum scroll on mobile.
-export function Sections() {
-  return (
-    <div className="journey">
-      <section className="hero" style={{ top: 0 }}>
-        <p className="eyebrow">Andry Paez · AI systems + research software</p>
-        <h1>{identity.tagline}</h1>
-        <ContactLinks />
-        <p className="sim-caption">
-          <span className="live-dot" aria-hidden="true" /> {identity.simCaption}
-        </p>
-      </section>
-
-      <section className="panel" style={{ top: `${RESEARCH_TOP}dvh` }}>
-        <p className="eyebrow">{research.eyebrow}</p>
-        <h2>{research.title}</h2>
-        <p>{research.body}</p>
-        <ul>
-          {research.facts.map((f) => (
-            <li key={f}>{f}</li>
-          ))}
-        </ul>
-      </section>
-
-      {projects.map((p, i) => (
-        <div
-          key={p.name}
-          className={`card-slot ${i % 2 ? 'right' : 'left'}`}
-          style={{ top: `${CARD_BASE + i * CARD_STEP}dvh` }}
-        >
-          {i === 0 && <p className="eyebrow">projects</p>}
-          <ProjectCard p={p} />
-        </div>
+    <div className="hardware-figures">
+      {hardware.map((h) => (
+        <figure key={h.src} className="hardware">
+          <img src={h.src} alt={h.alt} width={h.w} height={h.h} loading="lazy" />
+          <figcaption>{h.caption}</figcaption>
+        </figure>
       ))}
-
-      <section className="panel closing" style={{ top: `${CLOSING_TOP}dvh` }}>
-        <p className="eyebrow">{howIWork.eyebrow}</p>
-        <h2>{howIWork.title}</h2>
-        <p>{howIWork.body}</p>
-        <p className="open-to">{footer.line}</p>
-        <ContactLinks />
-      </section>
     </div>
   )
 }
 
-// Plain document-flow version: the ungated recruiter/SEO/no-WebGL path. It
-// must carry ALL content (accessibility + crawl floor), so every panel the
-// gated experience renders has a plain equivalent here.
+// Plain document-flow version: the ungated recruiter/SEO/no-JS path. It must
+// carry ALL content (accessibility + crawl floor), so every section the main
+// page renders has a plain equivalent here.
 export function StaticFallback() {
   return (
     <main className="fallback">
@@ -152,6 +108,21 @@ export function StaticFallback() {
         </ul>
       </section>
 
+      <p className="eyebrow">work</p>
+      {projects.map((p) => (
+        <ProjectCard key={p.name} p={p} />
+      ))}
+
+      <section className="panel">
+        <p className="eyebrow">skills</p>
+        <h2>What I work in</h2>
+        {skillTree.map((branch) => (
+          <p key={branch.job}>
+            <strong>{branch.branch}</strong>: {branch.skills.join(' · ')}
+          </p>
+        ))}
+      </section>
+
       <section className="panel">
         <p className="eyebrow">{questLog.eyebrow}</p>
         <h2>{questLog.title}</h2>
@@ -165,29 +136,9 @@ export function StaticFallback() {
         </ul>
       </section>
 
-      <p className="eyebrow">projects</p>
-      {projects.map((p) => (
-        <ProjectCard key={p.name} p={p} />
-      ))}
-
       <section className="panel">
-        <p className="eyebrow">skill tree</p>
-        <h2>One character, four branches</h2>
-        {skillTree.map((branch) => (
-          <div key={branch.job}>
-            <h3>{branch.branch}</h3>
-            <ul>
-              {branch.skills.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </section>
-
-      <section className="panel">
-        <p className="eyebrow">achievements</p>
-        <h2>Records</h2>
+        <p className="eyebrow">recognition</p>
+        <h2>Honors and credentials</h2>
         <ul>
           {achievements.map((a) => (
             <li key={a.title}>
@@ -206,10 +157,12 @@ export function StaticFallback() {
       </section>
 
       <section className="panel">
-        <HardwareFigures />
+        <p className="eyebrow">{howIWork.eyebrow}</p>
+        <h2>{howIWork.title}</h2>
+        <p>{howIWork.body}</p>
       </section>
 
-      <section className="panel">
+      <section className="panel closing">
         <p className="eyebrow">{contact.eyebrow}</p>
         <h2>{contact.title}</h2>
         <p>{contact.body}</p>
@@ -221,14 +174,7 @@ export function StaticFallback() {
             </span>
           ))}
         </p>
-      </section>
-
-      <section className="panel closing">
-        <p className="eyebrow">{howIWork.eyebrow}</p>
-        <h2>{howIWork.title}</h2>
-        <p>{howIWork.body}</p>
         <p className="open-to">{footer.line}</p>
-        <ContactLinks />
       </section>
     </main>
   )

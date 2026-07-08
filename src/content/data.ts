@@ -2,6 +2,7 @@
 // ~/Documents/personal/experience.md. Do not add claims that are not in that file.
 import type { JobId } from './jobs'
 import sageShot from '../assets/screenshots/sage.jpg'
+import qaoaShot from '../assets/screenshots/qaoa.png'
 import kalshiShot from '../assets/screenshots/kalshi.jpg'
 import reachyConsoleShot from '../assets/screenshots/reachy-console.jpg'
 import reachyPhoto from '../assets/hardware/reachy.jpg'
@@ -13,15 +14,17 @@ export const identity = {
   email: 'andryypaez@gmail.com',
   github: 'https://github.com/zeapsu',
   linkedin: 'https://www.linkedin.com/in/andry-lloyd-paez-744883252',
-  simCaption:
-    'This is a live two-component Gross-Pitaevskii simulation, the same equations I work on at SJSU. Scroll and watch spin domains form.',
-  auroraCaption:
-    'The aurora is a live two-component Gross-Pitaevskii simulation, the same equations I work on at SJSU. Each band is a spin domain forming in real time.',
 }
 
 export const research = {
-  eyebrow: 'research',
+  eyebrow: 'now',
   title: 'Simulating ultracold atoms at San Jose State',
+  // Display-type pull-stat for the NOW section; the same fact stays in
+  // `facts` in full (the stat is aria-hidden decoration of a stated fact).
+  pullStat: {
+    value: '1,880×',
+    label: 'sine-DVR kinetic-energy operator, 161 s → 0.09 s, verified bit-exact',
+  },
   body: 'Research assistant in the Dept. of Physics & Astronomy, working on spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst. I build the code that keeps the science running: a CLI and HDF5 pipeline for ground states and Bogoliubov-de Gennes spectra, reproducible environments, and Slurm workflows on the SJSU cluster.',
   facts: [
     'Vectorized the sine-DVR kinetic-energy operator: 161 s down to 0.09 s at 2048 grid points, a 1,880x speedup verified bit-exact by a benchmark harness',
@@ -34,12 +37,14 @@ export const research = {
 
 export interface Project {
   name: string
-  status: string
   blurb: string
   facts: string[]
+  /** facet tags: which lenses feature/sort this project (rename-proof — the
+   *  association lives on the project, not on a display-name lookup) */
+  jobs: JobId[]
   link?: string
-  // A real UI screenshot of the shipped project (private projects show their
-  // UI only; the "ask me about it" caveat stays in `status`).
+  // A real UI screenshot of the shipped project (private projects show
+  // their UI only; privacy is conveyed by the absence of a link).
   image?: string
   imageAlt?: string
 }
@@ -47,8 +52,9 @@ export interface Project {
 export const projects: Project[] = [
   {
     name: 'reachy-console',
-    status: 'private, ask me about it',
-    blurb: 'Control console and voice assistant for a Reachy Mini robot living on a headless Jetson Orin Nano.',
+    jobs: ['robotics', 'ai-systems'],
+    blurb:
+      'Control console and voice assistant for a Reachy Mini robot living on a headless Jetson Orin Nano. Private repo, ask me about it.',
     facts: [
       'FastAPI + vanilla JS web console, a pure HTTP/WS proxy that never grabs the robot lock; 162 controller tests green',
       'Voice pipeline: mic to faster-whisper to LLM to TTS, with live camera frames for visual questions; 286 tests',
@@ -59,8 +65,9 @@ export const projects: Project[] = [
   },
   {
     name: 'Kalshi weather markets',
-    status: 'private, honest caveat: no validated P&L',
-    blurb: 'An end-to-end quantitative ML system for trading weather prediction markets. Not a profitable bot, and I say so.',
+    jobs: ['ai-systems', 'swe'],
+    blurb:
+      'An end-to-end quantitative ML system for trading weather prediction markets. Not a profitable bot, and I say so. Private repo, ask me about it.',
     facts: [
       'NWS and commercial forecast ingestion, a Gaussian edge model, and stacked LSTM temperature models in PyTorch with per-city artifacts',
       'A 1,336-line trading engine with bracket parsing and ASOS rounding compensation, plus a Streamlit dashboard',
@@ -70,7 +77,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Sage',
-    status: 'paused on purpose',
+    jobs: ['ai-systems', 'swe'],
     blurb: 'Local-first desktop knowledge agent: add sources, chat with citations, generate quizzes and audio narration.',
     facts: [
       'Tauri + Next.js + FastAPI + SQLite with embeddings; provider abstraction across OpenAI, Anthropic, DeepSeek, Ollama',
@@ -81,23 +88,17 @@ export const projects: Project[] = [
     imageAlt: 'The Sage desktop app home screen: the Tome chat prompt and skill actions (Sources, Report, Quiz, Flashcards, Audio, Chat).',
   },
   {
-    name: 'daily-hub',
-    status: 'private, active',
-    blurb: 'Static-site generator for a daily opportunity hub, built around a strict public/private boundary.',
-    facts: [
-      'Whitelist-only renderer plus a CI leak check that fails the build if private tokens ever reach public output',
-      'Stdlib RSS ingestion hardened against XXE, redirects, and oversize responses; test suite grew 37 to 116 across three increments',
-    ],
-  },
-  {
     name: 'Quantum computing work',
-    status: 'WISER program + coursework',
+    jobs: ['physicist'],
     blurb: 'QAOA portfolio optimization and quantum error correction on real hardware.',
     facts: [
       'QAOA as a new ansatz family benchmarked against CPLEX on a 31-bond portfolio: 0.02% median objective gap after local search',
       "Shor's 9-qubit code run on IBM hardware via Qiskit Runtime, measuring a 36% fidelity improvement",
     ],
     link: 'https://github.com/zeapsu/Quantum-Portfolio-Optimization',
+    image: qaoaShot,
+    imageAlt:
+      'QAOA benchmark boxplot: optimizer iterations to last improvement versus circuit depth, p = 1 to 5.',
   },
 ]
 
@@ -105,9 +106,10 @@ export const projects: Project[] = [
 // years are rendered as one honest "time away" line — the Cal Poly stint is
 // on experience.md's exclusions list, so it is named nowhere on the site.
 export const questLog = {
-  eyebrow: 'quest log',
-  title: 'The route here was not a straight line',
-  intro: 'Community college to a physics degree to a research lab. Every step below is a finished quest.',
+  eyebrow: 'path',
+  title: 'Background',
+  intro:
+    'The route here was not a straight line: community college to a physics degree to a research lab.',
   quests: [
     {
       period: 'before 2021',
@@ -132,50 +134,75 @@ export const questLog = {
     {
       period: '2026 – present',
       title: 'Research Assistant, SJSU Physics',
-      detail:
-        'Spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst. The current quest.',
+      // Deduplicated: the full research story lives in the NOW section above.
+      detail: 'Spinor Bose-Einstein condensate simulations with Dr. Hilary Hurst. The work in Now, above.',
       status: 'active' as const,
     },
   ],
 }
 
-// Skill tree: one tree, four branches (the four jobs). The equipped branch
-// lights. Every skill traces to experience.md's skills/projects sections.
+// Skill field: one cloud, four wavelengths (the four jobs). The active
+// facet's motes catch the light; the rest grey out. Tokens are the audited
+// skill strings re-chunked to cloud size — every token traces to
+// experience.md's skills/projects sections, nothing added.
 export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
   {
     job: 'physicist',
     branch: 'Physicist',
     skills: [
-      'Quantum information: Qiskit, QAOA, Shor-code error correction',
-      'Computational physics: NumPy, FFT/spectral methods, Monte Carlo',
-      'Condensate simulation: Gross-Pitaevskii, HDF5, Slurm/HPC',
+      'Quantum information',
+      'Qiskit',
+      'QAOA',
+      'Shor-code error correction',
+      'NumPy',
+      'FFT/spectral methods',
+      'Monte Carlo',
+      'Gross-Pitaevskii simulation',
+      'HDF5',
+      'Slurm/HPC',
     ],
   },
   {
     job: 'ai-systems',
     branch: 'AI Systems',
     skills: [
-      'Local inference: llama.cpp, Ollama, quantization-aware selection',
-      'Agents: ReAct tool loops, MCP, multi-agent review gates',
-      'Edge deployment: Jetson Orin Nano, faster-whisper',
+      'Local inference',
+      'llama.cpp',
+      'Ollama',
+      'quantization-aware selection',
+      'ReAct tool loops',
+      'MCP',
+      'multi-agent review gates',
+      'faster-whisper',
+      'edge deployment',
     ],
   },
   {
     job: 'swe',
     branch: 'Research SWE',
     skills: [
-      'Python, TypeScript, Rust (Tauri), C/C++',
-      'FastAPI, Next.js/React, WebSockets/SSE',
-      'CI, pytest, Playwright-driven runtime verification',
+      'Python',
+      'TypeScript',
+      'Rust (Tauri)',
+      'C/C++',
+      'FastAPI',
+      'Next.js/React',
+      'WebSockets/SSE',
+      'CI',
+      'pytest',
+      'Playwright-driven verification',
     ],
   },
   {
     job: 'robotics',
-    branch: 'Roboticist',
+    branch: 'Robotics Engineer',
     skills: [
-      'A Reachy Mini living on a headless Jetson',
-      'GStreamer, ALSA/PipeWire, kernel-driver debugging',
-      'ESP32 firmware (currently leveling)',
+      'Reachy Mini',
+      'headless Jetson Orin Nano',
+      'GStreamer',
+      'ALSA/PipeWire',
+      'kernel-driver debugging',
+      'ESP32 firmware (leveling)',
     ],
   },
 ]
@@ -190,31 +217,48 @@ export interface Achievement {
   credential?: string
 }
 
-export const achievements: Achievement[] = [
-  { title: 'Dean’s Scholar', detail: 'SJSU, Fall 2024 and Fall 2025' },
-  { title: 'Four degrees with honors', detail: 'MJC: CS, Mathematics, Physics, Language & Rationality' },
-  { title: 'President’s List × 5', detail: 'Modesto Junior College' },
+// Grouped by source so SJSU and MJC honors read separately. Degrees live in
+// the Background timeline only (the MJC entry lists all four); this grid is
+// honors and certificates, no duplication.
+export const achievementGroups: { label: string; items: Achievement[] }[] = [
   {
-    title: '2025 Quantum Program, WISER',
-    detail: 'Quantum algorithms for portfolio optimization, 2025',
-    credential: '/certificates/wiser-project-2025.jpg',
+    label: 'San Jose State',
+    items: [{ title: 'Dean’s Scholar', detail: 'Fall 2024 and Fall 2025' }],
   },
-  { title: 'QBronze169 Diploma', detail: 'QWorld, 2025', credential: '/certificates/qbronze169.jpg' },
   {
-    title: 'PennyLane LCU Challenge',
-    detail: 'Womanium & WISER, 2025',
-    // SVG (vector): the source PDF renders cut off in-browser.
-    credential: '/certificates/pennylane-lcu.svg',
+    label: 'Modesto Junior College',
+    items: [{ title: 'President’s List × 5', detail: '2021 – 2024' }],
+  },
+  {
+    label: 'Programs & certificates',
+    items: [
+      {
+        title: '2025 Quantum Program, WISER',
+        detail: 'Quantum algorithms for portfolio optimization, 2025',
+        credential: '/certificates/wiser-project-2025.jpg',
+      },
+      { title: 'QBronze169 Diploma', detail: 'QWorld, 2025', credential: '/certificates/qbronze169.jpg' },
+      {
+        title: 'PennyLane LCU Challenge',
+        detail: 'Womanium & WISER, 2025',
+        // SVG (vector): the source PDF renders cut off in-browser.
+        credential: '/certificates/pennylane-lcu.svg',
+      },
+    ],
   },
 ]
+// Flat view for the plain fallback.
+export const achievements: Achievement[] = achievementGroups.flatMap((g) =>
+  g.items.map((a) => ({ ...a, detail: `${g.label}: ${a.detail}` })),
+)
 
 export const contact = {
   eyebrow: 'contact',
-  title: 'Party invite',
+  title: 'Get in touch',
   body: 'Open to AI systems and research software roles. The quickest way to reach me:',
-  // The download resolves to the equipped job's resume (see `resumes`); this
-  // line explains the job-aware behavior.
-  resumeNote: 'The resume matches the equipped role. Switch jobs to swap it.',
+  // The download resolves to the active focus's resume (see `resumes`); this
+  // line explains the focus-aware behavior.
+  resumeNote: 'The resume matches the focus you pick above.',
 }
 
 // Job-aware resume downloads (public/resume/, opened in a new tab). One per

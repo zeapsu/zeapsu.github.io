@@ -1,0 +1,351 @@
+import { useEffect, useRef } from 'react'
+import { JOBS } from '../content/jobs'
+import type { BeamGeometry } from './dispersion'
+
+// Layer 2 of the dispersion hero: a single WebGL2 fragment-shader quad that
+// adds volumetric light, dust motes drifting in the beams, shimmer, and
+// pointer parallax behind the DOM. Progressive enhancement only — without
+// WebGL2 the static SVG (Layer 1) carries the visual, and under reduced
+// motion exactly one formed frame is rendered (no loop, no shimmer motion).
+
+const VERT = `#version 300 es
+void main() {
+  // fullscreen triangle
+  vec2 v = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(v * 2.0 - 1.0, 0.0, 1.0);
+}`
+
+const FRAG = `#version 300 es
+precision highp float;
+out vec4 outColor;
+
+uniform vec2 uSize;      // hero size in CSS px
+uniform float uDpr;
+uniform float uTime;
+uniform vec2 uPointer;   // 0..1, eased
+uniform vec2 uEntryA, uEntryB, uOrigin;
+uniform vec2 uExit[4];
+uniform vec3 uColor[4];
+uniform float uWeight[4];
+uniform float uWhite;
+uniform float uLightMode; // 0 = additive over dark, 1 = painted on paper
+uniform vec3 uPaper;      // the page background (matches the portrait wall)
+
+// the incident spectrum, on-brand: roboticist→swe→physicist→ai hues
+vec3 spectrum(float t) {
+  vec3 c1 = vec3(1.0, 0.48, 0.27);
+  vec3 c2 = vec3(0.94, 0.66, 0.28);
+  vec3 c3 = vec3(0.31, 0.85, 0.78);
+  vec3 c4 = vec3(0.71, 0.55, 1.0);
+  t = clamp(t, 0.0, 1.0);
+  return t < 0.34 ? mix(c1, c2, t / 0.34)
+       : t < 0.67 ? mix(c2, c3, (t - 0.34) / 0.33)
+                  : mix(c3, c4, (t - 0.67) / 0.33);
+}
+
+float segDist(vec2 p, vec2 a, vec2 b, out float t) {
+  vec2 pa = p - a, ba = b - a;
+  t = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-4), 0.0, 1.0);
+  return length(pa - ba * t);
+}
+
+// Additive glow around a segment: tight core + wide halo, igniting near the
+// source and decaying along the length.
+float beam(vec2 p, vec2 a, vec2 b, float core, float halo) {
+  float t;
+  float d = segDist(p, a, b, t);
+  float fall = smoothstep(0.0, 0.10, t) * (1.0 - 0.30 * t);
+  return (exp(-d * core) + 0.18 * exp(-d * halo)) * fall;
+}
+
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+// Sparse drifting motes: one candidate per grid cell, kept for ~35% of cells.
+float dust(vec2 p, float t, float cell, vec2 drift) {
+  vec2 q = (p + drift * t) / cell;
+  vec2 id = floor(q);
+  vec2 f = fract(q);
+  if (hash(id) > 0.35) return 0.0;
+  vec2 c = vec2(hash(id + 7.3), hash(id + 3.1)) * 0.8 + 0.1;
+  float tw = 0.75 + 0.25 * sin(t * (1.0 + hash(id + 11.0)) * 2.2 + hash(id) * 6.28);
+  return smoothstep(0.09, 0.0, length(f - c)) * tw;
+}
+
+void main() {
+  // CSS-px coords, y-down, matching the measured DOM geometry
+  vec2 p = vec2(gl_FragCoord.x / uDpr, uSize.y - gl_FragCoord.y / uDpr);
+  p += (uPointer - 0.5) * 14.0; // parallax
+
+  vec3 col = vec3(0.0);     // additive light (dark theme, screen blend)
+  vec3 absorb = vec3(0.0);  // pigment shadow (light theme)
+  vec3 shine = vec3(0.0);   // light painted OVER the paper (light theme)
+  float field = 0.0;
+
+  // incident beam: the whole spectrum arrives, striped across the width
+  {
+    vec2 ba = uEntryB - uEntryA;
+    float tt = clamp(dot(p - uEntryA, ba) / max(dot(ba, ba), 1e-4), 0.0, 1.0);
+    vec2 close = uEntryA + ba * tt;
+    vec2 perp = normalize(vec2(-ba.y, ba.x));
+    float s = dot(p - close, perp);           // signed px across the beam
+    // distance to the SEGMENT, not the infinite line — the incident beam
+    // must stop at the prism (only the refracted beams continue)
+    float dE = length(p - close);
+    float fall = smoothstep(0.0, 0.10, tt) * (1.0 - 0.25 * tt);
+    float I = (exp(-dE * 0.07) + 0.18 * exp(-dE * 0.010)) * fall * uWhite;
+    vec3 hue = spectrum(s / 26.0 + 0.5);
+    col += hue * I * 1.15;
+    shine += hue * I * 1.0;
+    field += I;
+  }
+
+  // recombination burst where the light meets the prism's exit face: white
+  {
+    float dB = length(p - uOrigin);
+    float B = exp(-dB * 0.045) * uWhite;
+    col += vec3(0.95) * B * 0.9;
+    shine += vec3(1.0) * B * 1.1;
+    field += B;
+  }
+
+  // four dispersed wavelengths, gently shimmering
+  vec3 tint = vec3(0.0);
+  for (int i = 0; i < 4; i++) {
+    float w = uWeight[i] * (0.94 + 0.06 * sin(uTime * 1.7 + float(i) * 2.1));
+    float b = beam(p, uOrigin, uExit[i], 0.055, 0.008) * w;
+    col += uColor[i] * b * 1.5;
+    absorb += (vec3(1.0) - uColor[i]) * b * 1.2; // subtractive: rainbow on paper
+    field += b;
+    tint += uColor[i] * w;
+  }
+
+  // faint atmosphere so the whole field feels lit by the dispersed hues
+  float vign = 1.0 - smoothstep(0.2, 0.85, length((p / uSize) - vec2(0.62, 0.45)));
+  col += tint * 0.012 * vign;
+  shine += tint * 0.010 * vign;
+
+  // dust sparkles inside the light in both themes
+  float motes = dust(p, uTime, 26.0, vec2(9.0, 2.5)) + dust(p, uTime, 47.0, vec2(-5.0, 4.0));
+  float dustI = motes * min(field * 1.6, 1.0);
+  col += vec3(0.95) * dustI * 0.9;
+  shine += vec3(1.0) * dustI * 0.8;
+
+  // soften the canvas' bottom boundary so the light never ends on a hard line
+  float edge = smoothstep(uSize.y, uSize.y - 110.0, p.y);
+  col *= edge;
+  absorb *= edge;
+  shine *= edge;
+
+  // fine grain dithers the halo tails; strongest where the light is dim
+  float g = (hash(gl_FragCoord.xy + fract(uTime)) - 0.5);
+  col += g * mix(0.02, 0.006, min(field, 1.0));
+
+  // Both themes paint the page background themselves (opaque, no CSS blend:
+  // the sticky hero isolates mix-blend-mode from the page behind it, which
+  // left a seam). Dark: light adds over the ground. Light: pigment + shine.
+  vec3 night = max(uPaper + col, 0.0);
+  vec3 paper = clamp(uPaper - min(absorb, vec3(0.65)) + shine, 0.0, 1.0) + g * 0.014;
+  outColor = vec4(mix(night, paper, uLightMode), 1.0);
+}`
+
+function hexToRgb(hex: string): [number, number, number] {
+  const n = parseInt(hex.slice(1), 16)
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]
+}
+
+const REDUCED =
+  typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
+
+export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: number[] }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  // Live targets read by the render loop without re-creating the GL state.
+  const targets = useRef({ geom, weights })
+  targets.current = { geom, weights }
+  // With no render loop under reduced motion, prop changes (resize re-measure,
+  // role hover/lock) must trigger their own redraw or the frame goes stale.
+  const drawRef = useRef<(() => void) | null>(null)
+  useEffect(() => {
+    if (REDUCED) drawRef.current?.()
+  }, [geom, weights])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    // Opaque + CSS mix-blend-mode:screen — black is a no-op over the page,
+    // light adds. Avoids non-premultiplied-alpha compositing pitfalls.
+    const gl = canvas.getContext('webgl2', { alpha: false, antialias: false })
+    if (!gl) {
+      canvas.style.display = 'none' // SVG carries the visual
+      return
+    }
+
+    const compile = (type: number, src: string) => {
+      const s = gl.createShader(type)!
+      gl.shaderSource(s, src)
+      gl.compileShader(s)
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+        throw new Error(gl.getShaderInfoLog(s) ?? 'shader compile failed')
+      return s
+    }
+    let prog: WebGLProgram
+    try {
+      prog = gl.createProgram()!
+      gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT))
+      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG))
+      gl.linkProgram(prog)
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS))
+        throw new Error(gl.getProgramInfoLog(prog) ?? 'link failed')
+    } catch (err) {
+      // The SVG layer carries the visual; log so a silent fallback is
+      // diagnosable in the field.
+      console.warn('BeamCanvas disabled:', err)
+      canvas.style.display = 'none'
+      return
+    }
+    gl.useProgram(prog)
+    gl.enable(gl.BLEND)
+    gl.blendFunc(gl.ONE, gl.ONE) // light adds over the dark page
+
+    const u = (name: string) => gl.getUniformLocation(prog, name)
+    const colors = JOBS.map((j) => hexToRgb(j.palette.accent))
+    // The paper color = the page background where the hero lives. Read per
+    // frame (cached on the string): at mount the stylesheet may not have
+    // applied yet (dev injects CSS post-paint and html transitions its
+    // background), and a one-shot read races that — black paper, dark hero.
+    let bgStr = ''
+    let paper: [number, number, number] = [0.85, 0.82, 0.76]
+    const readPaper = () => {
+      const s = getComputedStyle(document.documentElement).backgroundColor
+      if (s === bgStr) return
+      bgStr = s
+      const m = s.match(/\d+(\.\d+)?/g)
+      if (m && m.length >= 3 && m[3] !== '0') {
+        paper = [Number(m[0]) / 255, Number(m[1]) / 255, Number(m[2]) / 255]
+      }
+    }
+
+    const reduced = REDUCED
+
+    // Displayed weights ease toward targets so a lock collapses the light
+    // smoothly instead of snapping.
+    const shown = [...targets.current.weights]
+    let lightShown = document.documentElement.dataset.theme === 'light' ? 1 : 0
+    const pointer = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 }
+    const onMove = (e: PointerEvent) => {
+      pointer.tx = e.clientX / innerWidth
+      pointer.ty = e.clientY / innerHeight
+    }
+    if (!reduced) addEventListener('pointermove', onMove, { passive: true })
+
+    let raf = 0
+    let running = true
+    const t0 = performance.now()
+
+    const draw = () => {
+      const { geom: g, weights: tw } = targets.current
+      // read per draw: the window can move between displays (or zoom), and a
+      // mount-time value would leave the hero blurry or overdrawn until reload
+      const dpr = Math.min(devicePixelRatio || 1, 2)
+      const w = Math.round(g.width * dpr)
+      const h = Math.round(g.height * dpr)
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w
+        canvas.height = h
+        gl.viewport(0, 0, w, h)
+      }
+      for (let k = 0; k < 4; k++) shown[k] += (tw[k] - shown[k]) * (reduced ? 1 : 0.08)
+      const lightTarget = document.documentElement.dataset.theme === 'light' ? 1 : 0
+      lightShown += (lightTarget - lightShown) * (reduced ? 1 : 0.1)
+      pointer.x += (pointer.tx - pointer.x) * 0.06
+      pointer.y += (pointer.ty - pointer.y) * 0.06
+
+      gl.clearColor(0, 0, 0, 1)
+      gl.clear(gl.COLOR_BUFFER_BIT)
+      gl.uniform2f(u('uSize'), g.width, g.height)
+      gl.uniform1f(u('uDpr'), dpr)
+      gl.uniform1f(u('uTime'), reduced ? 0 : (performance.now() - t0) / 1000)
+      gl.uniform2f(u('uPointer'), pointer.x, pointer.y)
+      gl.uniform2f(u('uEntryA'), g.entry.x1, g.entry.y1)
+      gl.uniform2f(u('uEntryB'), g.entry.x2, g.entry.y2)
+      gl.uniform2f(u('uOrigin'), g.exits[0]?.x1 ?? 0, g.exits[0]?.y1 ?? 0)
+      for (let k = 0; k < 4; k++) {
+        const e = g.exits[k]
+        gl.uniform2f(u(`uExit[${k}]`), e?.x2 ?? 0, e?.y2 ?? 0)
+        gl.uniform3f(u(`uColor[${k}]`), ...colors[k])
+        gl.uniform1f(u(`uWeight[${k}]`), shown[k])
+      }
+      gl.uniform1f(u('uWhite'), 0.9)
+      gl.uniform1f(u('uLightMode'), lightShown)
+      readPaper()
+      gl.uniform3f(u('uPaper'), paper[0], paper[1], paper[2])
+      gl.drawArrays(gl.TRIANGLES, 0, 3)
+    }
+
+    drawRef.current = draw
+
+    let settle: ReturnType<typeof setTimeout> | undefined
+    let themeMo: MutationObserver | undefined
+    if (reduced) {
+      draw() // one formed frame, no loop...
+      settle = setTimeout(draw, 900) // ...re-drawn once the bg transition lands
+      // the lights toggle flips data-theme with no render loop running
+      themeMo = new MutationObserver(() => {
+        draw()
+        clearTimeout(settle)
+        settle = setTimeout(draw, 900)
+      })
+      themeMo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    } else {
+      const loop = () => {
+        if (running) draw()
+        raf = requestAnimationFrame(loop)
+      }
+      raf = requestAnimationFrame(loop)
+    }
+
+    // Don't burn GPU while the hero can't be seen. The sticky hero never
+    // leaves the viewport on desktop, so intersection alone can't detect
+    // "scrolled past": also watch the first sheet crossing the viewport-top
+    // line (rootMargin collapses the root to that line) — once it pins, the
+    // hero is fully covered. (The seam's slanted corner may freeze a beat
+    // early; it is gone within ~80px of scroll.)
+    let onScreen = true
+    let covered = false
+    const gate = () => {
+      running = onScreen && !covered
+    }
+    const io = new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting
+      gate()
+    })
+    io.observe(canvas)
+    let coverIo: IntersectionObserver | undefined
+    const firstSheet = document.querySelector('.panels .panel')
+    if (firstSheet) {
+      coverIo = new IntersectionObserver(
+        ([e]) => {
+          covered = e.isIntersecting
+          gate()
+        },
+        { rootMargin: '0px 0px -100% 0px' },
+      )
+      coverIo.observe(firstSheet)
+    }
+
+    return () => {
+      drawRef.current = null
+      cancelAnimationFrame(raf)
+      clearTimeout(settle)
+      themeMo?.disconnect()
+      io.disconnect()
+      coverIo?.disconnect()
+      removeEventListener('pointermove', onMove)
+      // Deliberately NOT losing the GL context: StrictMode remounts reuse
+      // the same canvas, and a lost context can't compile shaders again.
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} className="beam-canvas" aria-hidden="true" />
+}
