@@ -8,7 +8,7 @@ Andry's portfolio site, live at https://zeapsu.github.io. The Dispersion redesig
 
 Rollback lineage, oldest first: `journey-v1` (3D scroll journey), `vista-r3f-v1` (Blender vista), `themed-3d-v1` (character-select worlds + live GPE sim — the pre-redesign live site), each with a matching `legacy/*` branch. The Gross-Pitaevskii sim was deliberately dropped from the site 2026-07-06; do not resurrect it here (its honest-physics guardrail retired with it).
 
-Current backlog: #31 (content fine-tuning; the first big slice landed 2026-07-08 via PR #34 — honesty fixes, the robotics facet reframed to physical AI, Sigma Pi Sigma, and About+Contact merged into one "Off the clock" closing sheet, so the deck is six sheets) and #32 (per-section signature animations; the half-empty right sides of NOW/PATH and the merged closer are the target). The pre-redesign issues that described the retired 3D site were triaged and closed 2026-07-07.
+Current backlog: #32 (per-section signature animations; the half-empty right sides of NOW/PATH and the merged closer are the target). #31 (content fine-tuning) closed 2026-07-08 after two passes: PR #34 (honesty fixes, the robotics facet reframed to physical AI, Sigma Pi Sigma, About+Contact merged into one "Off the clock" closing sheet — the deck is six sheets) and two direct-to-main copy commits (corporate-speak trims, footer dedupe, hedge fixes); every visible string got an explicit keep/change call. The pre-redesign issues that described the retired 3D site were triaged and closed 2026-07-07.
 
 ## Commands
 
