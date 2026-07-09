@@ -13,13 +13,14 @@ import { PRIMARY_JOB, type JobId } from './content/jobs'
 
 export default function App() {
   // `locked` is the clicked focus (outlives the hover); `preview` is the
-  // hovered/focused one (transient). The active lens is preview-over-locked;
-  // when neither is set the hero cycles and the accent falls back to the
+  // hovered/focused one (transient). The active lens is locked-over-preview:
+  // a click pins the page and hover stops steering until unlocked. When
+  // neither is set the hero cycles and the accent falls back to the
   // primary focus. Deliberately NOT persisted across reloads: a fresh visit
   // re-enters the idle cycle (only the lights choice persists).
   const [locked, setLocked] = useState<JobId | null>(null)
   const [preview, setPreview] = useState<JobId | null>(null)
-  const lens = preview ?? locked
+  const lens = locked ?? preview
   const accent = lens ?? PRIMARY_JOB
 
   // Global theme flip: every sheet swaps light<->dark but the section-by-

@@ -233,7 +233,7 @@ li {
   pointer-events: none;
   z-index: 0;
 }
-.hero > :not(.hero-svg):not(.beam-canvas) {
+.hero > :not(.hero-svg):not(.beam-canvas):not(.scroll-cue) {
   position: relative;
   z-index: 1;
 }
@@ -302,7 +302,9 @@ li {
   cursor: pointer;
   text-decoration: none;
   text-underline-offset: 6px;
-  transition: color 180ms ease;
+  transition:
+    color 180ms ease,
+    text-shadow 400ms ease;
   /* a dark bed so the words stay crisp inside the volumetric glow */
   text-shadow:
     0 0 6px rgba(8, 7, 14, 0.95),
@@ -317,10 +319,31 @@ li {
   text-decoration: underline;
   text-decoration-thickness: 2px;
 }
+/* until a role is locked, hovering borrows the locked underline as a
+   "this is selectable" hint; once locked, the underline means locked only */
+.beam-btns:not(:has(.locked)) .beam-btn:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+/* the idle cycle's current role glows a little on top of the dark bed */
+.beam-btn.lit {
+  color: var(--facet);
+  text-shadow:
+    0 0 6px rgba(8, 7, 14, 0.95),
+    0 0 14px rgba(8, 7, 14, 0.8),
+    0 0 16px color-mix(in srgb, var(--facet) 80%, transparent);
+}
 [data-theme='light'] .beam-btn:hover,
 [data-theme='light'] .beam-btn.active,
-[data-theme='light'] .beam-btn.locked {
+[data-theme='light'] .beam-btn.locked,
+[data-theme='light'] .beam-btn.lit {
   color: color-mix(in srgb, var(--facet) 42%, #17121f);
+}
+[data-theme='light'] .beam-btn.lit {
+  text-shadow:
+    0 0 6px rgba(216, 208, 194, 0.95),
+    0 0 14px rgba(216, 208, 194, 0.8),
+    0 0 16px color-mix(in srgb, var(--facet) 80%, transparent);
 }
 [data-theme='light'] .beam-btn {
   color: #2e2940;
@@ -337,6 +360,30 @@ li {
   outline: 2px solid var(--facet);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+/* Scroll cue: a bare drawn chevron, nudging that there's more below. */
+.scroll-cue {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  translate: -50%;
+  pointer-events: none;
+  stroke: var(--muted);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: cue-drift 2s ease-in-out infinite alternate;
+}
+@keyframes cue-drift {
+  from {
+    translate: -50% 0;
+    opacity: 0.4;
+  }
+  to {
+    translate: -50% 6px;
+    opacity: 0.9;
+  }
 }
 
 /* Mid widths: the role word wraps instead of running under the photo. */
@@ -1521,7 +1568,8 @@ li {
   .resume-button,
   .spine,
   .panel h2,
-  .skill-cloud-group li {
+  .skill-cloud-group li,
+  .scroll-cue {
     transition: none;
     animation: none;
   }
@@ -1533,5 +1581,9 @@ li {
   .panel h2 {
     opacity: 1;
     background-position-x: 0%;
+  }
+  .scroll-cue {
+    opacity: 1;
+    translate: -50%;
   }
 }
