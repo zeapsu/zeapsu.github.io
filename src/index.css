@@ -561,44 +561,6 @@ li {
   opacity: 1;
 }
 
-/* The active wavelength, carried down the page. Scroll-driven where
-   supported; otherwise (and under reduced motion) it simply shows fully
-   lit — the same formed state. */
-.spine {
-  position: absolute;
-  left: calc(var(--gutter) / 2 - 1px);
-  top: 0;
-  bottom: 0;
-  z-index: 3; /* the light thread rides over the stacked sheets */
-  width: 2px;
-  background: linear-gradient(
-    to bottom,
-    var(--accent),
-    color-mix(in srgb, var(--accent) 30%, transparent)
-  );
-  transform-origin: top;
-  opacity: 0.7;
-  transition: background 600ms ease;
-}
-@supports (animation-timeline: scroll()) {
-  .spine {
-    animation: spine-grow linear both;
-    animation-timeline: scroll();
-  }
-  @keyframes spine-grow {
-    from {
-      transform: scaleY(0);
-    }
-    to {
-      transform: scaleY(1);
-    }
-  }
-}
-@media (max-width: 780px) {
-  .spine {
-    display: none;
-  }
-}
 .panel {
   padding-block: clamp(2.8rem, 6vw, 4.6rem);
   border-top: 1px solid var(--line);
@@ -630,7 +592,7 @@ li {
   grid-template-columns: 9rem 1fr;
   gap: 0.4rem 1.4rem;
   padding-left: 1.2rem;
-  /* the timeline rail reads as the spine's continuation */
+  /* the timeline rail carries the accent wavelength */
   border-left: 2px solid color-mix(in srgb, var(--accent) 40%, var(--line-strong));
   transition: border-color 600ms ease;
 }
@@ -1566,7 +1528,6 @@ li {
   .card,
   .trophy-link,
   .resume-button,
-  .spine,
   .panel h2,
   .skill-cloud-group li,
   .scroll-cue {
@@ -1577,7 +1538,7 @@ li {
     opacity: 1;
     transform: none;
   }
-  /* formed states: spine fully lit, headings fully lit */
+  /* formed states: headings fully lit */
   .panel h2 {
     opacity: 1;
     background-position-x: 0%;

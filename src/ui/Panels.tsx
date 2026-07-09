@@ -33,9 +33,6 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
   const t = (base: 'dark' | 'light') => (inverted ? (base === 'dark' ? 'light' : 'dark') : base)
   return (
     <main className="panels">
-      {/* the active wavelength, carried down the page (decorative) */}
-      <div className="spine" aria-hidden="true" />
-
       <section className="panel reveal anim-now panel-split" data-theme={t('dark')}>
         <p className="eyebrow">{research.eyebrow}</p>
         <h2>{research.title}</h2>
