@@ -30,7 +30,7 @@ export function Hero({
   onPreview: (id: JobId | null) => void
   onLock: (id: JobId) => void
 }) {
-  const lens = preview ?? locked
+  const lens = locked ?? preview
   const cycling = lens === null && !reduced
 
   const [i, setI] = useState(0)
