@@ -319,13 +319,19 @@ li {
   text-decoration: underline;
   text-decoration-thickness: 2px;
 }
+/* until a role is locked, hovering borrows the locked underline as a
+   "this is selectable" hint; once locked, the underline means locked only */
+.beam-btns:not(:has(.locked)) .beam-btn:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
 /* the idle cycle's current role glows a little on top of the dark bed */
 .beam-btn.lit {
   color: var(--facet);
   text-shadow:
     0 0 6px rgba(8, 7, 14, 0.95),
     0 0 14px rgba(8, 7, 14, 0.8),
-    0 0 12px color-mix(in srgb, var(--facet) 55%, transparent);
+    0 0 16px color-mix(in srgb, var(--facet) 80%, transparent);
 }
 [data-theme='light'] .beam-btn:hover,
 [data-theme='light'] .beam-btn.active,
@@ -337,7 +343,7 @@ li {
   text-shadow:
     0 0 6px rgba(216, 208, 194, 0.95),
     0 0 14px rgba(216, 208, 194, 0.8),
-    0 0 12px color-mix(in srgb, var(--facet) 55%, transparent);
+    0 0 16px color-mix(in srgb, var(--facet) 80%, transparent);
 }
 [data-theme='light'] .beam-btn {
   color: #2e2940;
