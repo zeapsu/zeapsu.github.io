@@ -109,7 +109,7 @@ export const questLog = {
   eyebrow: 'path',
   title: 'Background',
   intro:
-    'The route here was not a straight line: community college to a physics degree to a research lab.',
+    'The route here was not a straight line: community college to a physics degree to an RA position.',
   quests: [
     {
       period: 'before 2021',
