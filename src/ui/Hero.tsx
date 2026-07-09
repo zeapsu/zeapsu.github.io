@@ -147,7 +147,7 @@ export function Hero({
               btnRefs.current[idx] = el
             }}
             type="button"
-            className={`beam-btn${j.id === locked ? ' locked' : ''}${j.id === lens ? ' active' : ''}`}
+            className={`beam-btn${j.id === locked ? ' locked' : ''}${j.id === lens ? ' active' : ''}${j.id === shownId && !lens ? ' lit' : ''}`}
             style={{ '--facet': j.palette.accent } as CSSProperties}
             aria-pressed={j.id === locked}
             onMouseEnter={() => onPreview(j.id)}
@@ -160,6 +160,10 @@ export function Hero({
           </button>
         ))}
       </div>
+
+      <svg className="scroll-cue" aria-hidden="true" viewBox="0 0 24 12" width="24" height="12">
+        <path d="M 2 2 L 12 10 L 22 2" fill="none" />
+      </svg>
     </header>
   )
 }
