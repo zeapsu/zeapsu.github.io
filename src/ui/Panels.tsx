@@ -10,6 +10,7 @@ import {
 } from '../content/data'
 import { ContactLinks, ProjectCard } from './Sections'
 import { SkillField } from './SkillField'
+import { CloserGlow } from './CloserGlow'
 
 // The single content column, always fully visible. Section order is the
 // narrative arc: NOW (present-tense job) → WORK → PATH → RECOGNITION →
@@ -156,7 +157,7 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
       {/* ABOUT + CONTACT share the closing sheet: the person, then the
           essentials. The anim-about choreography keys off the child classes
           (about-body, contact-lead, links, resume-download, resume-note). */}
-      <section className="panel reveal anim-about" data-theme={t('light')}>
+      <section className="panel reveal anim-about panel-split" data-theme={t('light')}>
         <h2>{about.title}</h2>
         <p className="about-body">{about.body}</p>
         <p className="contact-lead">{contact.body}</p>
@@ -167,6 +168,11 @@ export function Panels({ lens, inverted = false }: { lens: JobId | null; inverte
           </a>
         </p>
         <p className="resume-note">{contact.resumeNote}</p>
+        {/* the bookend: the hero split the light, the closer gathers it.
+            Decorative; last in DOM so reading and tab order are untouched. */}
+        <div className="panel-aside closer-glow-wrap" aria-hidden="true">
+          <CloserGlow lens={lens} />
+        </div>
       </section>
     </main>
   )
