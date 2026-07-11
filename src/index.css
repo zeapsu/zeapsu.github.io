@@ -400,11 +400,11 @@ li {
   margin: 0.2rem 0 1.1rem;
   max-width: 18ch;
 }
-/* The role sentence: its own line, scaled so the longest role ("an AI
-   Systems Engineer") holds one line — switching roles never rewraps. */
+/* The role sentence: its own line, scaled so the longest role ("AI Systems
+   Engineering") holds one line down to 1141px — switching roles never rewraps. */
 .role-line {
   display: block;
-  font-size: 0.62em;
+  font-size: 0.5em;
   margin-top: 0.22em;
   letter-spacing: -0.01em;
 }

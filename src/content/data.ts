@@ -31,7 +31,7 @@ export const research = {
     'Validated spinor ground states to machine precision (norm error 2.2e-16) with correct miscible and immiscible domain-wall structure',
     'Hash-addressed initial-condition catalog with a rebuildable SQLite index and a write-then-index HPC workflow that avoids concurrent-writer contention',
     'Ran a c2-quench study of spontaneous symmetry breaking with Truncated Wigner vacuum-noise seeding and domain-wall counting, recovering Kibble-Zurek scaling (exponent 1/4)',
-    'More than a dozen dated technical reports: benchmarks, validations, design recommendations',
+    'Dated technical reports: benchmarks, validations, design recommendations whose conclusions set project defaults',
   ],
 }
 
@@ -56,8 +56,8 @@ export const projects: Project[] = [
     blurb:
       'Control console and voice assistant for a Reachy Mini robot living on a headless Jetson Orin Nano. Private repo, ask me about it.',
     facts: [
-      'FastAPI + vanilla JS web console, a pure HTTP/WS proxy that never grabs the robot lock; 162 controller tests green',
-      'Voice pipeline: mic to faster-whisper to LLM to TTS, with live camera frames for visual questions; 286 tests',
+      'FastAPI + vanilla JS web console, a pure HTTP/WS proxy so the robot daemon stays the single writer to the hardware',
+      'Voice pipeline: mic to faster-whisper to LLM to TTS, with live camera frames for visual questions',
       'Real hardware debugging: built webrtcsink from source for arm64, root-caused speaker silence to ALSA card remapping after an OS migration',
     ],
     image: reachyConsoleShot,
@@ -81,7 +81,7 @@ export const projects: Project[] = [
     blurb: 'Local-first desktop knowledge agent: add sources, chat with citations, generate quizzes and audio narration.',
     facts: [
       'Tauri + Next.js + FastAPI + SQLite with embeddings; provider abstraction across OpenAI, Anthropic, DeepSeek, Ollama',
-      '130 commits over 15 months, then a deliberate stop. The kill decision and its rationale are in the repo.',
+      '15 months of sustained work, then a deliberate stop. The kill decision and its rationale are in the repo.',
     ],
     link: 'https://github.com/zeapsu/Sage',
     image: sageShot,
@@ -148,7 +148,7 @@ export const questLog = {
 export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
   {
     job: 'physicist',
-    branch: 'Physicist',
+    branch: 'Physics',
     skills: [
       'Quantum information',
       'Qiskit',
@@ -167,19 +167,24 @@ export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
     branch: 'AI Systems',
     skills: [
       'Local inference',
-      'llama.cpp',
+      'llama.cpp (ARM64 CUDA source build)',
       'Ollama',
       'quantization-aware selection',
+      'K/I-quants',
+      'LoRA fine-tuning',
+      'KV-cache tradeoffs',
+      'MoE pruning',
       'ReAct tool loops',
       'MCP',
       'multi-agent review gates',
+      'agent harnesses',
       'faster-whisper',
       'edge deployment',
     ],
   },
   {
     job: 'swe',
-    branch: 'Research SWE',
+    branch: 'Research Software Engineering',
     skills: [
       'Python',
       'TypeScript',
@@ -195,7 +200,7 @@ export const skillTree: { job: JobId; branch: string; skills: string[] }[] = [
   },
   {
     job: 'robotics',
-    branch: 'Robotics Engineer',
+    branch: 'Robotics',
     skills: [
       'edge inference',
       'voice + vision pipelines',

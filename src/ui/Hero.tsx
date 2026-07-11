@@ -12,9 +12,6 @@ const reduced =
 // The cycle leads with the primary focus, then the rest in array order.
 const CYCLE: JobId[] = [PRIMARY_JOB, ...JOBS.map((j) => j.id).filter((id) => id !== PRIMARY_JOB)]
 
-// Only "AI Systems Engineer" takes "an"; the other three take "a".
-const article = (id: JobId) => (id === 'ai-systems' ? 'an' : 'a')
-
 // The prism hero: white light enters from the left, strikes the portrait,
 // and disperses into four wavelength beams — one per facet. The beam-end
 // labels are the filter (hover/focus previews, click locks); the headline
@@ -109,11 +106,11 @@ export function Hero({
         <p className="eyebrow">{identity.name}</p>
         <h1 className="lead">
           Hi, I&rsquo;m Andry.
-          {/* the role line is scaled so the longest role ("an AI Systems
-              Engineer") stays on one line — switching never changes the
+          {/* the role line is scaled so the longest role ("AI Systems
+              Engineering") stays on one line — switching never changes the
               headline's line count */}
           <span className="role-line">
-            I am{' '}
+            I work in{' '}
             <span className="role-slot">
               {/* keying on shownId remounts the word so it re-plays the enter
                   animation each cycle; the word wears its own focus hue */}
@@ -122,7 +119,7 @@ export function Hero({
                 className="role"
                 style={{ '--facet': shown.palette.accent } as CSSProperties}
               >
-                {article(shownId)} {shown.name}
+                {shown.name}
               </span>
             </span>
           </span>
