@@ -1,4 +1,4 @@
-// The four focuses of the portfolio: one person, four facets. The hero line
+// The four disciplines of the portfolio: one person, four facets. The hero line
 // cycles these and doubles as the filter (AI Systems leads — it is the primary
 // framing — but the array stays in display order). Taglines are audited against
 // ~/Documents/personal/experience.md like all copy.
@@ -16,25 +16,25 @@ export interface Job {
 export const JOBS: Job[] = [
   {
     id: 'physicist',
-    name: 'Physicist',
+    name: 'Physics',
     tagline: 'Quantum information and computational physics, from QAOA portfolio benchmarks to condensate simulations.',
     palette: { accent: '#4fd8c8', accentDim: '#1e6f8f' },
   },
   {
     id: 'ai-systems',
-    name: 'AI Systems Engineer',
+    name: 'AI Systems Engineering',
     tagline: 'Agents, local inference, and edge hardware I can point at.',
     palette: { accent: '#b48cff', accentDim: '#6b4a9e' },
   },
   {
     id: 'swe',
-    name: 'Research SWE',
+    name: 'Research Software',
     tagline: 'Verification first: tests re-run, diffs read, apps driven.',
     palette: { accent: '#f0a848', accentDim: '#9a6a2a' },
   },
   {
     id: 'robotics',
-    name: 'Robotics Engineer',
+    name: 'Robotics',
     tagline: 'Physical AI: putting intelligence on edge devices and robots.',
     palette: { accent: '#ff7a45', accentDim: '#9e4a26' },
   },
