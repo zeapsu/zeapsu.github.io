@@ -54,10 +54,10 @@ export const projects: Project[] = [
     name: 'reachy-console',
     jobs: ['robotics', 'ai-systems'],
     blurb:
-      'Control console and voice assistant for a Reachy Mini robot living on a headless Jetson Orin Nano. Private repo, ask me about it.',
+      'Control console and voice agent for a Reachy Mini robot on a headless Jetson Orin Nano. Private repo, ask me about it.',
     facts: [
-      'FastAPI + vanilla JS web console, a pure HTTP/WS proxy so the robot daemon stays the single writer to the hardware',
-      'Voice pipeline: mic to faster-whisper to LLM to TTS, with live camera frames for visual questions',
+      'FastAPI + vanilla JS control console and in-place app library, with a pure HTTP/WS proxy so the robot daemon stays the single writer to the hardware',
+      'Voice agent: local faster-whisper STT to an LLM with live camera frames for visual questions, then neural TTS with persistent sessions, cancellation, and queued follow-ups',
       'Real hardware debugging: built webrtcsink from source for arm64, root-caused speaker silence to ALSA card remapping after an OS migration',
     ],
     image: reachyConsoleShot,
@@ -307,4 +307,3 @@ export const about = {
   title: 'Off the clock',
   body: 'Away from the keyboard: Marvel and scary movies, souls-like games, pickleball, judo (one tournament, zero wins, undeterred), and time with family and the cats. Music runs all day: R&B, UK garage, EDM, dubstep, jazz, classical, JRPG soundtracks. I genuinely enjoy grocery shopping.',
 }
-
