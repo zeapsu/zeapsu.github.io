@@ -9,9 +9,10 @@ import './index.css'
 import App from './App.tsx'
 
 // Local aesthetic review only. The shipped portfolio remains the default.
-const Root = new URLSearchParams(location.search).has('workshop')
-  ? lazy(() => import('./workshop/WorkshopPrototype'))
-  : App
+const parameters = new URLSearchParams(location.search)
+const Root = parameters.has('explore')
+  ? lazy(() => import('./explore/ExplorePrototype'))
+  : parameters.has('workshop') ? lazy(() => import('./workshop/WorkshopPrototype')) : App
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
