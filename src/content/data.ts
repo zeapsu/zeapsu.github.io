@@ -307,3 +307,52 @@ export const about = {
   title: 'Off the clock',
   body: 'Away from the keyboard: Marvel and scary movies, souls-like games, pickleball, judo (one tournament, zero wins, undeterred), and time with family and the cats. Music runs all day: R&B, UK garage, EDM, dubstep, jazz, classical, JRPG soundtracks. I genuinely enjoy grocery shopping.',
 }
+
+// Bounded local workshop study. Career wording follows the approved canonical
+// resume source 41fe5af, not the older research claims above. Skills remain open
+// while the separate resume evidence review completes.
+export const workshopPrototype = {
+  name: identity.name,
+  nameLines: ['Andry', 'Paez.'],
+  navigation: { work: 'Work', resume: 'Résumé', contact: 'Contact' },
+  screenshotClose: 'Close',
+  label: 'Physics · software · robotics',
+  introduction:
+    'I extend scientific software, build AI tools, and troubleshoot Linux and robotics systems.',
+  education: 'B.S. Physics, San Jose State University · May 2026',
+  workLabel: 'Explore my work',
+  resumeLabel: 'Résumé',
+  contactLabel: 'Get in touch',
+  sceneLabel: 'A corner for making things.',
+  scenePending: 'Composition study · Blender scene pending',
+  sceneReady: 'Original workshop scene',
+  sceneDescription:
+    'A proposed fantasy workshop: an arched window, a wooden desk, books, a warm lamp and a monitor. This is a temporary illustrated composition study, not a Blender render.',
+  portraitAlt: 'Andry Paez',
+  linkedin: 'https://www.linkedin.com/in/andry-lloyd-paez',
+  caseStudy: {
+    heading: 'Building around real hardware.',
+    name: 'Reachy console & voice agent',
+    summary:
+      'A browser controller and voice pipeline for a Reachy Mini on a headless Jetson Orin Nano.',
+    details: [
+      'Kept one hardware-owning daemon behind the browser controller.',
+      'Debugged ALSA/PipeWire audio routing and built GStreamer components for ARM64.',
+      'Worked on cancellation, subprocess waits and SIGINT forwarding in the voice pipeline.',
+    ],
+    image: reachyConsoleShot,
+    imageAlt: 'Actual Reachy console screenshot, showing camera view and robot controls.',
+    photo: reachyPhoto,
+    photoAlt: hardware[0].alt,
+    photoCaption: 'The actual robot and Jetson workbench.',
+    imageCaption: 'The browser controller.',
+    linkLabel: 'Ask me about this project',
+    privateNote: 'Private project. Actual hardware and interface shown.',
+  },
+  resumeHeading: 'Résumé & contact',
+  resumeNote:
+    'This prototype links the existing published CV. The revised canonical résumé will replace it before release.',
+  resumeDownloadLabel: 'Published CV (July 2026)',
+  resumeDownload: resumeDefault,
+  reviewNote: 'Local design study · one workshop, one case study',
+}
