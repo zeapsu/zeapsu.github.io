@@ -1,25 +1,31 @@
 # Fantasy workshop: bounded local prototype
 
-Open `http://127.0.0.1:4174/?workshop=1` with the local dev server on port 4174. This query selects the prototype; the default portfolio and `?plain=1` retain their existing behavior. Nothing has been pushed or deployed.
+Open `http://127.0.0.1:4174/?workshop=1` on the Mac with the local dev server on port 4174. This query selects the prototype. The default portfolio and `?plain=1` retain their existing behavior. Nothing has been pushed or deployed.
 
-## Art direction
+## Appearance and scope
 
-The approved direction is an original fantasy workshop with Genshin Impact inspired stylization. Use a fixed oblique view, an arched window, warm wood, broad painterly color areas, brass details and cool ambient depth. A warm lamp and one restrained scientific/magical object provide the focal light. Preserve the real portrait; do not invent an avatar or copy game assets, characters or logos.
+The approved direction is an original fantasy workshop with Genshin Impact inspired stylization: painted wood, broad color areas, brass details, warm lamp light and cool ambient depth. A fixed oblique view shows a desk, shelves, books, jars, a plant, quill and a small mineral resonator. There are no copied game assets, characters or logos.
 
-The scene occupies the right side of a warm-paper or deep-blue hero. The left side states the name and introduction and exposes Work and Résumé actions. Contact is in the navigation. Mobile places the introduction and actions before the scene. One Reachy row follows, using the existing real hardware photo and actual controller screenshot with native-dialog enlargement.
+The scene occupies the right side of a warm-paper or deep-blue hero. Real DOM text on the left states the name and introduction and exposes Work and the current General résumé. Contact is in the navigation. Mobile places the introduction and actions before the scene. The real portrait is preserved. One Reachy row follows, using existing actual hardware and interface images with native-dialog enlargement.
 
-Scope is one hero and one case study. No walking, cinematic entry, room switching, character carousel, scroll camera or resurrected simulation.
+Scope is one hero and one case study. No walking, cinematic entry, room switching, character carousel, scroll camera or resurrected simulation. A full skills section remains outside this study.
 
-## Current state and handoff
+## Actual assets and browser integration
 
-The visible artwork is explicitly labeled as a temporary SVG composition study. The native Blender scene owner has not supplied a confirmed GLB/render. `getWorkshopAsset()` therefore returns `null`; the preview does not fetch a 3D runtime or invent an asset. Add the inspected model, actual poster render and camera to `src/workshop/asset.ts` after handoff. Keep any private orchestration notes and source/provenance documents outside the web repository.
+The inspected original GLB is 2,165,680 bytes with 29,110 triangles, 162 meshes and eleven embedded 128×128 painted textures. It has no external image or buffer resources. This is slightly above the initial 2 MB model target; no optimization pass has been applied before aesthetic review. The actual 1440×960 transparent Blender render is the static fallback, framed with CSS without altering its pixels.
 
-The prepared loader uses a fixed camera, demand rendering, DPR capped at 2, visibility gating and a static poster for reduced motion, unavailable WebGL or context loss. It has passed compilation but cannot be visually or performance validated until the actual asset arrives. Model target: below 2 MB, 100k visible triangles and 2K textures, subject to measurement.
+Blender coordinates map to glTF as `(x,y,z) → (x,z,-y)`. The browser camera is `[6.8,7.3,10]`, targeting `[0,1.73,0]`, orthographic with view height 4.95. The native full-hero horizontal shift is omitted because the browser has a separate scene column. Browser hemisphere/directional lights and AgX tone mapping restore warm/cool depth; imported punctual light intensity is scaled for the web renderer. Cycles lighting is not baked, so the browser and poster are visually consistent rather than pixel-identical.
 
-The résumé control explicitly identifies the existing published July CV. A reviewed current General PDF is still needed before release. The prototype copy uses bounded systems/robotics experience; a full skills section remains outside this study while its separate evidence review finishes.
+The loader is deferred, uses demand rendering and caps DPR at 2. Offscreen/hidden-page gating avoids active rendering. Reduced motion, unavailable WebGL and context loss show the actual poster while all content and links remain usable. The model and optional canvas module are not requested under reduced motion or without WebGL. A development-only renderer handle supports measurements and is removed from the production build.
 
-## Validation
+The hero opens the reviewed current General PDF directly. The footer labels it "General résumé (PDF)". Its copied and served bytes match the approved local output. No private source or provenance documents, orchestration files or Blender source are included in the website.
 
-Build and content/palette selfcheck pass. Lint reports only the pre-existing `dispersion.ts` hook dependency warning. Real Chromium captures cover desktop at 1440×900/DPR 2, mobile 390×844/DPR 2, both themes, reduced motion and unavailable WebGL for the current composition. The capture script also checks no horizontal overflow, immediate mobile actions, keyboard skip navigation, case-study anchor navigation, native-modal focus/escape/return, the explicitly labeled existing PDF response, and unchanged default/plain routes.
+## Verification and limits
 
-No current 3D FPS, GLB appearance or asset fallback result is claimed. Those checks are pending the actual handoff. Screenshots and verification data remain outside the git worktree.
+TypeScript compilation, Vite production build and content/palette selfcheck pass. Lint reports only the pre-existing `dispersion.ts` hook dependency warning. Vite reports the existing shared Three/R3F chunk above 500 kB; it remains optional and deferred. The current R3F/Three combination emits a Three.Clock deprecation warning, with no captured errors.
+
+Real Chromium checks cover desktop 1440×900/DPR 2 and mobile 390×844/DPR 2 in both themes; reduced motion; no WebGL; context loss; and mobile scroll away/return. They check no horizontal overflow, immediate mobile actions, skip navigation, case-study anchor navigation, native-modal focus/escape/return, PDF response and exact bytes, and existing default/plain routes. Actual desktop, mobile and fallback captures were visually inspected. Screenshots and verification data are stored outside the git worktree.
+
+A fixed-camera, continuous-render probe on headless Chromium using Apple M4/Metal at DPR 2 rendered 120 frames in 1,999.9 ms: approximately 60 fps, with a 17.5 ms 95th-percentile interval. Normal rendering is on demand. This is a bounded Mac measurement; other browsers, real phones, network loading and battery use have not been measured. Safari/iOS visual QA remains open.
+
+The prototype is ready for aesthetic review. Release, broader page design and production optimization remain separate decisions.

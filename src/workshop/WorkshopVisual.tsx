@@ -2,6 +2,7 @@ import { Component, lazy, Suspense, useCallback, useEffect, useRef, useState } f
 import type { ReactNode } from 'react'
 import { WorkshopStudy } from './WorkshopStudy'
 import { getWorkshopAsset } from './asset'
+import { workshopPrototype as copy } from '../content/data'
 
 const WorkshopCanvas = lazy(() => import('./WorkshopCanvas'))
 
@@ -46,7 +47,7 @@ export function WorkshopVisual({ dark }: { dark: boolean }) {
     }
   }, [model])
   const staticScene = asset
-    ? <img className="w-scene-poster" src={asset.poster} alt="The original fantasy workshop, rendered in Blender." width="1600" height="1200" />
+    ? <img className="w-scene-poster" src={asset.poster} alt={copy.scenePosterAlt} width="1440" height="960" />
     : <WorkshopStudy />
   const render3d = asset && visible && webgl && pageVisible && !reducedMotion && !failed
   return <div className="w-scene" ref={container} data-scene={render3d ? 'webgl' : asset ? 'poster' : 'composition-study'}>

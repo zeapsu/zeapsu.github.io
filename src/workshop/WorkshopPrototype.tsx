@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import portrait from '../assets/portrait.jpg'
 import { identity, workshopPrototype as copy } from '../content/data'
 import { WorkshopVisual } from './WorkshopVisual'
-import { getWorkshopAsset } from './asset'
 import './workshop.css'
 
 function Star({ className = '' }: { className?: string }) {
@@ -39,12 +38,12 @@ export default function WorkshopPrototype() {
             <p className="w-disciplines">{copy.label}</p>
             <h1 id="w-name">{copy.nameLines[0]}<br /><span>{copy.nameLines[1]}</span></h1>
             <p className="w-introduction">{copy.introduction}</p>
-            <div className="w-actions"><a className="w-primary" href="#work">{copy.workLabel}<span aria-hidden="true">↘</span></a><a href="#resume">{copy.resumeLabel}<span aria-hidden="true">↗</span></a></div>
+            <div className="w-actions"><a className="w-primary" href="#work">{copy.workLabel}<span aria-hidden="true">↘</span></a><a href={copy.resumeDownload} target="_blank" rel="noreferrer">{copy.resumeLabel}<span aria-hidden="true">↗</span></a></div>
             <div className="w-person"><img src={portrait} alt={copy.portraitAlt} width="1120" height="1400" /><p>{copy.education}</p></div>
           </div>
           <figure className="w-visual">
             <WorkshopVisual dark={dark} />
-            <figcaption><span>{copy.sceneLabel}</span><span className="w-study-label">{getWorkshopAsset() ? copy.sceneReady : copy.scenePending}</span></figcaption>
+            <figcaption><span>{copy.sceneLabel}</span></figcaption>
           </figure>
         </section>
         <section className="w-work" id="work" aria-labelledby="w-work-title">
@@ -58,7 +57,7 @@ export default function WorkshopPrototype() {
           </article>
         </section>
         <footer className="w-footer" id="resume">
-          <div><h2>{copy.resumeHeading}</h2><a className="w-mail" href={`mailto:${identity.email}`}>{identity.email}</a><div className="w-footer-links"><a href={copy.resumeDownload} target="_blank" rel="noreferrer">{copy.resumeDownloadLabel} ↗</a><a href={identity.github}>GitHub ↗</a><a href={copy.linkedin}>LinkedIn ↗</a></div><p className="w-resume-note">{copy.resumeNote}</p></div>
+          <div><h2>{copy.resumeHeading}</h2><a className="w-mail" href={`mailto:${identity.email}`}>{identity.email}</a><div className="w-footer-links"><a href={copy.resumeDownload} target="_blank" rel="noreferrer">{copy.resumeDownloadLabel} ↗</a><a href={identity.github}>GitHub ↗</a><a href={copy.linkedin}>LinkedIn ↗</a></div></div>
           <p className="w-review-note">{copy.reviewNote}</p>
         </footer>
       </main>

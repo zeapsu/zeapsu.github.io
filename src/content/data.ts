@@ -309,8 +309,8 @@ export const about = {
 }
 
 // Bounded local workshop study. Career wording follows the approved canonical
-// resume source 41fe5af, not the older research claims above. Skills remain open
-// while the separate resume evidence review completes.
+// profile, not the older research claims above. A full skills section remains
+// outside this hero-and-case-study prototype.
 export const workshopPrototype = {
   name: identity.name,
   nameLines: ['Andry', 'Paez.'],
@@ -324,10 +324,10 @@ export const workshopPrototype = {
   resumeLabel: 'Résumé',
   contactLabel: 'Get in touch',
   sceneLabel: 'A corner for making things.',
-  scenePending: 'Composition study · Blender scene pending',
-  sceneReady: 'Original workshop scene',
   sceneDescription:
     'A proposed fantasy workshop: an arched window, a wooden desk, books, a warm lamp and a monitor. This is a temporary illustrated composition study, not a Blender render.',
+  scenePosterAlt:
+    'An original fantasy workshop with painted wooden shelves, a warm lantern and a small mineral resonator.',
   portraitAlt: 'Andry Paez',
   linkedin: 'https://www.linkedin.com/in/andry-lloyd-paez',
   caseStudy: {
@@ -350,9 +350,7 @@ export const workshopPrototype = {
     privateNote: 'Private project. Actual hardware and interface shown.',
   },
   resumeHeading: 'Résumé & contact',
-  resumeNote:
-    'This prototype links the existing published CV. The revised canonical résumé will replace it before release.',
-  resumeDownloadLabel: 'Published CV (July 2026)',
-  resumeDownload: resumeDefault,
+  resumeDownloadLabel: 'General résumé (PDF)',
+  resumeDownload: '/resume/Andry_Paez_general.pdf',
   reviewNote: 'Local design study · one workshop, one case study',
 }
