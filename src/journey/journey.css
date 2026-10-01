@@ -1,0 +1,76 @@
+html[data-journey='true'] { scroll-behavior: auto; background: #f5f1e6; }
+html[data-journey='true'] body::before { display: none; }
+.journey { --j-paper: #f5f1e6; --j-surface: #faf7eef2; --j-ink: #2a3c3d; --j-muted: #526564; --j-line: #b9c5b8; --j-accent: #396462; --ink: var(--j-ink); --muted: var(--j-muted); color: var(--j-ink); font-family: system-ui, sans-serif; overflow-x: clip; }
+.journey[data-theme='dark'] { --j-paper: #1c2b30; --j-surface: #21363bf2; --j-ink: #eee9da; --j-muted: #c0ccc7; --j-line: #4d676b; --j-accent: #d2bd87; }
+.journey :is(h1,h2,h3,p) { color: inherit; }
+.journey p { max-width: none; }
+.journey a { color: inherit; text-decoration: none; border: 0; transition: none; }
+.journey a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.journey button, .journey select { font: inherit; color: inherit; }
+.journey button { cursor: pointer; }
+.journey :is(a,button,select,summary):focus-visible { outline: 2px solid var(--j-accent); outline-offset: 5px; }
+.journey :is(h1,h2):focus { outline: none; }
+.j-skip { position: fixed; top: 8px; left: 12px; z-index: 60; padding: 13px; background: var(--j-paper); transform: translateY(-160%); }
+.j-skip:focus { transform: none; }
+.j-header { position: fixed; top: 0; left: 0; right: 0; z-index: 30; height: 64px; display: flex; align-items: center; padding: 0 30px; gap: 25px; background: var(--j-surface); border-bottom: 1px solid var(--j-line); }
+.j-name { margin-right: auto; font-size: 18px; letter-spacing: -.025em; }
+.j-header nav { display: flex; gap: 25px; font-size: 13px; }
+.j-theme { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--j-line); background: transparent; display: grid; place-items: center; font-size: 22px !important; }
+.j-world { position: fixed; inset: 64px 0 0; z-index: 0; background: #e8c5a3; }
+.journey[data-theme='dark'] .j-world { background: #263b50; }
+.journey main { position: relative; z-index: 2; padding-top: 64px; pointer-events: none; }
+.j-chapter { min-height: 140svh; position: relative; padding: 12svh 6vw 35svh; box-sizing: border-box; pointer-events: none; }
+.j-panel { position: sticky; top: 110px; width: min(390px, 32vw); margin-left: auto; padding: 27px 29px; border: 1px solid var(--j-line); border-radius: 3px; background: var(--j-surface); pointer-events: auto; }
+.j-chapter-approach .j-panel { width: min(310px, 30vw); }
+.j-panel :is(h1,h2) { font: 400 34px/1.18 'Spectral', Georgia, serif; letter-spacing: -.025em; margin: 0 0 20px; scroll-margin-top: 110px; }
+.j-panel h1 { font-size: 41px; }
+.j-panel p { font-size: 14px; line-height: 1.75; margin: 0 0 18px; }
+.j-panel h3 { font-size: 12px; font-weight: 600; margin: 22px 0 10px; }
+.j-panel ul { margin: 0 0 18px; padding-left: 18px; font-size: 13px; line-height: 1.8; }
+.j-panel li { margin-bottom: 10px; }
+.j-instruction, .j-context, .j-note { font-size: 11px !important; color: var(--j-muted) !important; }
+.j-next { font-size: 12px; display: flex; justify-content: space-between; padding-top: 20px; margin-top: 22px; border-top: 1px solid var(--j-line) !important; }
+.j-panel details { font-size: 12px; }
+.j-panel summary { cursor: pointer; padding: 10px 0; }
+.j-panel details[open] { max-height: min(56svh, 560px); overflow: auto; scrollbar-width: thin; padding: 0 4px; }
+.j-evidence { display: grid; grid-template-columns: 1fr 64px; gap: 8px; margin: 20px 0; }
+.j-evidence img { width: 100%; height: auto; border: 1px solid var(--j-line); }
+.j-email { display: block; font-size: 15px; overflow-wrap: anywhere; margin-bottom: 22px; }
+.j-contact-links { display: flex; gap: 20px; font-size: 12px; }
+.j-reset { width: 100%; margin-top: 30px; padding: 13px 0 0; border: 0; border-top: 1px solid var(--j-line); background: transparent; display: flex; justify-content: space-between; font-size: 13px !important; }
+.j-chapter-contact { min-height: 105svh; }
+.j-chapters { position: fixed; z-index: 35; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--j-surface); border: 1px solid var(--j-line); border-radius: 4px; overflow: hidden; }
+.j-desktop-chapters { display: flex; padding: 7px; gap: 3px; }
+.j-desktop-chapters a { padding: 10px 16px; font-size: 12px; }
+.j-desktop-chapters a[aria-current='step'] { box-shadow: inset 0 -2px var(--j-accent); }
+.j-chapters progress { appearance: none; display: block; width: 100%; height: 2px; border: 0; background: transparent; }
+.j-chapters progress::-webkit-progress-bar { background: transparent; }
+.j-chapters progress::-webkit-progress-value { background: var(--j-accent); }
+.j-mobile-chapters { display: none; }
+.j-flat { position: absolute; inset: 0; display: flex; align-items: center; padding-left: 18vw; background: linear-gradient(150deg, #afc9c1, #e5cba5 70%); }
+.j-flat span { font: 300 70px 'Spectral', Georgia, serif; color: #355959; opacity: .55; }
+.journey[data-theme='dark'] .j-flat { background: linear-gradient(150deg, #31515a, #41423c 70%); }
+.journey[data-theme='dark'] .j-flat span { color: #e5d6b7; }
+@media (max-width: 760px) {
+  .j-header { height: 60px; padding: 0 18px; gap: 16px; }
+  .j-name { font-size: 16px; }
+  .j-header nav { gap: 16px; font-size: 12px; }
+  .j-theme { width: 30px; height: 30px; }
+  .j-world { top: 60px; bottom: auto; height: 42svh; border-bottom: 1px solid var(--j-line); }
+  .journey main { padding-top: 60px; }
+  .j-chapter { padding: calc(42svh + 20px) 20px 20svh; min-height: 130svh; }
+  .j-panel, .j-chapter-approach .j-panel { position: relative; top: auto; margin: 0; width: 100%; padding: 25px; }
+  .j-panel h1 { font-size: 35px; }
+  .j-panel h2 { font-size: 30px; }
+  .j-panel :is(h1,h2) { scroll-margin-top: calc(42svh + 80px); }
+  .j-panel details[open] { max-height: none; overflow: visible; }
+  .j-desktop-chapters { display: none; }
+  .j-mobile-chapters { display: flex; align-items: center; gap: 12px; padding: 6px; }
+  .j-mobile-chapters button { background: transparent; border: 0; padding: 7px 11px; font-size: 18px; }
+  .j-mobile-chapters button:disabled { opacity: .3; cursor: default; }
+  .j-mobile-chapters select { background: var(--j-paper); border: 0; padding: 10px; font-size: 12px; min-width: 145px; }
+  .j-chapters { bottom: 12px; }
+  .j-flat { justify-content: center; padding: 0; }
+  .j-flat span { font-size: 48px; }
+}
+@media (prefers-reduced-motion: reduce) { .journey *, .journey *::before, .journey *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }

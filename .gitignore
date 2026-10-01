@@ -25,3 +25,5 @@ dist-ssr
 
 # Playwright MCP session artifacts
 .playwright-mcp/
+
+.vite-local-cache/
