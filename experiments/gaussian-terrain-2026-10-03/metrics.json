@@ -1,0 +1,140 @@
+{
+  "brush_official_heldout_metrics": [
+    {
+      "iteration": 200,
+      "psnr_db": 26.333342,
+      "ssim": 0.74874157
+    },
+    {
+      "iteration": 400,
+      "psnr_db": 29.050785,
+      "ssim": 0.81588984
+    },
+    {
+      "iteration": 600,
+      "psnr_db": 30.158428,
+      "ssim": 0.8496187
+    },
+    {
+      "iteration": 800,
+      "psnr_db": 30.973047,
+      "ssim": 0.87178427
+    },
+    {
+      "iteration": 1000,
+      "psnr_db": 31.398645,
+      "ssim": 0.88483834
+    },
+    {
+      "iteration": 1200,
+      "psnr_db": 31.846922,
+      "ssim": 0.8962921
+    },
+    {
+      "iteration": 1400,
+      "psnr_db": 32.045525,
+      "ssim": 0.9001136
+    },
+    {
+      "iteration": 1600,
+      "psnr_db": 32.142563,
+      "ssim": 0.90321004
+    },
+    {
+      "iteration": 1800,
+      "psnr_db": 32.15247,
+      "ssim": 0.90342146
+    },
+    {
+      "iteration": 2000,
+      "psnr_db": 32.364735,
+      "ssim": 0.9076311
+    }
+  ],
+  "quantized_png_pixel_losses": [
+    {
+      "iteration": 2,
+      "per_view": [
+        {
+          "view": "val_000.png",
+          "l1_rgb_over_black": 0.07434781360801403,
+          "mse_rgb_over_black": 0.016826557627070374,
+          "psnr_quantized_db": 17.74004722793118,
+          "foreground_l1_alpha_gt_0_5": 0.17482579288369257
+        },
+        {
+          "view": "val_001.png",
+          "l1_rgb_over_black": 0.08568005124787297,
+          "mse_rgb_over_black": 0.02278172135785867,
+          "psnr_quantized_db": 16.42413464279055,
+          "foreground_l1_alpha_gt_0_5": 0.20991339044583024
+        },
+        {
+          "view": "val_002.png",
+          "l1_rgb_over_black": 0.11892113393219488,
+          "mse_rgb_over_black": 0.037885153117723475,
+          "psnr_quantized_db": 14.215309531539479,
+          "foreground_l1_alpha_gt_0_5": 0.2793013165924118
+        },
+        {
+          "view": "val_003.png",
+          "l1_rgb_over_black": 0.10153749083886005,
+          "mse_rgb_over_black": 0.028385611320951392,
+          "psnr_quantized_db": 15.469017482429733,
+          "foreground_l1_alpha_gt_0_5": 0.23283836484170573
+        }
+      ],
+      "mean_l1": 0.09512162240673548,
+      "mean_mse": 0.02646976085590098
+    },
+    {
+      "iteration": 2000,
+      "per_view": [
+        {
+          "view": "val_000.png",
+          "l1_rgb_over_black": 0.01128999474472069,
+          "mse_rgb_over_black": 0.000528040503886927,
+          "psnr_quantized_db": 32.773327631860404,
+          "foreground_l1_alpha_gt_0_5": 0.024684419759773004
+        },
+        {
+          "view": "val_001.png",
+          "l1_rgb_over_black": 0.011401097762657167,
+          "mse_rgb_over_black": 0.0005746768509975858,
+          "psnr_quantized_db": 32.405762966656646,
+          "foreground_l1_alpha_gt_0_5": 0.02598939650926081
+        },
+        {
+          "view": "val_002.png",
+          "l1_rgb_over_black": 0.011710417923750837,
+          "mse_rgb_over_black": 0.0005907136414117765,
+          "psnr_quantized_db": 32.28622999818615,
+          "foreground_l1_alpha_gt_0_5": 0.024968819757188117
+        },
+        {
+          "view": "val_003.png",
+          "l1_rgb_over_black": 0.01253861264742371,
+          "mse_rgb_over_black": 0.0006315389942744857,
+          "psnr_quantized_db": 31.995998288372334,
+          "foreground_l1_alpha_gt_0_5": 0.026712686016894513
+        }
+      ],
+      "mean_l1": 0.011735030769638102,
+      "mean_mse": 0.0005812424976426938
+    }
+  ],
+  "metric_note": "Four never-trained camera views, RGB composited over black. Native Brush metrics use unquantized model output; separately calculated PNG metrics differ slightly due 8-bit quantization. Background is included; foreground L1 also reported. Optimization loss scalar was not emitted by the headless CLI.",
+  "performance": {
+    "iterations": 2000,
+    "reported_training_seconds_rounded": 12,
+    "supervisor_elapsed_seconds_including_polling": 15.321131333243102,
+    "max_sampled_process_tree_rss_bytes": 149880832,
+    "min_system_memory_free_pct": 34,
+    "thermal_states": [
+      0
+    ],
+    "min_disk_free_bytes": 16241426432,
+    "all_samples_on_ac": true,
+    "rss_note": "Sampled RSS is not total GPU/unified-memory allocation; global memory-pressure monitoring supplies the additional safety check."
+  }
+}
