@@ -1,0 +1,37 @@
+{
+  "experiment": "gaussian-terrain-2026-10-03",
+  "original_results_archive_sha256": "e841febc90f0f07c630530a040b45fe1eab68b26bc27e3d09600b921eb923ae9",
+  "archive_note": "Local account paths and internal Library identifiers removed, archive headers normalized, manifests regenerated. Binary outputs, measured values and camera matrices unchanged.",
+  "files": [
+    {
+      "path": "README.md",
+      "size_bytes": 1788,
+      "sha256": "b910c099bf3a6986de534a8713bd05fd1456fa3d943a4d57643ead035c25cf0e"
+    },
+    {
+      "path": "metrics.json",
+      "size_bytes": 4270,
+      "sha256": "4d96f66182f7cd58aa4ad5dcadb7aa76111f39c3fd39a3d4ece9c7481a38e530"
+    },
+    {
+      "path": "terrain-heldout-comparison.png",
+      "size_bytes": 483407,
+      "sha256": "8ffafd0f4e8bd8adb6598c293926fa09e69f126431ad48eb04fe740278b2bd70"
+    },
+    {
+      "path": "terrain-learned-preview.mp4",
+      "size_bytes": 752197,
+      "sha256": "5f3019f46d6631a5266bf79631868e0baacd8c4d055e349c60ca2973a88e0ee7"
+    },
+    {
+      "path": "terrain-trained-2000.ply",
+      "size_bytes": 672435,
+      "sha256": "c4283d6fac7ea017afdfe2e1c723d2b7c132719bc043de1bad19099231d96ce7"
+    },
+    {
+      "path": "terrain-training-results.tar.gz",
+      "size_bytes": 10397553,
+      "sha256": "29e0f918038bb6cb1f1deaae57b1d71cc19ed4e7c53d86bacdb8cdba98d7f618"
+    }
+  ]
+}
