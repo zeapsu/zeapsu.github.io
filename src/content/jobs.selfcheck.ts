@@ -2,6 +2,7 @@
 import assert from 'node:assert'
 import { readFileSync } from 'node:fs'
 import { JOBS, isJobId } from './jobs.ts'
+import { chapters } from './story.ts'
 
 // 1. Exactly four jobs, unique ids, in select-screen order.
 assert.deepStrictEqual(
@@ -28,6 +29,16 @@ for (const j of JOBS) {
   assert.ok(block, `index.css has a token block for ${j.id}`)
   for (const [k, v] of Object.entries(j.palette)) {
     assert.ok(block![1].includes(v), `${j.id} css block carries palette.${k} = ${v}`)
+  }
+}
+
+// 5. The life story ships only in Andry's own words: no placeholder chapter
+// reaches a deploy, ids are unique, and the copy has no em dashes.
+assert.strictEqual(new Set(chapters.map((c) => c.id)).size, chapters.length, 'unique chapter ids')
+for (const c of chapters) {
+  assert.ok(!c.draft, `chapter "${c.id}" is still a placeholder draft`)
+  for (const t of [c.period, c.title, ...c.body]) {
+    assert.ok(!t.includes('—'), `chapter "${c.id}" has an em dash`)
   }
 }
 

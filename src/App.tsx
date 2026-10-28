@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Hero } from './ui/Hero'
-import { Panels } from './ui/Panels'
+import { Panels, type View } from './ui/Panels'
 import { StaticFallback } from './ui/Sections'
 import { useReveal, useStackedDeck } from './ui/reveal'
 import { PRIMARY_JOB, type JobId } from './content/jobs'
@@ -8,8 +8,10 @@ import { PRIMARY_JOB, type JobId } from './content/jobs'
 // Flat, content-first portfolio: one identity, four facets. No gate, no worlds.
 // The hero states "I am a <rotating focus>" and doubles as the filter. A locked
 // focus themes the single page accent, sorts projects, lights its skill branch,
-// and swaps the resume; nothing is ever hidden. `?plain=1` is the ungated
-// plain-text path (a11y + crawl floor).
+// and swaps the resume; nothing is ever hidden. The deck tells the life story
+// by default; `?view=work` (and the "just the work" toggle) is the focused
+// portfolio for readers who only want the technical background. `?plain=1`
+// is the ungated plain-text path (a11y + crawl floor).
 
 export default function App() {
   // `locked` is the clicked focus (outlives the hover); `preview` is the
@@ -51,13 +53,30 @@ export default function App() {
     document.documentElement.dataset.job = accent
   }, [accent])
 
-  useReveal()
-  useStackedDeck()
+  // Story or work view. Lives in the URL, not localStorage, so a work-view
+  // link (e.g. from a resume) is shareable and a fresh visit gets the story.
+  const [view, setView] = useState<View>(() =>
+    new URLSearchParams(location.search).get('view') === 'work' ? 'work' : 'story',
+  )
+  const toggleView = () => {
+    const next: View = view === 'work' ? 'story' : 'work'
+    const url = new URL(location.href)
+    if (next === 'work') url.searchParams.set('view', 'work')
+    else url.searchParams.delete('view')
+    history.replaceState(null, '', url)
+    setView(next)
+  }
+
+  useReveal(view)
+  useStackedDeck(view)
 
   if (new URLSearchParams(location.search).has('plain')) return <StaticFallback />
 
   return (
     <>
+      <button className="view-toggle" aria-pressed={view === 'work'} onClick={toggleView}>
+        {view === 'work' ? 'the whole story' : 'just the work'}
+      </button>
       <button
         className="mode-toggle"
         aria-pressed={lightsOff}
@@ -71,7 +90,7 @@ export default function App() {
         onPreview={setPreview}
         onLock={(id) => setLocked((cur) => (cur === id ? null : id))}
       />
-      <Panels lens={lens} inverted={lightsOff} />
+      <Panels lens={lens} view={view} inverted={lightsOff} />
     </>
   )
 }
