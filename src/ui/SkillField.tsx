@@ -99,7 +99,8 @@ export function SkillField({ lens, light = false }: { lens: JobId | null; light?
     })
     io.observe(wrapRef.current)
     let coverIo: IntersectionObserver | undefined
-    const next = document.querySelector('.anim-path')
+    // whichever sheet follows skills in the current view
+    const next = wrapRef.current.closest('.panel')?.nextElementSibling
     if (next) {
       coverIo = new IntersectionObserver(
         ([e]) => {

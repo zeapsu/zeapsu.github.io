@@ -322,7 +322,9 @@ export function BeamCanvas({ geom, weights }: { geom: BeamGeometry; weights: num
     })
     io.observe(canvas)
     let coverIo: IntersectionObserver | undefined
-    const firstSheet = document.querySelector('.panels .panel')
+    // the deck's <main> starts where its first sheet does and, unlike the
+    // sheet, survives the story/work view swap
+    const firstSheet = document.querySelector('.panels')
     if (firstSheet) {
       coverIo = new IntersectionObserver(
         ([e]) => {

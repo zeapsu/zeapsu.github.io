@@ -5,7 +5,8 @@ import { useEffect } from 'react'
 // before pinning, which needs its own height: top = -(height - viewport),
 // kept fresh per panel via ResizeObserver and read by the CSS as
 // var(--stick-top). Mobile CSS ignores the variable (panels aren't sticky).
-export function useStackedDeck() {
+// `deps` re-runs it when the deck's sheets change (the story/work view).
+export function useStackedDeck(...deps: unknown[]) {
   useEffect(() => {
     const panels = Array.from(document.querySelectorAll<HTMLElement>('.panels .panel'))
     if (!panels.length) return
@@ -23,14 +24,14 @@ export function useStackedDeck() {
       ro.disconnect()
       removeEventListener('resize', set)
     }
-  }, [])
+  }, deps)
 }
 
 // Reveal-on-scroll: add `.in-view` to every `.reveal` element as it enters the
 // viewport, then stop watching it (fires once). One shared observer. Elements
 // already on-screen fire immediately (IntersectionObserver reports initial
 // intersection on observe). Reduced-motion or no-IO: reveal everything at once.
-export function useReveal() {
+export function useReveal(...deps: unknown[]) {
   useEffect(() => {
     // `.reveal` panels fade up; `.panel h2` headings additionally "catch the
     // light" (a one-shot brightness sweep) when they enter view.
@@ -59,7 +60,8 @@ export function useReveal() {
       // reveal below the fold edge.
       { threshold: 0, rootMargin: '0px 0px -10% 0px' },
     )
-    els.forEach((el) => io.observe(el))
+    // already-revealed elements stay revealed when the view changes
+    els.filter((el) => !el.classList.contains('in-view')).forEach((el) => io.observe(el))
     return () => io.disconnect()
-  }, [])
+  }, deps)
 }

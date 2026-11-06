@@ -12,6 +12,7 @@ import {
   hardware,
 } from '../content/data'
 import { JOBS, type JobId } from '../content/jobs'
+import { chapters } from '../content/story'
 
 type LinkKey = 'github' | 'linkedin' | 'email'
 
@@ -95,6 +96,17 @@ export function StaticFallback() {
         <ContactLinks />
         <a className="plain-link" href="./">back to the interactive site</a>
       </section>
+
+      {/* the life story, then the portfolio in full */}
+      {chapters.map((c) => (
+        <section key={c.id} className="panel">
+          <p className="eyebrow">{c.period}</p>
+          <h2>{c.title}</h2>
+          {c.body.map((para) => (
+            <p key={para}>{para}</p>
+          ))}
+        </section>
+      ))}
 
       <section className="panel">
         <p className="eyebrow">{research.eyebrow}</p>
