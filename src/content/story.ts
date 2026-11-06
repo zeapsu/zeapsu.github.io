@@ -86,9 +86,10 @@ export const chapters: Chapter[] = [
     draft: true,
   },
   {
-    // Building: Reachy, Sage, the Kalshi experiment, directing agents
-    // (agentic engineering). Why you build on hardware you can point at.
-    // The work and skills sheets follow.
+    // Building: Reachy Bridge (renamed from reachy-console), the Delta
+    // finance app, Sage, the Kalshi experiment, directing agents (agentic
+    // engineering). Why you build on hardware you can point at. The work
+    // and skills sheets follow.
     id: 'building',
     period: 'on the side',
     title: 'Building things',
@@ -98,7 +99,9 @@ export const chapters: Chapter[] = [
   },
   {
     // What's next: what you want to work on, the kind of team, where you
-    // hope this goes. The closing sheet (off the clock + contact) follows.
+    // hope this goes. The closing sheet (off the clock + contact) follows;
+    // its interests line in data.ts predates Oct 2026 (now: fishing, MMOs
+    // now and then, combat sports in general; no judo, no GW2).
     id: 'next',
     period: 'next',
     title: 'Where I’m headed',
